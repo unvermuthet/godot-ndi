@@ -4,6 +4,8 @@
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
 
+#include "SACN.h"
+
 using namespace godot;
 
 void initialize_gdextension_types(ModuleInitializationLevel p_level)
@@ -11,7 +13,7 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
-	//GDREGISTER_CLASS(YourClass);
+	GDREGISTER_CLASS(SACN);
 }
 
 void uninitialize_gdextension_types(ModuleInitializationLevel p_level) {
@@ -29,7 +31,6 @@ extern "C"
 		init_obj.register_initializer(initialize_gdextension_types);
 		init_obj.register_terminator(uninitialize_gdextension_types);
 		init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_SCENE);
-
 		return init_obj.init();
 	}
 }
