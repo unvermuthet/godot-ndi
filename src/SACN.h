@@ -1,4 +1,5 @@
 #include <godot_cpp/classes/ref_counted.hpp>
+#include <e131.h>
 
 using namespace godot;
 
@@ -9,7 +10,7 @@ class SACN : public RefCounted {
         static void _bind_methods();
     
     public:
-        int number();
+        static int socket(void);
         SACN();
         ~SACN();
 };

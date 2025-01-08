@@ -5,6 +5,7 @@ SACN::~SACN() {
 }
 void SACN::_bind_methods() {
     ClassDB::bind_method(D_METHOD("number"), &SACN::number);
+    
 }
 int SACN::number() {
 	return 42;
