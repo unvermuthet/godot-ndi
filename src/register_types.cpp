@@ -4,7 +4,7 @@
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
 
-#include "SACN.h"
+#include "E131.h"
 
 using namespace godot;
 
@@ -13,7 +13,7 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
-	GDREGISTER_CLASS(SACN);
+	GDREGISTER_CLASS(E131);
 }
 
 void uninitialize_gdextension_types(ModuleInitializationLevel p_level) {
