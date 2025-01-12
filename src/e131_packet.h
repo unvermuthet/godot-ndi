@@ -14,7 +14,7 @@ class E131Packet : public RefCounted {
     public:
         E131Packet();
 
-        e131_packet_t packet;
+        e131_packet_t _packet;
 
         void set_option(const e131_option_t option, const bool state);
         bool get_option(const e131_option_t option) const;
@@ -30,6 +30,10 @@ class E131Packet : public RefCounted {
 
         void set_universe(const uint16_t universe);
         uint16_t get_universe() const;
+
+        e131_error_t validate() const;
+        void dump() const;
 };
 
 VARIANT_ENUM_CAST(e131_option_t);
+VARIANT_ENUM_CAST(e131_error_t);

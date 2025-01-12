@@ -10,6 +10,8 @@ class E131Socket : public RefCounted {
     private:
         int sockfd;
         e131_addr_t dest;
+        uint8_t last_seq_send = 0x00;
+        uint8_t last_seq_recv = 0x00;
 
     protected:
         static void _bind_methods();
@@ -23,8 +25,8 @@ class E131Socket : public RefCounted {
         int multicast_join(const uint16_t universe);
         int multicast_join_iface(const uint16_t universe, const int ifindex);
         int multicast_join_ifaddr(const uint16_t universe, const String ifaddr);
-        ssize_t send(const E131Packet packet);
-        E131Packet recv();
+        Error send(const E131Packet packet);
+        Error recv(E131Packet packet);
 };
 
 // VARIANT_ENUM_CAST(e131_error_t);

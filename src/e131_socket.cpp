@@ -1,4 +1,5 @@
 #include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/classes/thread.hpp>
 
 #include "e131.h"
 #include "e131_packet.h"
@@ -41,10 +42,35 @@ int E131Socket::multicast_join_ifaddr(const uint16_t universe, const String ifad
 	return e131_multicast_join_ifaddr(sockfd, universe, ifaddr.utf8().ptr());
 }
 
-ssize_t E131Socket::send(const E131Packet packet) {
-	return e131_send(sockfd, &packet.packet, &dest);
+Error E131Socket::send(const E131Packet packet) {
+	e131_error_t err = e131_pkt_validate(&packet._packet);
+	ERR_FAIL_COND_V_MSG(err != E131_ERR_NONE, ERR_INVALID_DATA, e131_strerror(err));
+
+	e131_packet_t p = packet._packet;
+	p.frame.seq_number = last_seq_send + 1;
+
+	ERR_FAIL_COND_V_MSG(e131_send(sockfd, &p, &dest) == -1, ERR_FILE_CANT_WRITE, strerror(errno));
+
+	last_seq_send++;
+	return OK;
 }
 
-E131Packet E131Socket::recv() {
-	return E131Packet();
+Error E131Socket::recv(E131Packet packet) {
+	e131_packet_t p;
+	ERR_FAIL_COND_V_MSG(e131_recv(sockfd, &p) == -1, ERR_FILE_CANT_READ, strerror(errno));
+
+	e131_error_t err = e131_pkt_validate(&p);
+	if (err != E131_ERR_NONE) {
+		WARN_PRINT(e131_strerror(err));
+		return ERR_INVALID_DATA;
+	}
+
+	if (e131_pkt_discard(&p, last_seq_recv)) {
+		WARN_PRINT("Packet received out of order");
+		return ERR_INVALID_DATA;
+	}
+	last_seq_recv = p.frame.seq_number;
+
+	packet._packet = p;
+	return OK;
 }
