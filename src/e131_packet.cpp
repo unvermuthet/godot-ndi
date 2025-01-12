@@ -1,4 +1,6 @@
 #include <godot_cpp/core/class_db.hpp>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include <e131.h>
 
 #include "e131_packet.h"
