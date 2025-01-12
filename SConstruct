@@ -5,7 +5,7 @@ import sys
 from methods import print_error
 
 
-libname = "godot-sacn"
+libname = "godot-e131"
 projectdir = "demo"
 
 localEnv = Environment(tools=["default"], PLATFORM="")
