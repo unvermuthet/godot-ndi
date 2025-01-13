@@ -77,11 +77,11 @@ runs:
       run: |
         emcc -v
 # Windows only
-    # - name: Windows - Setup MinGW for Windows/MinGW build
-    #   uses: egor-tensin/setup-mingw@v2
-    #   if: ${{ inputs.platform == 'windows' }}
-    #   with:
-    #     version: 12.2.0
+    - name: Windows - Setup MinGW for Windows/MinGW build
+      uses: egor-tensin/setup-mingw@v2
+      if: ${{ inputs.platform == 'windows' }}
+      with:
+        version: 12.2.0
 # Dependencies of godot
     # Use python 3.x release (works cross platform)
     - name: Set up Python 3.x

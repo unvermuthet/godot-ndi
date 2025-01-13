@@ -1,7 +1,9 @@
 #include <godot_cpp/core/class_db.hpp>
 
 #ifdef _WIN32
-#include <WinSock2.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <ws2ipdef.h>
 #else
 #include <netinet/in.h>
 #endif
