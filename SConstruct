@@ -5,7 +5,7 @@ import sys
 from methods import print_error
 
 
-libname = "godot-e131"
+libname = "godot-ndi"
 # projectdir = "demo"
 
 localEnv = Environment(tools=["default"], PLATFORM="")
@@ -21,12 +21,12 @@ Help(opts.GenerateHelpText(localEnv))
 env = localEnv.Clone()
 
 submodule_initialized = False
-if os.path.isdir("godot-cpp") and os.path.isdir("libe131"):
-    if os.listdir("godot-cpp") and os.listdir("libe131"):
+if os.path.isdir("godot-cpp"):
+    if os.listdir("godot-cpp"):
         submodule_initialized = True
 
 if not submodule_initialized:
-    print_error("""godot-cpp or libe131 is not available within this folder, as Git submodules haven't been initialized.
+    print_error("""godot-cpp is not available within this folder, as Git submodules haven't been initialized.
 Run the following command to download godot-cpp:
 
     git submodule update --init --recursive""")
@@ -34,10 +34,10 @@ Run the following command to download godot-cpp:
 
 env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 
-env.Append(CPPPATH=["src/", "libe131/src"])
+env.Append(CPPPATH=["src/", "ndi/"])
 
 sources = Glob("src/*.cpp")
-sources.extend(Glob("libe131/src/*.c"))
+# sources.extend(Glob("libe131/src/*.c"))
 
 if env["platform"] == "windows":
     env.Append(LIBS=["ws2_32"])
