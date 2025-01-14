@@ -6,7 +6,7 @@ from methods import print_error
 
 
 libname = "godot-e131"
-projectdir = "demo"
+# projectdir = "demo"
 
 localEnv = Environment(tools=["default"], PLATFORM="")
 
@@ -64,7 +64,8 @@ library = env.SharedLibrary(
     source=sources,
 )
 
-copy = env.InstallAs("{}/bin/{}/{}lib{}".format(projectdir, env["platform"], filepath, file), library)
+# copy = env.InstallAs("{}/bin/{}/{}lib{}".format(projectdir, env["platform"], filepath, file), library)
 
-default_args = [library, copy]
+# default_args = [library, copy]
+default_args = [library]
 Default(*default_args)
