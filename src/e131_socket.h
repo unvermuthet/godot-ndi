@@ -25,8 +25,8 @@ class E131Socket : public RefCounted {
         int multicast_join(const uint16_t universe);
         int multicast_join_iface(const uint16_t universe, const int ifindex);
         int multicast_join_ifaddr(const uint16_t universe, const String ifaddr);
-        Error send(const E131Packet packet);
-        Error recv(E131Packet packet);
+        Error send(const Ref<E131Packet> packet);
+        Error recv(Ref<E131Packet> packet);
 };
 
 // VARIANT_ENUM_CAST(e131_error_t);
