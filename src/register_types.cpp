@@ -4,6 +4,7 @@
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
 
+#include <e131.h>
 #include "e131_packet.h"
 #include "e131_socket.h"
 
