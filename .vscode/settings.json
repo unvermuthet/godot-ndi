@@ -2,6 +2,7 @@
     "cmake.options.statusBarVisibility": "hidden",
     "cmake.ignoreCMakeListsMissing": true,
     "files.associations": {
-        "atomic": "cpp"
+        "atomic": "cpp",
+        "xstring": "cpp"
     }
 }
