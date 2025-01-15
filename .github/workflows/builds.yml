@@ -322,6 +322,6 @@ jobs:
       - name: Merge Artifacts
         uses: actions/upload-artifact/merge@v4
         with:
-          name: godot-cpp-template
+          name: godot-ndi
           pattern: godot-cpp-template-*
           delete-merged: true
