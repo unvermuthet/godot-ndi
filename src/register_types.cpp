@@ -15,6 +15,10 @@
 #include "Processing.NDI.Lib.h"
 #include "Processing.NDI.Lib.cplusplus.h"
 
+#include "ndi.h"
+#include "ndi_connection.h"
+#include "ndi_source.h"
+
 using namespace godot;
 
 void initialize_gdextension_types(ModuleInitializationLevel p_level)
@@ -84,11 +88,12 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 
 	if (!ndi->initialize()) {
 		printf("Cannot run NDI..");
-		UtilityFunctions::print("Fail");
 		return;
 	}
 
-	UtilityFunctions::print("HAAALALLOOO");
+	GDREGISTER_CLASS(NDI);
+	GDREGISTER_CLASS(NDIConnection);
+	GDREGISTER_CLASS(NDISource);
 }
 
 void uninitialize_gdextension_types(ModuleInitializationLevel p_level) {
