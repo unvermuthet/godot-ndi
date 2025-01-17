@@ -1,5 +1,6 @@
 #include <godot_cpp/core/class_db.hpp>
-
+#include "Processing.NDI.Lib.h"
+#include "register_types.h"
 #include "ndi_source.h"
 
 void NDISource::_bind_methods() {
@@ -13,27 +14,50 @@ void NDISource::_bind_methods() {
 }
 
 NDISource::NDISource() {
+    recv_desc.allow_video_fields = false;
+    recv_desc.bandwidth = NDIlib_recv_bandwidth_highest;
+    recv_desc.color_format = NDIlib_recv_color_format_RGBX_RGBA;
+    recv_desc.p_ndi_recv_name = NULL;
+}
+
+NDISource::NDISource(NDIlib_source_t source) {
+    NDISource();
+    recv_desc.source_to_connect_to = source;
 }
 
 void NDISource::set_name(const String name) {
-    source.p_ndi_name = name.utf8().ptr();
+    recv_desc.source_to_connect_to.p_ndi_name = name.utf8().ptr();
 }
 
 String NDISource::get_name() const {
-    if (!source.p_ndi_name) {
+    if (!recv_desc.source_to_connect_to.p_ndi_name) {
         return String();
     }
-	return String(source.p_ndi_name);
+	return String(recv_desc.source_to_connect_to.p_ndi_name);
 }
 
 void NDISource::set_url(const String url) {
-    source.p_url_address = url.utf8().ptr();
+    recv_desc.source_to_connect_to.p_url_address = url.utf8().ptr();
 }
 
 String NDISource::get_url() const {
-    if (!source.p_url_address) {
+    if (!recv_desc.source_to_connect_to.p_url_address) {
         return String();
     }
-	return String(source.p_url_address);
+	return String(recv_desc.source_to_connect_to.p_url_address);
 }
 
+void NDISource::set_bandwidth(const NDIlib_recv_bandwidth_e bandwidth) {
+    recv_desc.bandwidth = bandwidth;
+}
+
+NDIlib_recv_bandwidth_e NDISource::get_bandwidth() const {
+	return recv_desc.bandwidth;
+}
+
+void NDISource::connect() {
+    recv = ndi->NDIlib_recv_create_v3(&recv_desc);
+}
+
+void NDISource::disconnect() {
+}

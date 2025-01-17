@@ -1,9 +1,4 @@
-#include "register_types.h"
-#include <gdextension_interface.h>
-#include <godot_cpp/core/class_db.hpp>
-#include <godot_cpp/core/defs.hpp>
-#include <godot_cpp/godot.hpp>
-#include <godot_cpp/variant/utility_functions.hpp>
+#include <stddef.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -12,12 +7,17 @@
 #include <dlfcn.h>
 #endif
 
-#include "Processing.NDI.Lib.h"
-#include "Processing.NDI.Lib.cplusplus.h"
+#include <gdextension_interface.h>
+#include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/core/defs.hpp>
+#include <godot_cpp/godot.hpp>
+#include <godot_cpp/variant/utility_functions.hpp>
 
-#include "ndi.h"
-#include "ndi_connection.h"
+#include "Processing.NDI.Lib.h"
+
+#include "ndi_find.h"
 #include "ndi_source.h"
+#include "register_types.h"
 
 using namespace godot;
 
@@ -67,7 +67,7 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 	// Try to load the library
 	void* ndi_lib = dlopen(ndi_runtime_path.c_str(), RTLD_LOCAL | RTLD_LAZY);
 
-	// The main NDI entry point for dynamic loading if we got the library
+	// The main NDIFind entry point for dynamic loading if we got the library
 	const NDIlib_v5* (*NDIlib_v5_load)(void) = NULL;
 	if (ndi_lib) {
 		*((void**)&NDIlib_v5_load) = dlsym(ndi_lib, "NDIlib_v5_load");
@@ -91,8 +91,7 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 		return;
 	}
 
-	GDREGISTER_CLASS(NDI);
-	GDREGISTER_CLASS(NDIConnection);
+	GDREGISTER_CLASS(NDIFind);
 	GDREGISTER_CLASS(NDISource);
 }
 

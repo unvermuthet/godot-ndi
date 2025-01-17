@@ -1,8 +1,4 @@
-#include <stddef.h>
-
-#ifdef _WIN32
-#include <windows.h>
-#endif
+#pragma once
 
 #include "Processing.NDI.Lib.h"
 
@@ -11,7 +7,6 @@
 
 void initialize_gdextension_types();
 void uninitialize_gdextension_types();
+const NDIlib_v5 *ndi;
 
 #endif // EXAMPLE_REGISTER_TYPES_H
-
-const NDIlib_v5 *ndi = NULL;

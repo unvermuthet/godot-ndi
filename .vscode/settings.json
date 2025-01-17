@@ -4,6 +4,7 @@
     "files.associations": {
         "atomic": "cpp",
         "xstring": "cpp",
-        "array": "cpp"
+        "array": "cpp",
+        "typeinfo": "cpp"
     }
 }
