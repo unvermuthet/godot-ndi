@@ -3,6 +3,8 @@
     "cmake.ignoreCMakeListsMissing": true,
     "files.associations": {
         "atomic": "cpp",
-        "xstring": "cpp"
+        "xstring": "cpp",
+        "array": "cpp",
+        "typeinfo": "cpp"
     }
 }
