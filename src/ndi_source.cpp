@@ -1,6 +1,3 @@
-#include <godot_cpp/core/class_db.hpp>
-#include "Processing.NDI.Lib.h"
-#include "register_types.h"
 #include "ndi_source.h"
 
 void NDISource::_bind_methods() {
@@ -56,8 +53,11 @@ NDIlib_recv_bandwidth_e NDISource::get_bandwidth() const {
 }
 
 void NDISource::connect() {
-    recv = ndi->NDIlib_recv_create_v3(&recv_desc);
+    recv = lib->NDIlib_recv_create_v3(&recv_desc);
+    sync = lib->NDIlib_framesync_create(recv);
 }
 
 void NDISource::disconnect() {
+    lib->NDIlib_recv_destroy(recv);
+    lib->NDIlib_framesync_destroy(sync);
 }

@@ -1,16 +1,19 @@
 #pragma once
 
 #include <godot_cpp/classes/ref_counted.hpp>
+#include <godot_cpp/core/class_db.hpp>
 #include "Processing.NDI.Lib.h"
+#include "ndi.h"
 
 using namespace godot;
 
-class NDISource : public RefCounted {
-    GDCLASS(NDISource, RefCounted)
+class NDISource : public NDI {
+    GDCLASS(NDISource, NDI)
 
     private:
         NDIlib_recv_create_v3_t recv_desc;
         NDIlib_recv_instance_t recv;
+        NDIlib_framesync_instance_t sync;
 
     protected:
         static void _bind_methods();

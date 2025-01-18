@@ -2,12 +2,13 @@
 
 #include <godot_cpp/classes/ref_counted.hpp>
 #include "Processing.NDI.Lib.h"
+#include "ndi.h"
 #include "ndi_source.h"
 
 using namespace godot;
 
-class NDIFind : public RefCounted {
-    GDCLASS(NDIFind, RefCounted)
+class NDIFind : public NDI {
+    GDCLASS(NDIFind, NDI)
 
     private:
         NDIlib_find_instance_t find;

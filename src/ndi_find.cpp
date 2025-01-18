@@ -1,16 +1,15 @@
 #include "ndi_find.h"
-#include "register_types.h"
 
 void NDIFind::_bind_methods() {
 }
 
 NDIFind::NDIFind() {
 	NDIlib_find_create_t find_desc;
-	find = ndi->NDIlib_find_create_v2(&find_desc);
+	find = lib->NDIlib_find_create_v2(&find_desc);
 }
 
 NDIFind::~NDIFind() {
-	ndi->NDIlib_find_destroy(find);
+	lib->NDIlib_find_destroy(find);
 }
 
 void NDIFind::set_sources_settings(const bool show_local_sources, const PackedStringArray groups, const PackedStringArray extra_ips) {
@@ -24,15 +23,15 @@ void NDIFind::set_sources_settings(const bool show_local_sources, const PackedSt
 		find_desc.p_extra_ips = String(",").join(extra_ips).utf8().ptr();
 	}
 
-	ndi->NDIlib_find_destroy(find);
-	find = ndi->NDIlib_find_create(&find_desc);
+	lib->NDIlib_find_destroy(find);
+	find = lib->NDIlib_find_create(&find_desc);
 }
 
 TypedArray<NDISource> NDIFind::get_sources() const {
 	TypedArray<NDISource> sources;
 
 	uint32_t num_sources = 0;
-	const NDIlib_source_t *sources_pointer = ndi->NDIlib_find_get_current_sources(find, &num_sources);
+	const NDIlib_source_t *sources_pointer = lib->NDIlib_find_get_current_sources(find, &num_sources);
 
 	for (int i = 0; i < num_sources; i++) {
 		NDISource source = NDISource(sources_pointer[i]);
