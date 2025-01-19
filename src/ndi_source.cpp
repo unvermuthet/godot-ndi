@@ -3,11 +3,21 @@
 void NDISource::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_name", "name"), &NDISource::set_name);
     ClassDB::bind_method(D_METHOD("get_name"), &NDISource::get_name);
+
     ClassDB::bind_method(D_METHOD("set_url", "url"), &NDISource::set_url);
     ClassDB::bind_method(D_METHOD("get_url"), &NDISource::get_url);
 
+    ClassDB::bind_method(D_METHOD("set_bandwidth", "bandwidth"), &NDISource::set_bandwidth);
+    ClassDB::bind_method(D_METHOD("get_bandwidth"), &NDISource::get_bandwidth);
+
     ADD_PROPERTY(PropertyInfo(Variant::STRING, "name"), "set_name", "get_name");
     ADD_PROPERTY(PropertyInfo(Variant::STRING, "url"), "set_url", "get_url");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "bandwidth"), "set_bandwidth", "get_bandwidth");
+
+    BIND_ENUM_CONSTANT(NDIlib_recv_bandwidth_metadata_only)
+    BIND_ENUM_CONSTANT(NDIlib_recv_bandwidth_audio_only)
+    BIND_ENUM_CONSTANT(NDIlib_recv_bandwidth_lowest)
+    BIND_ENUM_CONSTANT(NDIlib_recv_bandwidth_highest)
 }
 
 NDISource::NDISource() {
@@ -17,8 +27,7 @@ NDISource::NDISource() {
     recv_desc.p_ndi_recv_name = NULL;
 }
 
-NDISource::NDISource(NDIlib_source_t source) {
-    NDISource();
+NDISource::NDISource(NDIlib_source_t source) : NDISource() {
     recv_desc.source_to_connect_to = source;
 }
 
@@ -52,12 +61,15 @@ NDIlib_recv_bandwidth_e NDISource::get_bandwidth() const {
 	return recv_desc.bandwidth;
 }
 
-void NDISource::connect() {
-    recv = lib->NDIlib_recv_create_v3(&recv_desc);
-    sync = lib->NDIlib_framesync_create(recv);
+void NDISource::receive() {
+    recv = lib->recv_create_v3(&recv_desc);
+    sync = lib->framesync_create(recv);
 }
 
-void NDISource::disconnect() {
-    lib->NDIlib_recv_destroy(recv);
-    lib->NDIlib_framesync_destroy(sync);
+void NDISource::stop_receiving() {
+    lib->recv_destroy(recv);
+    lib->framesync_destroy(sync);
+
+    recv = NULL;
+    sync = NULL;
 }

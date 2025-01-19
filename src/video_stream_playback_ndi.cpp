@@ -1,0 +1,131 @@
+#include "video_stream_playback_ndi.h"
+
+VideoStreamPlaybackNDI::VideoStreamPlaybackNDI() {
+    ndi = memnew(NDI);
+    texture = memnew(ImageTexture);
+}
+
+VideoStreamPlaybackNDI::VideoStreamPlaybackNDI(NDIlib_recv_create_v3_t _recv_desc) : VideoStreamPlaybackNDI() {
+    recv_desc = _recv_desc;
+}
+
+VideoStreamPlaybackNDI::~VideoStreamPlaybackNDI() { }
+
+void VideoStreamPlaybackNDI::render_video() {
+    NDIlib_video_frame_v2_t video_frame;
+    ndi->lib->framesync_capture_video(sync, &video_frame, NDIlib_frame_format_type_progressive);
+
+    if (video_frame.p_data == NULL) {
+        ndi->lib->framesync_free_video(sync, &video_frame);
+        return;
+    }
+
+    Image::Format format;
+    switch (video_frame.FourCC)
+    {
+        case NDIlib_FourCC_type_RGBA:
+            format = Image::Format::FORMAT_RGBA8;
+            break;
+
+        case NDIlib_FourCC_type_RGBX:
+            format = Image::Format::FORMAT_RGB8;
+            break;
+        
+        default:
+            ndi->lib->framesync_free_video(sync, &video_frame);
+            return;
+    }
+
+    PackedByteArray data;
+    data.resize(video_frame.line_stride_in_bytes * video_frame.yres);
+
+    memcpy(data.ptrw(), video_frame.p_data, data.size());
+    ndi->lib->framesync_free_video(sync, &video_frame);
+
+    Ref<Image> img = Image::create_from_data(video_frame.xres, video_frame.yres, false, format, data);
+    texture->set_image(img);
+
+    data.resize(0);
+}
+
+void VideoStreamPlaybackNDI::render_audio(double p_delta) {
+
+    int no_samples = (int)((double)(_get_mix_rate()) * p_delta) / 4 * 4;
+
+    NDIlib_audio_frame_v3_t audio_frame;
+    ndi->lib->framesync_capture_audio_v2(sync, &audio_frame, _get_mix_rate(), _get_channels(), no_samples);
+
+    if (audio_frame.p_data != NULL)
+    {
+        PackedFloat32Array audio;
+        audio.resize(audio_frame.no_channels * audio_frame.no_samples);
+
+        memcpy((uint8_t *)audio.ptrw(), audio_frame.p_data, audio.size()*4);
+        mix_audio(audio.size()/_get_channels(), audio, 0);
+
+        audio.resize(0);
+    }
+
+    ndi->lib->framesync_free_audio_v2(sync, &audio_frame);
+}
+
+void VideoStreamPlaybackNDI::_stop() {
+    if (playing) {
+        playing = false;
+        ndi->lib->framesync_destroy(sync);
+        ndi->lib->recv_destroy(recv);
+    }
+}
+
+void VideoStreamPlaybackNDI::_play() {
+    if (!playing) {
+        audio_sample_rate = 0;
+        audio_no_channels = 0;
+        recv = ndi->lib->recv_create_v3(&recv_desc);
+        sync = ndi->lib->framesync_create(recv);
+        playing = true;
+    }
+}
+
+bool VideoStreamPlaybackNDI::_is_playing() const {
+	return playing;
+}
+
+void VideoStreamPlaybackNDI::_set_paused(bool p_paused) {
+    paused = p_paused;
+}
+
+bool VideoStreamPlaybackNDI::_is_paused() const {
+	return paused;
+}
+
+double VideoStreamPlaybackNDI::_get_length() const {
+	return 0.0;
+}
+
+double VideoStreamPlaybackNDI::_get_playback_position() const {
+	return 0.0;
+}
+
+void VideoStreamPlaybackNDI::_seek(double p_time) {
+}
+
+void VideoStreamPlaybackNDI::_set_audio_track(int32_t p_idx) {
+}
+
+Ref<Texture2D> VideoStreamPlaybackNDI::_get_texture() const {
+	return texture;
+}
+
+void VideoStreamPlaybackNDI::_update(double p_delta) {
+    render_video();
+    render_audio(p_delta);
+}
+
+int32_t VideoStreamPlaybackNDI::_get_channels() const {
+    return 2;
+}
+
+int32_t VideoStreamPlaybackNDI::_get_mix_rate() const {
+    return 48000;
+}

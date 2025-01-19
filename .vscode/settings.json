@@ -5,6 +5,8 @@
         "atomic": "cpp",
         "xstring": "cpp",
         "array": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "string_view": "cpp",
+        "initializer_list": "cpp"
     }
 }

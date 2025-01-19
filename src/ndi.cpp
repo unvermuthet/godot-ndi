@@ -70,4 +70,5 @@ NDI::NDI() {
 }
 
 NDI::~NDI() {
+	lib->destroy();
 }

@@ -31,6 +31,8 @@ class NDISource : public NDI {
         void set_bandwidth(const NDIlib_recv_bandwidth_e bandwidth);
         NDIlib_recv_bandwidth_e get_bandwidth() const;
 
-        void connect();
-        void disconnect();
+        void receive();
+        void stop_receiving();
 };
+
+VARIANT_ENUM_CAST(NDIlib_recv_bandwidth_e);
