@@ -18,7 +18,6 @@ void NDIFind::_bind_methods() {
 }
 
 NDIFind::NDIFind() {
-	find_desc = NDIlib_find_create_t(true, NULL, NULL);
 	find = lib->find_create_v2(&find_desc);
 }
 
@@ -37,11 +36,12 @@ bool NDIFind::get_show_local_sources() const {
 	return find_desc.show_local_sources;
 }
 
-void NDIFind::set_groups(const PackedStringArray groups) {
-	find_desc.p_groups = NULL;
+void NDIFind::set_groups(const PackedStringArray _groups) {
+	groups = _groups;
 
+	find_desc.p_groups = NULL;
 	if (groups.size() > 0) {
-		find_desc.p_groups = String(",").join(groups).utf8().ptr();
+		find_desc.p_groups = String(",").join(groups).utf8();
 	}
 
 	lib->find_destroy(find);
@@ -53,14 +53,15 @@ PackedStringArray NDIFind::get_groups() const {
 		return PackedStringArray();
 	}
 
-	return String(find_desc.p_groups).split(",", false);
+	return String::utf8(find_desc.p_groups).split(",", false);
 }
 
-void NDIFind::set_extra_ips(const PackedStringArray extra_ips) {
+void NDIFind::set_extra_ips(const PackedStringArray _extra_ips) {
+	extra_ips = _extra_ips;
+	
 	find_desc.p_extra_ips = NULL;
-
 	if (extra_ips.size() > 0) {
-		find_desc.p_extra_ips = String(",").join(extra_ips).utf8().ptr();
+		find_desc.p_extra_ips = String(",").join(extra_ips).utf8();
 	}
 
 	lib->find_destroy(find);
@@ -72,17 +73,17 @@ PackedStringArray NDIFind::get_extra_ips() const {
 		return PackedStringArray();
 	}
 
-	return String(find_desc.p_extra_ips).split(",", false);
+	return String::utf8(find_desc.p_extra_ips).split(",", false);
 }
 
-TypedArray<NDISource> NDIFind::get_sources() const {
-	TypedArray<NDISource> sources;
+TypedArray<VideoStreamNDI> NDIFind::get_sources() const {
+	TypedArray<VideoStreamNDI> sources;
 
 	uint32_t num_sources = 0;
 	const NDIlib_source_t *sources_pointer = lib->find_get_current_sources(find, &num_sources);
 
 	for (int i = 0; i < num_sources; i++) {
-		NDISource* source = memnew(NDISource(sources_pointer[i]));
+		VideoStreamNDI* source = memnew(VideoStreamNDI(sources_pointer[i]));
 		sources.push_back(source);
 	}
 

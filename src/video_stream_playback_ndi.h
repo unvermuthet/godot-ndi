@@ -19,11 +19,10 @@ class VideoStreamPlaybackNDI : public VideoStreamPlayback {
     NDIlib_recv_instance_t recv;
     NDIlib_framesync_instance_t sync;
 
-    int audio_sample_rate = 0;
-    int audio_no_channels = 0;
-    
     ImageTexture* texture;
-
+    PackedFloat32Array audio_p;
+    PackedFloat32Array audio_i;
+    
     bool playing = false;
     bool paused = false;
 
@@ -34,11 +33,10 @@ class VideoStreamPlaybackNDI : public VideoStreamPlayback {
         VideoStreamPlaybackNDI();
         VideoStreamPlaybackNDI(NDIlib_recv_create_v3_t recv_desc);
         ~VideoStreamPlaybackNDI();
-        void render_video();
-        void render_audio(double p_delta);
         void _stop() override;
         void _play() override;
         bool _is_playing() const override;
+        void _update(double p_delta) override;
         void _set_paused(bool p_paused) override;
         bool _is_paused() const override;
         double _get_length() const override;
@@ -46,8 +44,9 @@ class VideoStreamPlaybackNDI : public VideoStreamPlayback {
         void _seek(double p_time) override;
         void _set_audio_track(int32_t p_idx) override;
         Ref<Texture2D> _get_texture() const override;
-        void _update(double p_delta) override;
         int32_t _get_channels() const override;
         int32_t _get_mix_rate() const override;
+        void render_video();
+        void render_audio(double p_delta);
 };
 

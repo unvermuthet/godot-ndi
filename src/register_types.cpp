@@ -5,8 +5,7 @@
 #include <godot_cpp/variant/utility_functions.hpp>
 
 #include "ndi.h"
-// #include "ndi_find.h"
-// #include "ndi_source.h"
+#include "ndi_find.h"
 #include "video_stream_ndi.h"
 #include "video_stream_playback_ndi.h"
 
@@ -21,8 +20,7 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 	}
 
 	GDREGISTER_CLASS(NDI);
-	// GDREGISTER_CLASS(NDIFind);
-	// GDREGISTER_CLASS(NDISource);
+	GDREGISTER_CLASS(NDIFind);
 	GDREGISTER_CLASS(VideoStreamNDI);
 	GDREGISTER_CLASS(VideoStreamPlaybackNDI);
 }
