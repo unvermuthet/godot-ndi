@@ -1,17 +1,4 @@
 {
     "cmake.options.statusBarVisibility": "hidden",
-    "cmake.ignoreCMakeListsMissing": true,
-    "files.associations": {
-        "atomic": "cpp",
-        "xstring": "cpp",
-        "array": "cpp",
-        "typeinfo": "cpp",
-        "string_view": "cpp",
-        "initializer_list": "cpp",
-        "*.tcc": "cpp",
-        "deque": "cpp",
-        "list": "cpp",
-        "string": "cpp",
-        "vector": "cpp"
-    }
+    "cmake.ignoreCMakeListsMissing": true
 }
