@@ -10,12 +10,12 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 	std::string ndi_runtime_path = ndi_runtime_folder;
 
 #ifdef _WIN32
-	ERR_FAIL_NULL_MSG(ndi_runtime_folder, NDILIB_REDIST_FOLDER "doesn't exist on PATH");
+	ERR_FAIL_NULL_EDMSG(ndi_runtime_folder, NDILIB_REDIST_FOLDER "doesn't exist on PATH");
 
 	ndi_runtime_path += "\\" NDILIB_LIBRARY_NAME;
 
 	HMODULE ndi_lib = LoadLibraryA(ndi_runtime_path.c_str());
-	ERR_FAIL_NULL_MSG(ndi_lib, "Couldn't open NDI Library " NDILIB_LIBRARY_NAME);
+	ERR_FAIL_NULL_EDMSG(ndi_lib, "Couldn't open NDI Library " NDILIB_LIBRARY_NAME);
 
 	const NDIlib_v5* (*NDIlib_v5_load)(void) = NULL;
 	*((FARPROC*)&NDIlib_v5_load) = GetProcAddress(ndi_lib, "NDIlib_v5_load");
@@ -24,7 +24,7 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 		if (ndi_lib) {
 			FreeLibrary(ndi_lib);
 		}
-		ERR_FAIL_MSG("Couldn't obtain entry symbol for NDI");
+		ERR_FAIL_EDMSG("Couldn't obtain entry symbol for NDI");
 	}
 #else
 	if (ndi_runtime_folder) {
@@ -34,7 +34,7 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 	}
 
 	void* ndi_lib = dlopen(ndi_runtime_path.c_str(), RTLD_LOCAL | RTLD_LAZY);
-	ERR_FAIL_NULL_MSG(ndi_lib, "Couldn't open NDI Library " NDILIB_LIBRARY_NAME);
+	ERR_FAIL_NULL_EDMSG(ndi_lib, "Couldn't open NDI Library " NDILIB_LIBRARY_NAME);
 
 	const NDIlib_v5* (*NDIlib_v5_load)(void) = NULL;
 	*((void**)&NDIlib_v5_load) = dlsym(ndi_lib, "NDIlib_v5_load");
@@ -43,14 +43,13 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 		if (ndi_lib) {
 			dlclose(ndi_lib);
 		}
-		ERR_FAIL_MSG("Couldn't obtain entry symbol for NDI");
+		ERR_FAIL_EDMSG("Couldn't obtain entry symbol for NDI");
 	}
 
 #endif
 
 	ndi = NDIlib_v5_load();
-
-	ERR_FAIL_COND_MSG(!ndi->initialize(), "NDI isn't supported");
+	ERR_FAIL_COND_EDMSG(!ndi->initialize(), "NDI isn't supported");
 
 	GDREGISTER_CLASS(NDIFind);
 	GDREGISTER_CLASS(VideoStreamNDI);
