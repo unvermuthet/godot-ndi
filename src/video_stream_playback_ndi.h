@@ -13,32 +13,30 @@ using namespace godot;
 class VideoStreamPlaybackNDI : public VideoStreamPlayback {
     GDCLASS(VideoStreamPlaybackNDI, VideoStreamPlayback)
 
-    NDI* ndi;
+    Ref<NDI> ndi;
 
     NDIlib_recv_create_v3_t recv_desc;
     NDIlib_recv_instance_t recv;
     NDIlib_framesync_instance_t sync;
 
-    int audio_sample_rate = 0;
-    int audio_no_channels = 0;
+    Ref<ImageTexture> texture;
+    PackedFloat32Array audio_p;
+    PackedFloat32Array audio_i;
     
-    ImageTexture* texture;
-
-    bool playing = false;
-    bool paused = false;
+    bool playing;
+    bool paused;
 
     protected:
-        static void _bind_methods() {}
+        static void _bind_methods();
 
     public:
         VideoStreamPlaybackNDI();
         VideoStreamPlaybackNDI(NDIlib_recv_create_v3_t recv_desc);
         ~VideoStreamPlaybackNDI();
-        void render_video();
-        void render_audio(double p_delta);
         void _stop() override;
         void _play() override;
         bool _is_playing() const override;
+        void _update(double p_delta) override;
         void _set_paused(bool p_paused) override;
         bool _is_paused() const override;
         double _get_length() const override;
@@ -46,8 +44,9 @@ class VideoStreamPlaybackNDI : public VideoStreamPlayback {
         void _seek(double p_time) override;
         void _set_audio_track(int32_t p_idx) override;
         Ref<Texture2D> _get_texture() const override;
-        void _update(double p_delta) override;
         int32_t _get_channels() const override;
         int32_t _get_mix_rate() const override;
+        void render_video();
+        void render_audio(double p_delta);
 };
 

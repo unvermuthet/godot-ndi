@@ -1,8 +1,10 @@
 #include "video_stream_playback_ndi.h"
 
+void VideoStreamPlaybackNDI::_bind_methods() { }
+
 VideoStreamPlaybackNDI::VideoStreamPlaybackNDI() {
-    ndi = memnew(NDI);
-    texture = memnew(ImageTexture);
+	ndi.instantiate();
+    texture.instantiate();
 }
 
 VideoStreamPlaybackNDI::VideoStreamPlaybackNDI(NDIlib_recv_create_v3_t _recv_desc) : VideoStreamPlaybackNDI() {
@@ -10,6 +12,65 @@ VideoStreamPlaybackNDI::VideoStreamPlaybackNDI(NDIlib_recv_create_v3_t _recv_des
 }
 
 VideoStreamPlaybackNDI::~VideoStreamPlaybackNDI() { }
+
+void VideoStreamPlaybackNDI::_stop() {
+    if (playing) {
+        playing = false;
+        ndi->lib->framesync_destroy(sync);
+        ndi->lib->recv_destroy(recv);
+    }
+}
+
+void VideoStreamPlaybackNDI::_play() {
+    if (!playing) {
+        recv = ndi->lib->recv_create_v3(&recv_desc);
+        sync = ndi->lib->framesync_create(recv);
+        playing = true;
+    }
+}
+
+bool VideoStreamPlaybackNDI::_is_playing() const {
+	return playing;
+}
+
+void VideoStreamPlaybackNDI::_set_paused(bool p_paused) {
+    paused = p_paused;
+}
+
+bool VideoStreamPlaybackNDI::_is_paused() const {
+	return paused;
+}
+
+double VideoStreamPlaybackNDI::_get_length() const {
+	return 0.0;
+}
+
+double VideoStreamPlaybackNDI::_get_playback_position() const {
+	return 0.0;
+}
+
+void VideoStreamPlaybackNDI::_seek(double p_time) {
+}
+
+void VideoStreamPlaybackNDI::_set_audio_track(int32_t p_idx) {
+}
+
+Ref<Texture2D> VideoStreamPlaybackNDI::_get_texture() const {
+	return texture;
+}
+
+int32_t VideoStreamPlaybackNDI::_get_channels() const {
+    return 2;
+}
+
+int32_t VideoStreamPlaybackNDI::_get_mix_rate() const {
+    return 48000;
+}
+
+void VideoStreamPlaybackNDI::_update(double p_delta) {
+    render_video();
+    // render_audio(p_delta);
+}
 
 void VideoStreamPlaybackNDI::render_video() {
     NDIlib_video_frame_v2_t video_frame;
@@ -49,83 +110,29 @@ void VideoStreamPlaybackNDI::render_video() {
 }
 
 void VideoStreamPlaybackNDI::render_audio(double p_delta) {
-
-    int no_samples = (int)((double)(_get_mix_rate()) * p_delta) / 4 * 4;
+    int no_samples = (double)_get_mix_rate() * p_delta;
 
     NDIlib_audio_frame_v3_t audio_frame;
     ndi->lib->framesync_capture_audio_v2(sync, &audio_frame, _get_mix_rate(), _get_channels(), no_samples);
 
     if (audio_frame.p_data != NULL)
     {
-        PackedFloat32Array audio;
-        audio.resize(audio_frame.no_channels * audio_frame.no_samples);
+        audio_p.resize(audio_frame.no_channels * audio_frame.no_samples);
+        audio_i.resize(audio_p.size());
 
-        memcpy((uint8_t *)audio.ptrw(), audio_frame.p_data, audio.size()*4);
-        mix_audio(audio.size()/_get_channels(), audio, 0);
+        memcpy((uint8_t *)audio_p.ptrw(), audio_frame.p_data, audio_p.size()*4);
 
-        audio.resize(0);
+        for (int64_t i = 0; i < audio_i.size(); i++)
+        {
+            int channel = i % audio_frame.no_channels;
+            int stride_index = channel * audio_frame.no_samples;
+            int stride_offset = i / audio_frame.no_channels;
+            
+            audio_i.set(i, audio_p[stride_index + stride_offset]);
+        }
+
+        mix_audio(audio_frame.no_samples, audio_i, 0);
     }
 
     ndi->lib->framesync_free_audio_v2(sync, &audio_frame);
-}
-
-void VideoStreamPlaybackNDI::_stop() {
-    if (playing) {
-        playing = false;
-        ndi->lib->framesync_destroy(sync);
-        ndi->lib->recv_destroy(recv);
-    }
-}
-
-void VideoStreamPlaybackNDI::_play() {
-    if (!playing) {
-        audio_sample_rate = 0;
-        audio_no_channels = 0;
-        recv = ndi->lib->recv_create_v3(&recv_desc);
-        sync = ndi->lib->framesync_create(recv);
-        playing = true;
-    }
-}
-
-bool VideoStreamPlaybackNDI::_is_playing() const {
-	return playing;
-}
-
-void VideoStreamPlaybackNDI::_set_paused(bool p_paused) {
-    paused = p_paused;
-}
-
-bool VideoStreamPlaybackNDI::_is_paused() const {
-	return paused;
-}
-
-double VideoStreamPlaybackNDI::_get_length() const {
-	return 0.0;
-}
-
-double VideoStreamPlaybackNDI::_get_playback_position() const {
-	return 0.0;
-}
-
-void VideoStreamPlaybackNDI::_seek(double p_time) {
-}
-
-void VideoStreamPlaybackNDI::_set_audio_track(int32_t p_idx) {
-}
-
-Ref<Texture2D> VideoStreamPlaybackNDI::_get_texture() const {
-	return texture;
-}
-
-void VideoStreamPlaybackNDI::_update(double p_delta) {
-    render_video();
-    render_audio(p_delta);
-}
-
-int32_t VideoStreamPlaybackNDI::_get_channels() const {
-    return 2;
-}
-
-int32_t VideoStreamPlaybackNDI::_get_mix_rate() const {
-    return 48000;
 }
