@@ -13,21 +13,21 @@ using namespace godot;
 class VideoStreamPlaybackNDI : public VideoStreamPlayback {
     GDCLASS(VideoStreamPlaybackNDI, VideoStreamPlayback)
 
-    NDI* ndi;
+    Ref<NDI> ndi;
 
     NDIlib_recv_create_v3_t recv_desc;
     NDIlib_recv_instance_t recv;
     NDIlib_framesync_instance_t sync;
 
-    ImageTexture* texture;
+    Ref<ImageTexture> texture;
     PackedFloat32Array audio_p;
     PackedFloat32Array audio_i;
     
-    bool playing = false;
-    bool paused = false;
+    bool playing;
+    bool paused;
 
     protected:
-        static void _bind_methods() {}
+        static void _bind_methods();
 
     public:
         VideoStreamPlaybackNDI();

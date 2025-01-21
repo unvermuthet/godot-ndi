@@ -42,7 +42,11 @@ NDI::NDI() {
 	}
 
 	// Try to load the library
-	void* ndi_lib = dlopen(ndi_runtime_path.c_str(), RTLD_LOCAL | RTLD_LAZY);
+	void* ndi_lib = dlopen(ndi_runtime_path.c_str(), RTLD_GLOBAL | RTLD_NOW);
+
+	if (ndi_lib == NULL) {
+		printf("ndi lib is null\n");
+	}
 
 	// The main NDIFind entry point for dynamic loading if we got the library
 	const NDIlib_v5* (*NDIlib_v5_load)(void) = NULL;

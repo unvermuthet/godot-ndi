@@ -37,12 +37,13 @@ bool NDIFind::get_show_local_sources() const {
 }
 
 void NDIFind::set_groups(const PackedStringArray _groups) {
-	groups = _groups;
-
-	find_desc.p_groups = NULL;
-	if (groups.size() > 0) {
-		find_desc.p_groups = String(",").join(groups).utf8();
+	if (_groups.is_empty()) {
+		find_desc.p_groups = NULL;
+		return;
 	}
+
+	groups = String(",").join(_groups).utf8();
+	find_desc.p_groups = groups;
 
 	lib->find_destroy(find);
 	find = lib->find_create_v2(&find_desc);
@@ -57,12 +58,13 @@ PackedStringArray NDIFind::get_groups() const {
 }
 
 void NDIFind::set_extra_ips(const PackedStringArray _extra_ips) {
-	extra_ips = _extra_ips;
-	
-	find_desc.p_extra_ips = NULL;
-	if (extra_ips.size() > 0) {
-		find_desc.p_extra_ips = String(",").join(extra_ips).utf8();
+	if (_extra_ips.is_empty()) {
+		find_desc.p_extra_ips = NULL;
+		return;
 	}
+	
+	extra_ips = String(",").join(_extra_ips).utf8();
+	find_desc.p_extra_ips = extra_ips;
 
 	lib->find_destroy(find);
 	find = lib->find_create_v2(&find_desc);

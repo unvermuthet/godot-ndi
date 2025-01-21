@@ -11,8 +11,8 @@ using namespace godot;
 class NDIFind : public NDI {
     GDCLASS(NDIFind, NDI)
 
-    PackedStringArray groups;
-    PackedStringArray extra_ips;
+    CharString groups;
+    CharString extra_ips;
 
     private:
         NDIlib_find_create_t find_desc;

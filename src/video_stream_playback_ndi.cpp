@@ -1,8 +1,10 @@
 #include "video_stream_playback_ndi.h"
 
+void VideoStreamPlaybackNDI::_bind_methods() { }
+
 VideoStreamPlaybackNDI::VideoStreamPlaybackNDI() {
-    ndi = memnew(NDI);
-    texture = memnew(ImageTexture);
+	ndi.instantiate();
+    texture.instantiate();
 }
 
 VideoStreamPlaybackNDI::VideoStreamPlaybackNDI(NDIlib_recv_create_v3_t _recv_desc) : VideoStreamPlaybackNDI() {
