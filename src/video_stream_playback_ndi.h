@@ -4,16 +4,12 @@
 #include <godot_cpp/classes/image_texture.hpp>
 #include <godot_cpp/classes/image.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
-#include <stdlib.h>
-#include "Processing.NDI.Lib.h"
 #include "ndi.h"
 
 using namespace godot;
 
 class VideoStreamPlaybackNDI : public VideoStreamPlayback {
     GDCLASS(VideoStreamPlaybackNDI, VideoStreamPlayback)
-
-    Ref<NDI> ndi;
 
     NDIlib_recv_create_v3_t recv_desc;
     NDIlib_recv_instance_t recv;
