@@ -24,6 +24,7 @@ VideoStreamNDI::VideoStreamNDI() {
     recv_desc.allow_video_fields = false;
     recv_desc.color_format = NDIlib_recv_color_format_RGBX_RGBA;
     recv_desc.bandwidth = NDIlib_recv_bandwidth_highest;
+    recv_desc.p_ndi_recv_name = NULL;
 }
 
 VideoStreamNDI::VideoStreamNDI(NDIlib_source_t source) : VideoStreamNDI::VideoStreamNDI() {

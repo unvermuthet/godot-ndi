@@ -5,6 +5,8 @@ void VideoStreamPlaybackNDI::_bind_methods() { }
 VideoStreamPlaybackNDI::VideoStreamPlaybackNDI() {
 	ndi.instantiate();
     texture.instantiate();
+    playing = false;
+    paused = false;
 }
 
 VideoStreamPlaybackNDI::VideoStreamPlaybackNDI(NDIlib_recv_create_v3_t _recv_desc) : VideoStreamPlaybackNDI() {
