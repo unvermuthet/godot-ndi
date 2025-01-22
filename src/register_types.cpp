@@ -7,11 +7,11 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 	}
 
 	const char* ndi_runtime_folder = getenv(NDILIB_REDIST_FOLDER);
-	std::string ndi_runtime_path = ndi_runtime_folder;
 
 #ifdef _WIN32
 	ERR_FAIL_NULL_EDMSG(ndi_runtime_folder, NDILIB_REDIST_FOLDER "doesn't exist on PATH");
 
+	std::string ndi_runtime_path = ndi_runtime_folder;
 	ndi_runtime_path += "\\" NDILIB_LIBRARY_NAME;
 
 	HMODULE ndi_lib = LoadLibraryA(ndi_runtime_path.c_str());
@@ -27,13 +27,26 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 		ERR_FAIL_EDMSG("Couldn't obtain entry symbol for NDI");
 	}
 #else
+	std::string ndi_runtime_path;
+
 	if (ndi_runtime_folder) {
 		ndi_runtime_path += NDILIB_LIBRARY_NAME;
 	} else {
 		ndi_runtime_path = NDILIB_LIBRARY_NAME;
 	}
 
-	void* ndi_lib = dlopen(ndi_runtime_path.c_str(), RTLD_LOCAL | RTLD_LAZY);
+	errno = 0;
+
+	void* ndi_lib = dlopen(ndi_runtime_path.c_str(), RTLD_NOW | RTLD_GLOBAL);
+
+	printf(strerror(errno));
+
+	char* err = dlerror();
+	if (err != NULL) {
+		printf(err);
+	}
+
+
 	ERR_FAIL_NULL_EDMSG(ndi_lib, "Couldn't open NDI Library " NDILIB_LIBRARY_NAME);
 
 	const NDIlib_v5* (*NDIlib_v5_load)(void) = NULL;

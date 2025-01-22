@@ -35,9 +35,8 @@ Run the following command to download godot-cpp:
 env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 
 env.Append(CPPPATH=["src/", "ndi/"])
-
+env.Append(LIBS=["dl"])
 sources = Glob("src/*.cpp")
-# sources.extend(Glob("libe131/src/*.c"))
 
 if env["platform"] == "windows":
     env.Append(LIBS=["ws2_32"])
