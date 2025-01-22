@@ -37,7 +37,6 @@ env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 env.Append(CPPPATH=["src/"])
 sources = Glob("src/*.cpp")
 
-
 env.Append(CPPPATH="ndi/include/", LINKFLAGS="-Wl,-Bdynamic -lndi -Wl,-Bstatic")
 
 if env["platform"] == "windows":
