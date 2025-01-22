@@ -18,18 +18,18 @@ void NDIFind::_bind_methods() {
 }
 
 NDIFind::NDIFind() {
-	find = lib->find_create_v2(&find_desc);
+	find = ndi->find_create_v2(&find_desc);
 }
 
 NDIFind::~NDIFind() {
-	lib->find_destroy(find);
+	ndi->find_destroy(find);
 }
 
 void NDIFind::set_show_local_sources(const bool state) {
 	find_desc.show_local_sources = state;
 
-	lib->find_destroy(find);
-	find = lib->find_create_v2(&find_desc);
+	ndi->find_destroy(find);
+	find = ndi->find_create_v2(&find_desc);
 }
 
 bool NDIFind::get_show_local_sources() const {
@@ -45,8 +45,8 @@ void NDIFind::set_groups(const PackedStringArray _groups) {
 	groups = String(",").join(_groups).utf8();
 	find_desc.p_groups = groups;
 
-	lib->find_destroy(find);
-	find = lib->find_create_v2(&find_desc);
+	ndi->find_destroy(find);
+	find = ndi->find_create_v2(&find_desc);
 }
 
 PackedStringArray NDIFind::get_groups() const {
@@ -66,8 +66,8 @@ void NDIFind::set_extra_ips(const PackedStringArray _extra_ips) {
 	extra_ips = String(",").join(_extra_ips).utf8();
 	find_desc.p_extra_ips = extra_ips;
 
-	lib->find_destroy(find);
-	find = lib->find_create_v2(&find_desc);
+	ndi->find_destroy(find);
+	find = ndi->find_create_v2(&find_desc);
 }
 
 PackedStringArray NDIFind::get_extra_ips() const {
@@ -82,7 +82,7 @@ TypedArray<VideoStreamNDI> NDIFind::get_sources() const {
 	TypedArray<VideoStreamNDI> sources;
 
 	uint32_t num_sources = 0;
-	const NDIlib_source_t *sources_pointer = lib->find_get_current_sources(find, &num_sources);
+	const NDIlib_source_t *sources_pointer = ndi->find_get_current_sources(find, &num_sources);
 
 	for (int i = 0; i < num_sources; i++) {
 		VideoStreamNDI* source = memnew(VideoStreamNDI(sources_pointer[i]));

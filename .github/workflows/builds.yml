@@ -1,10 +1,10 @@
 name: Build GDExtension
 on:
-  workflow_call:
+  # workflow_call:
   # push:
   workflow_dispatch:
-  pull_request:
-  merge_group:
+  # pull_request:
+  # merge_group:
 
 env:
   LIBNAME: godot-ndi
@@ -77,11 +77,11 @@ jobs:
           #   os: ubuntu-20.04
 
         # Release templates
-          - platform: linux
-            float-precision: single
-            arch: x86_64
-            target-type: template_release
-            os: ubuntu-20.04
+          # - platform: linux
+          #   float-precision: single
+          #   arch: x86_64
+          #   target-type: template_release
+          #   os: ubuntu-20.04
 
           # - platform: windows
           #   float-precision: single
@@ -89,11 +89,11 @@ jobs:
           #   target-type: template_release
           #   os: windows-latest
 
-          - platform: windows
-            float-precision: single
-            arch: x86_64
-            target-type: template_release
-            os: windows-latest
+          # - platform: windows
+          #   float-precision: single
+          #   arch: x86_64
+          #   target-type: template_release
+          #   os: windows-latest
 
           # - platform: macos
           #   float-precision: single

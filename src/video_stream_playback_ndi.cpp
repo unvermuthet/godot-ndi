@@ -3,7 +3,6 @@
 void VideoStreamPlaybackNDI::_bind_methods() { }
 
 VideoStreamPlaybackNDI::VideoStreamPlaybackNDI() {
-	ndi.instantiate();
     texture.instantiate();
     playing = false;
     paused = false;
@@ -18,15 +17,15 @@ VideoStreamPlaybackNDI::~VideoStreamPlaybackNDI() { }
 void VideoStreamPlaybackNDI::_stop() {
     if (playing) {
         playing = false;
-        ndi->lib->framesync_destroy(sync);
-        ndi->lib->recv_destroy(recv);
+        ndi->framesync_destroy(sync);
+        ndi->recv_destroy(recv);
     }
 }
 
 void VideoStreamPlaybackNDI::_play() {
     if (!playing) {
-        recv = ndi->lib->recv_create_v3(&recv_desc);
-        sync = ndi->lib->framesync_create(recv);
+        recv = ndi->recv_create_v3(&recv_desc);
+        sync = ndi->framesync_create(recv);
         playing = true;
     }
 }
@@ -76,10 +75,10 @@ void VideoStreamPlaybackNDI::_update(double p_delta) {
 
 void VideoStreamPlaybackNDI::render_video() {
     NDIlib_video_frame_v2_t video_frame;
-    ndi->lib->framesync_capture_video(sync, &video_frame, NDIlib_frame_format_type_progressive);
+    ndi->framesync_capture_video(sync, &video_frame, NDIlib_frame_format_type_progressive);
 
     if (video_frame.p_data == NULL) {
-        ndi->lib->framesync_free_video(sync, &video_frame);
+        ndi->framesync_free_video(sync, &video_frame);
         return;
     }
 
@@ -95,7 +94,7 @@ void VideoStreamPlaybackNDI::render_video() {
             break;
         
         default:
-            ndi->lib->framesync_free_video(sync, &video_frame);
+            ndi->framesync_free_video(sync, &video_frame);
             return;
     }
 
@@ -103,7 +102,7 @@ void VideoStreamPlaybackNDI::render_video() {
     data.resize(video_frame.line_stride_in_bytes * video_frame.yres);
 
     memcpy(data.ptrw(), video_frame.p_data, data.size());
-    ndi->lib->framesync_free_video(sync, &video_frame);
+    ndi->framesync_free_video(sync, &video_frame);
 
     Ref<Image> img = Image::create_from_data(video_frame.xres, video_frame.yres, false, format, data);
     texture->set_image(img);
@@ -115,7 +114,7 @@ void VideoStreamPlaybackNDI::render_audio(double p_delta) {
     int no_samples = (double)_get_mix_rate() * p_delta;
 
     NDIlib_audio_frame_v3_t audio_frame;
-    ndi->lib->framesync_capture_audio_v2(sync, &audio_frame, _get_mix_rate(), _get_channels(), no_samples);
+    ndi->framesync_capture_audio_v2(sync, &audio_frame, _get_mix_rate(), _get_channels(), no_samples);
 
     if (audio_frame.p_data != NULL)
     {
@@ -136,5 +135,5 @@ void VideoStreamPlaybackNDI::render_audio(double p_delta) {
         mix_audio(audio_frame.no_samples, audio_i, 0);
     }
 
-    ndi->lib->framesync_free_audio_v2(sync, &audio_frame);
+    ndi->framesync_free_audio_v2(sync, &audio_frame);
 }

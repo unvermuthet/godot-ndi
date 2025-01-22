@@ -2,14 +2,13 @@
 
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/core/class_db.hpp>
-#include "Processing.NDI.Lib.h"
 #include "ndi.h"
 #include "video_stream_ndi.h"
 
 using namespace godot;
 
-class NDIFind : public NDI {
-    GDCLASS(NDIFind, NDI)
+class NDIFind : public RefCounted {
+    GDCLASS(NDIFind, RefCounted)
 
     CharString groups;
     CharString extra_ips;

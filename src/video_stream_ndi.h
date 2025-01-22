@@ -2,7 +2,7 @@
 
 #include <godot_cpp/classes/video_stream.hpp>
 #include <godot_cpp/core/class_db.hpp>
-#include "Processing.NDI.Lib.h"
+#include "ndi.h"
 #include "video_stream_playback_ndi.h"
 
 using namespace godot;
