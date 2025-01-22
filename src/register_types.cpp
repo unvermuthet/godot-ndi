@@ -35,18 +35,7 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 		ndi_runtime_path = NDILIB_LIBRARY_NAME;
 	}
 
-	errno = 0;
-
-	void* ndi_lib = dlopen(ndi_runtime_path.c_str(), RTLD_NOW | RTLD_GLOBAL);
-
-	printf(strerror(errno));
-
-	char* err = dlerror();
-	if (err != NULL) {
-		printf(err);
-	}
-
-
+	void* ndi_lib = dlopen(ndi_runtime_path.c_str(), RTLD_LAZY | RTLD_LOCAL);
 	ERR_FAIL_NULL_EDMSG(ndi_lib, "Couldn't open NDI Library " NDILIB_LIBRARY_NAME);
 
 	const NDIlib_v5* (*NDIlib_v5_load)(void) = NULL;
