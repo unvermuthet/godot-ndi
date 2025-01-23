@@ -90,7 +90,7 @@ void VideoStreamPlaybackNDI::render_video() {
             break;
 
         case NDIlib_FourCC_type_RGBX:
-            format = Image::Format::FORMAT_RGB8;
+            format = Image::Format::FORMAT_RGBA8;
             break;
         
         default:
