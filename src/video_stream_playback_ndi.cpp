@@ -65,12 +65,12 @@ int32_t VideoStreamPlaybackNDI::_get_channels() const {
 }
 
 int32_t VideoStreamPlaybackNDI::_get_mix_rate() const {
-    return 48000;
+    return ProjectSettings::get_singleton()->get_setting("audio/driver/mix_rate", 48000);
 }
 
 void VideoStreamPlaybackNDI::_update(double p_delta) {
     render_video();
-    // render_audio(p_delta);
+    render_audio(p_delta);
 }
 
 void VideoStreamPlaybackNDI::render_video() {
@@ -121,7 +121,7 @@ void VideoStreamPlaybackNDI::render_audio(double p_delta) {
         audio_p.resize(audio_frame.no_channels * audio_frame.no_samples);
         audio_i.resize(audio_p.size());
 
-        memcpy((uint8_t *)audio_p.ptrw(), audio_frame.p_data, audio_p.size()*4);
+        memcpy(audio_p.ptrw(), audio_frame.p_data, audio_p.size()*4);
 
         for (int64_t i = 0; i < audio_i.size(); i++)
         {
