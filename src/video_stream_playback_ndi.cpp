@@ -3,7 +3,6 @@
 void VideoStreamPlaybackNDI::_bind_methods() { }
 
 VideoStreamPlaybackNDI::VideoStreamPlaybackNDI() {
-    texture.instantiate();
     playing = false;
     paused = false;
 }
@@ -17,6 +16,7 @@ VideoStreamPlaybackNDI::~VideoStreamPlaybackNDI() { }
 void VideoStreamPlaybackNDI::_stop() {
     if (playing) {
         playing = false;
+        texture.unref();
         ndi->framesync_destroy(sync);
         ndi->recv_destroy(recv);
     }
@@ -69,7 +69,7 @@ int32_t VideoStreamPlaybackNDI::_get_mix_rate() const {
 }
 
 void VideoStreamPlaybackNDI::_update(double p_delta) {
-    render_video();
+    // render_video();
     render_audio(p_delta);
 }
 
