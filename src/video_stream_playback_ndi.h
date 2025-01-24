@@ -1,3 +1,12 @@
+/*
+godot-ndi
+	Copyright 2025 Henry Muth - http://github.com/unvermuthet
+
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
 #pragma once
 
 #include <godot_cpp/classes/video_stream_playback.hpp>
@@ -16,10 +25,15 @@ class VideoStreamPlaybackNDI : public VideoStreamPlayback {
     NDIlib_recv_instance_t recv;
     NDIlib_framesync_instance_t sync;
 
+    NDIlib_video_frame_v2_t video_frame;
+    PackedByteArray video_buffer;
     Ref<ImageTexture> texture;
-    PackedFloat32Array audio_p;
-    PackedFloat32Array audio_i;
-    
+    Vector2i resolution;
+
+    NDIlib_audio_frame_v3_t audio_frame;
+    PackedFloat32Array audio_buffer_planar;
+    PackedFloat32Array audio_buffer_interleaved;
+
     bool playing;
     bool paused;
 

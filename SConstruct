@@ -4,9 +4,11 @@ import sys
 
 from methods import print_error
 
-
 libname = "godot-ndi"
-projectdir = "../"
+
+# This is nice for development, since this whole folder is .gdignored
+# installdir = "../godot-ndi-bin"
+installdir = False
 
 localEnv = Environment(tools=["default"], PLATFORM="")
 
@@ -34,7 +36,7 @@ Run the following command to download godot-cpp:
 
 env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 
-env.Append(CPPPATH=["src/", "ndi/include/"])
+env.Append(CPPPATH=["src/", "ndi/"])
 sources = Glob("src/*.cpp")
 
 if env["platform"] == "windows":
@@ -60,7 +62,10 @@ library = env.SharedLibrary(
     source=sources,
 )
 
-copy = env.InstallAs("{}/{}-bin/{}/{}lib{}".format(projectdir, libname, env["platform"], filepath, file), library)
+default_args = [library]
 
-default_args = [library, copy]
+if installdir:
+    copy = env.InstallAs("{}/{}/{}lib{}".format(installdir, env["platform"], filepath, file), library)
+    default_args = [library, copy]
+
 Default(*default_args)
