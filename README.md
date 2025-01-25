@@ -12,6 +12,25 @@ It still serves as a great starting point anyone looking to build a feature comp
 
 This is early stages. I'm happy to hear suggestions and incorperate improvements. [![Static Badge](https://img.shields.io/badge/unvermuthet-gray?style=flat&logo=discord&logoColor=white&labelColor=%235865F2)](https://discord.com/users/203583245223198722)
 
+## Example
+
+```GDScript
+@onready var player: VideoStreamPlayer = %VideoStreamPlayer
+var ndi_find: NDIFind
+var stream: VideoStreamNDI
+
+func _ready() -> void:
+	ndi_find = NDIFind.new()
+
+	while true:
+		stream = ndi_find.get_sources().pop_front()
+		if stream != null:
+			break
+			
+	player.stream = stream
+	player.play()
+```
+
 ## Download
 
 Check under `Releases` or get Build Artifacts under `Actions`. Install by extracting the zip anywhere is your Godot project. The NDI Runtime is also required.
