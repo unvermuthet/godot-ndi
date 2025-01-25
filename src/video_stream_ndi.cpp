@@ -88,6 +88,6 @@ NDIlib_recv_bandwidth_e VideoStreamNDI::get_bandwidth() const {
 
 Ref<VideoStreamPlayback> VideoStreamNDI::_instantiate_playback() {
     Ref<VideoStreamPlaybackNDI> p = memnew(VideoStreamPlaybackNDI);
-    p->recv_desc = &recv_desc;
+    p->setup(&recv_desc);
     return p;
 }
