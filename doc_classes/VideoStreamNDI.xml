@@ -11,8 +11,6 @@
 		</member>
 		<member name="name" type="String" setter="set_name" getter="get_name" default="&quot;&quot;">
 		</member>
-		<member name="url" type="String" setter="set_url" getter="get_url" default="&quot;&quot;">
-		</member>
 	</members>
 	<constants>
 		<constant name="NDIlib_recv_bandwidth_metadata_only" value="-10" enum="NDIlib_recv_bandwidth_e">
