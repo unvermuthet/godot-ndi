@@ -1,6 +1,6 @@
 /*
-godot-ndi
-	Copyright 2025 Henry Muth - http://github.com/unvermuthet
+https://github.com/unvermuthet/godot-ndi
+		(C) 2025 Henry Muth - unvermuthet
 
 This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -47,13 +47,12 @@ bool NDIFind::get_show_local_sources() const {
 
 void NDIFind::set_groups(const PackedStringArray _groups) {
 	if (_groups.is_empty()) {
-		find_desc.p_groups = NULL;
-		return;
+		groups = NULL;
+	} else {
+		groups = String(",").join(_groups).utf8();
 	}
 
-	groups = String(",").join(_groups).utf8();
 	find_desc.p_groups = groups;
-
 	ndi->find_destroy(find);
 	find = ndi->find_create_v2(&find_desc);
 }
@@ -68,13 +67,12 @@ PackedStringArray NDIFind::get_groups() const {
 
 void NDIFind::set_extra_ips(const PackedStringArray _extra_ips) {
 	if (_extra_ips.is_empty()) {
-		find_desc.p_extra_ips = NULL;
-		return;
+		extra_ips = NULL;
+	} else {
+		extra_ips = String(",").join(_extra_ips).utf8();
 	}
-	
-	extra_ips = String(",").join(_extra_ips).utf8();
-	find_desc.p_extra_ips = extra_ips;
 
+	find_desc.p_groups = extra_ips;
 	ndi->find_destroy(find);
 	find = ndi->find_create_v2(&find_desc);
 }
@@ -87,6 +85,9 @@ PackedStringArray NDIFind::get_extra_ips() const {
 	return String::utf8(find_desc.p_extra_ips).split(",", false);
 }
 
+
+/// @brief GPIHR
+/// @return 
 TypedArray<VideoStreamNDI> NDIFind::get_sources() const {
 	TypedArray<VideoStreamNDI> sources;
 
