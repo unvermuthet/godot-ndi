@@ -20,15 +20,15 @@ var ndi_find: NDIFind
 var stream: VideoStreamNDI
 
 func _ready() -> void:
-	ndi_find = NDIFind.new()
+    ndi_find = NDIFind.new()
 
-	while true:
-		stream = ndi_find.get_sources().pop_front()
-		if stream != null:
-			break
-			
-	player.stream = stream
-	player.play()
+    while true:
+        stream = ndi_find.get_sources().pop_front()
+        if stream != null:
+            break
+            
+    player.stream = stream
+    player.play()
 ```
 
 ## Download
