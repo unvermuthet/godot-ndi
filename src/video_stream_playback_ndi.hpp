@@ -14,6 +14,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #include <godot_cpp/classes/image.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/classes/project_settings.hpp>
+#include <godot_cpp/classes/engine.hpp>
 #include "ndi.hpp"
 
 using namespace godot;
@@ -21,14 +22,12 @@ using namespace godot;
 class VideoStreamPlaybackNDI : public VideoStreamPlayback {
     GDCLASS(VideoStreamPlaybackNDI, VideoStreamPlayback)
 
-    NDIlib_recv_create_v3_t recv_desc;
     NDIlib_recv_instance_t recv;
     NDIlib_framesync_instance_t sync;
 
     NDIlib_video_frame_v2_t video_frame;
     PackedByteArray video_buffer;
     Ref<ImageTexture> texture;
-    Vector2i resolution;
 
     NDIlib_audio_frame_v3_t audio_frame;
     PackedFloat32Array audio_buffer_planar;
@@ -42,8 +41,8 @@ class VideoStreamPlaybackNDI : public VideoStreamPlayback {
 
     public:
         VideoStreamPlaybackNDI();
-        VideoStreamPlaybackNDI(NDIlib_recv_create_v3_t recv_desc);
         ~VideoStreamPlaybackNDI();
+        const NDIlib_recv_create_v3_t* recv_desc;
         void _stop() override;
         void _play() override;
         bool _is_playing() const override;

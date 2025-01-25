@@ -18,27 +18,23 @@ VideoStreamPlaybackNDI::VideoStreamPlaybackNDI() {
     paused = false;
 }
 
-VideoStreamPlaybackNDI::VideoStreamPlaybackNDI(NDIlib_recv_create_v3_t _recv_desc) : VideoStreamPlaybackNDI() {
-    recv_desc = _recv_desc;
-}
-
 VideoStreamPlaybackNDI::~VideoStreamPlaybackNDI() {
-    _stop();
-}
-
-void VideoStreamPlaybackNDI::_stop() {
-    if (playing) {
-        playing = false;
-        ndi->framesync_destroy(sync);
-        ndi->recv_destroy(recv);
-    }
+    texture.unref();
 }
 
 void VideoStreamPlaybackNDI::_play() {
     if (!playing) {
-        recv = ndi->recv_create_v3(&recv_desc);
+        recv = ndi->recv_create_v3(recv_desc);
         sync = ndi->framesync_create(recv);
         playing = true;
+    }
+}
+
+void VideoStreamPlaybackNDI::_stop() {
+    if (playing) {
+        ndi->framesync_destroy(sync);
+        ndi->recv_destroy(recv);
+        playing = false;
     }
 }
 
@@ -90,16 +86,9 @@ void VideoStreamPlaybackNDI::render_video() {
     {
         video_buffer.resize(video_frame.line_stride_in_bytes * video_frame.yres);
         memcpy(video_buffer.ptrw(), video_frame.p_data, video_buffer.size());
+        
         Ref<Image> img = Image::create_from_data(video_frame.xres, video_frame.yres, false, Image::Format::FORMAT_RGBA8, video_buffer);
-
-        Vector2i new_resolution = {video_frame.xres, video_frame.yres};
-        if (resolution == new_resolution) {
-            texture->update(img);
-        } else {
-            texture->set_image(img);
-            resolution = new_resolution;
-        }
-
+        texture->set_image(img);
         img.unref();
     }
 

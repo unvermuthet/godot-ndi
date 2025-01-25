@@ -85,9 +85,6 @@ PackedStringArray NDIFind::get_extra_ips() const {
 	return String::utf8(find_desc.p_extra_ips).split(",", false);
 }
 
-
-/// @brief GPIHR
-/// @return 
 TypedArray<VideoStreamNDI> NDIFind::get_sources() const {
 	TypedArray<VideoStreamNDI> sources;
 
@@ -95,7 +92,7 @@ TypedArray<VideoStreamNDI> NDIFind::get_sources() const {
 	const NDIlib_source_t *sources_pointer = ndi->find_get_current_sources(find, &num_sources);
 
 	for (int i = 0; i < num_sources; i++) {
-		VideoStreamNDI* source = memnew(VideoStreamNDI(sources_pointer[i]));
+		Ref<VideoStreamNDI> source = memnew(VideoStreamNDI(sources_pointer[i]));
 		sources.push_back(source);
 	}
 
