@@ -139,11 +139,11 @@ jobs:
 
         # Double precision templates
         # Double precision debug templates
-          - platform: linux
-            float-precision: double
-            arch: x86_64
-            target-type: template_debug
-            os: ubuntu-20.04
+          # - platform: linux
+          #   float-precision: double
+          #   arch: x86_64
+          #   target-type: template_debug
+          #   os: ubuntu-20.04
 
           # - platform: windows
           #   float-precision: double
@@ -151,17 +151,17 @@ jobs:
           #   target-type: template_debug
           #   os: windows-latest
 
-          - platform: windows
-            float-precision: double
-            arch: x86_64
-            target-type: template_debug
-            os: windows-latest
+          # - platform: windows
+          #   float-precision: double
+          #   arch: x86_64
+          #   target-type: template_debug
+          #   os: windows-latest
 
-          - platform: macos
-            float-precision: double
-            arch: universal
-            target-type: template_debug
-            os: macos-latest
+          # - platform: macos
+          #   float-precision: double
+          #   arch: universal
+          #   target-type: template_debug
+          #   os: macos-latest
 
           # - platform: android
           #   float-precision: double
@@ -200,11 +200,11 @@ jobs:
           #   os: ubuntu-20.04
 
         # Double precision release templates
-          - platform: linux
-            float-precision: double
-            arch: x86_64
-            target-type: template_release
-            os: ubuntu-20.04
+          # - platform: linux
+          #   float-precision: double
+          #   arch: x86_64
+          #   target-type: template_release
+          #   os: ubuntu-20.04
 
           # - platform: windows
           #   float-precision: double
@@ -212,17 +212,17 @@ jobs:
           #   target-type: template_release
           #   os: windows-latest
 
-          - platform: windows
-            float-precision: double
-            arch: x86_64
-            target-type: template_release
-            os: windows-latest
+          # - platform: windows
+          #   float-precision: double
+          #   arch: x86_64
+          #   target-type: template_release
+          #   os: windows-latest
 
-          - platform: macos
-            float-precision: double
-            arch: universal
-            target-type: template_release
-            os: macos-latest
+          # - platform: macos
+          #   float-precision: double
+          #   arch: universal
+          #   target-type: template_release
+          #   os: macos-latest
 
           # - platform: android
           #   float-precision: double
