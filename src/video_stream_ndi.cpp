@@ -7,7 +7,7 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#include "video_stream_ndi.h"
+#include "video_stream_ndi.hpp"
 
 void VideoStreamNDI::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_name", "name"), &VideoStreamNDI::set_name);

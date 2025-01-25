@@ -7,7 +7,7 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#include "ndi_find.h"
+#include "ndi_find.hpp"
 
 void NDIFind::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_show_local_sources", "show_local_sources"), &NDIFind::set_show_local_sources);

@@ -22,10 +22,10 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #include <stdlib.h>
 #endif
 
-#include "ndi.h"
-#include "ndi_find.h"
-#include "video_stream_ndi.h"
-#include "video_stream_playback_ndi.h"
+#include "ndi.hpp"
+#include "ndi_find.hpp"
+#include "video_stream_ndi.hpp"
+#include "video_stream_playback_ndi.hpp"
 
 using namespace godot;
 

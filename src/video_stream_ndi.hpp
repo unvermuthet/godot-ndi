@@ -11,8 +11,8 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include <godot_cpp/classes/video_stream.hpp>
 #include <godot_cpp/core/class_db.hpp>
-#include "ndi.h"
-#include "video_stream_playback_ndi.h"
+#include "ndi.hpp"
+#include "video_stream_playback_ndi.hpp"
 
 using namespace godot;
 
