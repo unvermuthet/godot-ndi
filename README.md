@@ -6,10 +6,8 @@ Licensed under MPL 2.0
 
 [![Made with Godot](https://img.shields.io/badge/Made%20with-Godot-478CBF?style=flat&logo=godot%20engine&logoColor=white)](https://godotengine.org)
 
-Extends the [VideoStream](https://docs.godotengine.org/en/stable/classes/class_videostream.html) and [VideoStreamPlayer](https://docs.godotengine.org/en/stable/classes/class_videostreamplayer.html) classes to implement NDI playback.
+The extension can **currently only receive video and audio**, because that's all I need. Viewport output as NDI is planned. Extends the [VideoStream](https://docs.godotengine.org/en/stable/classes/class_videostream.html) and [VideoStreamPlayer](https://docs.godotengine.org/en/stable/classes/class_videostreamplayer.html) classes to implement NDI playback.
 
-The extension can **currently only receive video**, because that's all I need.
-It still serves as a great starting point anyone looking to build a feature complete implementation.
 
 This is early stages. I'm happy to hear suggestions and incorperate improvements. [![Static Badge](https://img.shields.io/badge/unvermuthet-gray?style=flat&logo=discord&logoColor=white&labelColor=%235865F2)](https://discord.com/users/203583245223198722)
 
