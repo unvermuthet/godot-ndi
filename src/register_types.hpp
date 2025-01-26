@@ -14,19 +14,4 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
 
-#ifdef _WIN32
-#include <windows.h>
-#else
-#include <dlfcn.h>
-#include <stddef.h>
-#include <stdlib.h>
-#endif
-
-#include "ndi.hpp"
-#include "ndi_find.hpp"
-#include "video_stream_ndi.hpp"
-#include "video_stream_playback_ndi.hpp"
-
 using namespace godot;
-
-const NDIlib_v5* ndi;
