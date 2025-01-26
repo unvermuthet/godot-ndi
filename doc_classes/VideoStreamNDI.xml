@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="VideoStreamNDI" inherits="VideoStream" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="bandwidth" type="int" setter="set_bandwidth" getter="get_bandwidth" enum="NDIlib_recv_bandwidth_e" default="100">
+		</member>
+		<member name="name" type="String" setter="set_name" getter="get_name" default="&quot;&quot;">
+		</member>
+	</members>
+	<constants>
+		<constant name="NDIlib_recv_bandwidth_metadata_only" value="-10" enum="NDIlib_recv_bandwidth_e">
+		</constant>
+		<constant name="NDIlib_recv_bandwidth_audio_only" value="10" enum="NDIlib_recv_bandwidth_e">
+		</constant>
+		<constant name="NDIlib_recv_bandwidth_lowest" value="0" enum="NDIlib_recv_bandwidth_e">
+		</constant>
+		<constant name="NDIlib_recv_bandwidth_highest" value="100" enum="NDIlib_recv_bandwidth_e">
+		</constant>
+	</constants>
+</class>

@@ -1,8 +1,8 @@
 [configuration]
 
 entry_symbol = "godot_ndi_init"
-compatibility_minimum = "4.1"
-reloadable = true
+compatibility_minimum = "4.3"
+reloadable = false
 
 [libraries]
 

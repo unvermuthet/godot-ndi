@@ -1,4 +1,15 @@
-#include "register_types.h"
+/*
+https://github.com/unvermuthet/godot-ndi
+		(C) 2025 Henry Muth - unvermuthet
+
+Loading of library referenced from NDI SDK dynamic loading example
+
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+#include "register_types.hpp"
 
 void initialize_gdextension_types(ModuleInitializationLevel p_level)
 {
