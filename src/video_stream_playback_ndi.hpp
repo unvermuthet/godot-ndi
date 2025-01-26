@@ -27,7 +27,7 @@ class VideoStreamPlaybackNDI : public VideoStreamPlayback {
     public:
         VideoStreamPlaybackNDI();
         ~VideoStreamPlaybackNDI();
-        void setup(const NDIlib_recv_create_v3_t* _recv_desc);
+        const NDIlib_recv_create_v3_t* recv_desc;
         void _play() override;
         void _stop() override;
         bool _is_playing() const override;
@@ -49,8 +49,6 @@ class VideoStreamPlaybackNDI : public VideoStreamPlayback {
         bool playing = false;
         bool paused = false;
 
-        const NDIlib_recv_create_v3_t* recv_desc;
-
         bool receiving = false;
         NDIlib_recv_instance_t recv;
         bool start_receiving(const bool restart = false);
@@ -64,6 +62,7 @@ class VideoStreamPlaybackNDI : public VideoStreamPlayback {
         Ref<ImageTexture> texture;
         NDIlib_video_frame_v2_t video_frame;
         PackedByteArray video_buffer;
+        void render_first_frame();
         void render_video();
 
         NDIlib_audio_frame_v3_t audio_frame;
