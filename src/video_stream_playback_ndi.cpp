@@ -57,10 +57,13 @@ void VideoStreamPlaybackNDI::_set_audio_track(int32_t p_idx) {}
 
 int32_t VideoStreamPlaybackNDI::_get_channels() const {
 	return 2;
+	// As far as i know this is only querried once by the video player.
+	// Might get updated afer stop/play
+	// Hardcoded for now :/
 }
 
 int32_t VideoStreamPlaybackNDI::_get_mix_rate() const {
-	return ProjectSettings::get_singleton()->get_setting("audio/driver/mix_rate", 41400);
+	return ProjectSettings::get_singleton()->get_setting("audio/driver/mix_rate", 44100);
 }
 
 Ref<Texture2D> VideoStreamPlaybackNDI::_get_texture() const {
@@ -121,53 +124,48 @@ void VideoStreamPlaybackNDI::stop_syncing() {
 }
 
 void VideoStreamPlaybackNDI::render_first_frame() {
-	for (size_t i = 0; i < 200; i++) {
+	for (size_t i = 0; i < 500; i++) {
 		ndi->framesync_capture_video(sync, &video_frame, NDIlib_frame_format_type_progressive);
 		if (video_frame.xres != 0 && video_frame.yres != 0) {
-			// UtilityFunctions::print("Found after ", i, "ms");
 			texture->set_image(Image::create_empty(video_frame.xres, video_frame.yres, false, Image::FORMAT_RGBA8));
 			ndi->framesync_free_video(sync, &video_frame);
 			return;
 		}
 		ndi->framesync_free_video(sync, &video_frame);
-		OS::get_singleton()->delay_msec(1);
+		OS::get_singleton()->delay_msec(10);
 	}
 
 	// Fallback resolution
 	texture->set_image(Image::create_empty(100, 100, false, Image::FORMAT_RGBA8));
-	UtilityFunctions::push_warning("NDI Source not found at playback start. Will play once found.");
+	ERR_FAIL_MSG("NDI Source not found at playback start. Will play once found.");
 }
 
 void VideoStreamPlaybackNDI::render_video() {
+	if (img.is_valid()) {
+		texture->set_image(img);
+	}
+
 	ndi->framesync_capture_video(sync, &video_frame, NDIlib_frame_format_type_progressive);
 
 	if (video_frame.p_data != NULL && (video_frame.FourCC == NDIlib_FourCC_type_RGBA || video_frame.FourCC == NDIlib_FourCC_type_RGBX)) {
 		video_buffer.resize(video_frame.line_stride_in_bytes * video_frame.yres);
 		memcpy(video_buffer.ptrw(), video_frame.p_data, video_buffer.size());
 
-		Ref<Image> img = Image::create_from_data(video_frame.xres, video_frame.yres, false, Image::Format::FORMAT_RGBA8, video_buffer);
-		texture->set_image(img);
-		img.unref();
+		img = Image::create_from_data(video_frame.xres, video_frame.yres, false, Image::Format::FORMAT_RGBA8, video_buffer);
 	}
 
 	ndi->framesync_free_video(sync, &video_frame);
 }
 
 void VideoStreamPlaybackNDI::render_audio(double p_delta) {
-	// This is clipped in an attempt to fix issue #3.
-	// FIXME: Should be clipping no_samples to buffer size because that's what causes the error.
-	//        But no clue what buffer is meant. The one from Project Settings or the one of VideoStreamPlayer (Buffer msec)?
-
-	p_delta = UtilityFunctions::min(p_delta, 0.5);
-
-	int no_samples = (double)_get_mix_rate() * p_delta;
-	ndi->framesync_capture_audio_v2(sync, &audio_frame, _get_mix_rate(), _get_channels(), no_samples);
+	int requested_samples = Math::min((double)_get_mix_rate() * p_delta, (double)ndi->framesync_audio_queue_depth(sync));
+	ndi->framesync_capture_audio_v2(sync, &audio_frame, _get_mix_rate(), _get_channels(), requested_samples);
 
 	if (audio_frame.p_data != NULL) {
 		audio_buffer_planar.resize(audio_frame.no_channels * audio_frame.no_samples);
 		audio_buffer_interleaved.resize(audio_buffer_planar.size());
 
-		memcpy(audio_buffer_planar.ptrw(), audio_frame.p_data, audio_buffer_planar.size() * 4);
+		memcpy((uint8_t *)audio_buffer_planar.ptrw(), audio_frame.p_data, audio_buffer_planar.size() * 4);
 
 		for (int64_t i = 0; i < audio_buffer_interleaved.size(); i++) {
 			int channel = i % audio_frame.no_channels;
@@ -177,7 +175,11 @@ void VideoStreamPlaybackNDI::render_audio(double p_delta) {
 			audio_buffer_interleaved.set(i, audio_buffer_planar[stride_index + stride_offset]);
 		}
 
-		mix_audio(audio_frame.no_samples, audio_buffer_interleaved, 0);
+		int processed_samples = Math::min(audio_frame.no_samples, 4096); // FIXME: dont hardcode this
+		int skipped_samples = audio_frame.no_samples - processed_samples;
+
+		// Skip the older samples by playing the last ones in the array
+		mix_audio(processed_samples, audio_buffer_interleaved, skipped_samples * _get_channels());
 	}
 
 	ndi->framesync_free_audio_v2(sync, &audio_frame);

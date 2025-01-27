@@ -60,6 +60,7 @@ class VideoStreamPlaybackNDI : public VideoStreamPlayback {
         void stop_syncing();
 
         Ref<ImageTexture> texture;
+        Ref<Image> img;
         NDIlib_video_frame_v2_t video_frame;
         PackedByteArray video_buffer;
         void render_first_frame();
