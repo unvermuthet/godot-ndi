@@ -73,7 +73,7 @@ void VideoStreamPlaybackNDI::_update(double p_delta) {
 	if (p_delta == 0) { // See https://github.com/godotengine/godot/blob/b15b24b087e792335d919fd83055f50f276fbe22/scene/gui/video_stream_player.cpp#L314
 		render_first_frame();
 	} else {
-	    render_audio(p_delta);
+		render_audio(p_delta);
 		render_video();
 	}
 }
@@ -121,12 +121,21 @@ void VideoStreamPlaybackNDI::stop_syncing() {
 }
 
 void VideoStreamPlaybackNDI::render_first_frame() {
-	if (ndi->recv_capture_v3(recv, &video_frame, NULL, NULL, 5000) == NDIlib_frame_type_video) {
-		texture->set_image(Image::create_empty(video_frame.xres, video_frame.yres, false, Image::FORMAT_RGBA8));
-		ndi->recv_free_video_v2(recv, &video_frame);
-	} else {
-		texture->set_image(Image::create_empty(100, 100, false, Image::FORMAT_RGBA8));
+	for (size_t i = 0; i < 200; i++) {
+		ndi->framesync_capture_video(sync, &video_frame, NDIlib_frame_format_type_progressive);
+		if (video_frame.xres != 0 && video_frame.yres != 0) {
+			// UtilityFunctions::print("Found after ", i, "ms");
+			texture->set_image(Image::create_empty(video_frame.xres, video_frame.yres, false, Image::FORMAT_RGBA8));
+			ndi->framesync_free_video(sync, &video_frame);
+			return;
+		}
+		ndi->framesync_free_video(sync, &video_frame);
+		OS::get_singleton()->delay_msec(1);
 	}
+
+	// Fallback resolution
+	texture->set_image(Image::create_empty(100, 100, false, Image::FORMAT_RGBA8));
+	UtilityFunctions::push_warning("NDI Source not found at playback start. Will play once found.");
 }
 
 void VideoStreamPlaybackNDI::render_video() {
