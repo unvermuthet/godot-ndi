@@ -20,13 +20,13 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 	const char* ndi_runtime_folder = getenv(NDILIB_REDIST_FOLDER);
 
 #ifdef _WIN32
-	ERR_FAIL_NULL_EDMSG(ndi_runtime_folder, NDILIB_REDIST_FOLDER "doesn't exist on PATH");
+	ERR_FAIL_NULL_EDMSG(ndi_runtime_folder, NDILIB_REDIST_FOLDER "doesn't exist on PATH. Make sure you have the NDI Runtime installed on your system.");
 
 	std::string ndi_runtime_path = ndi_runtime_folder;
 	ndi_runtime_path += "\\" NDILIB_LIBRARY_NAME;
 
 	HMODULE ndi_lib = LoadLibraryA(ndi_runtime_path.c_str());
-	ERR_FAIL_NULL_EDMSG(ndi_lib, "Couldn't open NDI Library " NDILIB_LIBRARY_NAME);
+	ERR_FAIL_NULL_EDMSG(ndi_lib, "Couldn't open NDI Library " NDILIB_LIBRARY_NAME ". Make sure you have the NDI Runtime installed on your system.");
 
 	const NDIlib_v5* (*NDIlib_v5_load)(void) = NULL;
 	*((FARPROC*)&NDIlib_v5_load) = GetProcAddress(ndi_lib, "NDIlib_v5_load");
@@ -35,7 +35,7 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 		if (ndi_lib) {
 			FreeLibrary(ndi_lib);
 		}
-		ERR_FAIL_EDMSG("Couldn't obtain entry symbol for NDI");
+		ERR_FAIL_EDMSG("Couldn't obtain entry symbol for NDI. Try reinstalling the NDI Runtime.");
 	}
 #else
 	std::string ndi_runtime_path;
@@ -47,7 +47,7 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 	}
 
 	void* ndi_lib = dlopen(ndi_runtime_path.c_str(), RTLD_LAZY | RTLD_LOCAL);
-	ERR_FAIL_NULL_EDMSG(ndi_lib, "Couldn't open NDI Library " NDILIB_LIBRARY_NAME);
+	ERR_FAIL_NULL_EDMSG(ndi_lib, "Couldn't open NDI Library " NDILIB_LIBRARY_NAME ". Make sure you have the NDI Runtime installed on your system.");
 
 	const NDIlib_v5* (*NDIlib_v5_load)(void) = NULL;
 	*((void**)&NDIlib_v5_load) = dlsym(ndi_lib, "NDIlib_v5_load");
@@ -56,7 +56,7 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 		if (ndi_lib) {
 			dlclose(ndi_lib);
 		}
-		ERR_FAIL_EDMSG("Couldn't obtain entry symbol for NDI");
+		ERR_FAIL_EDMSG("Couldn't obtain entry symbol for NDI. Try reinstalling the NDI Runtime.");
 	}
 
 #endif
