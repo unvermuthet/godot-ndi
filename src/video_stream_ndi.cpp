@@ -21,9 +21,9 @@ void VideoStreamNDI::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_name"), &VideoStreamNDI::get_name);
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "name"), "set_name", "get_name");
 
-	ClassDB::bind_method(D_METHOD("set_url", "url"), &VideoStreamNDI::set_url);
+	// ClassDB::bind_method(D_METHOD("set_url", "url"), &VideoStreamNDI::set_url);
 	ClassDB::bind_method(D_METHOD("get_url"), &VideoStreamNDI::get_url);
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "url"), "set_url", "get_url");
+	// ADD_PROPERTY(PropertyInfo(Variant::STRING, "url"), "set_url", "get_url");
 
 	ClassDB::bind_method(D_METHOD("set_bandwidth", "bandwidth"), &VideoStreamNDI::set_bandwidth);
 	ClassDB::bind_method(D_METHOD("get_bandwidth"), &VideoStreamNDI::get_bandwidth);
@@ -61,14 +61,14 @@ String VideoStreamNDI::get_name() const {
 	return String::utf8(name);
 }
 
-void VideoStreamNDI::set_url(const String p_url) {
-	if (p_url.is_empty()) {
-		url = NULL;
-	} else {
-		url = p_url.utf8();
-	}
-	emit_changed();
-}
+// void VideoStreamNDI::set_url(const String p_url) {
+// 	if (p_url.is_empty()) {
+// 		url = NULL;
+// 	} else {
+// 		url = p_url.utf8();
+// 	}
+// 	emit_changed();
+// }
 
 String VideoStreamNDI::get_url() const {
 	return String::utf8(url);
