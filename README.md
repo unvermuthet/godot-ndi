@@ -20,16 +20,16 @@ extends Node
 @onready var player: VideoStreamPlayer = %VideoStreamPlayer
 
 func _ready() -> void:
-	finder.connect("sources_changed", self.sources_changed)
-	
+    finder.connect("sources_changed", self.sources_changed)
+    
 func sources_changed():
-	var sources := finder.get_sources()
-	
-	if not sources.is_empty():
-		var source := sources.front() as VideoStreamNDI
-		print(source.name)
-		player.stream = source
-		player.play()
+    var sources := finder.get_sources()
+    
+    if not sources.is_empty():
+        var source := sources.front() as VideoStreamNDI
+        print(source.name)
+        player.stream = source
+        player.play()
 
 ```
 
