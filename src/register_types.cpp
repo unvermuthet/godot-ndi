@@ -64,7 +64,8 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 	ndi = NDIlib_v5_load();
 	ERR_FAIL_COND_EDMSG(!ndi->initialize(), "NDI isn't supported");
 
-	GDREGISTER_CLASS(NDIFind);
+	// GDREGISTER_CLASS(NDIFind);
+	GDREGISTER_CLASS(NDIFinder);
 	GDREGISTER_CLASS(VideoStreamNDI);
 	GDREGISTER_CLASS(VideoStreamPlaybackNDI);
 }

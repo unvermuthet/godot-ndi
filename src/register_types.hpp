@@ -24,6 +24,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "ndi.hpp"
 #include "ndi_find.hpp"
+#include "ndi_finder.hpp"
 #include "video_stream_ndi.hpp"
 #include "video_stream_playback_ndi.hpp"
 

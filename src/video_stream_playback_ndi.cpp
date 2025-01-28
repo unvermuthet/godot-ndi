@@ -85,9 +85,8 @@ void VideoStreamPlaybackNDI::_bind_methods() {}
 
 bool VideoStreamPlaybackNDI::start_receiving(bool force) {
 	if (force || !receiving) {
-		ERR_FAIL_NULL_V_MSG(recv_desc, false, "Can't create a NDI Receiver without description");
 		stop_receiving();
-		recv = ndi->recv_create_v3(recv_desc);
+		recv = ndi->recv_create_v3(&recv_desc);
 		receiving = true;
 	}
 

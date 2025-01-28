@@ -27,7 +27,7 @@ class VideoStreamPlaybackNDI : public VideoStreamPlayback {
     public:
         VideoStreamPlaybackNDI();
         ~VideoStreamPlaybackNDI();
-        const NDIlib_recv_create_v3_t* recv_desc;
+        NDIlib_recv_create_v3_t recv_desc;
         void _play() override;
         void _stop() override;
         bool _is_playing() const override;
