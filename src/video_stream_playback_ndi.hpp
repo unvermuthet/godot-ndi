@@ -7,17 +7,7 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#pragma once
-
-#include <godot_cpp/classes/video_stream_playback.hpp>
-#include <godot_cpp/classes/image_texture.hpp>
-#include <godot_cpp/classes/image.hpp>
-#include <godot_cpp/variant/utility_functions.hpp>
-#include <godot_cpp/classes/project_settings.hpp>
-#include <godot_cpp/classes/scene_tree.hpp>
-#include <godot_cpp/classes/os.hpp>
-#include <godot_cpp/classes/engine.hpp>
-#include "ndi.hpp"
+#include "includes.hpp"
 
 using namespace godot;
 

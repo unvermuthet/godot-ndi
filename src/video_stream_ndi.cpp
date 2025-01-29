@@ -7,7 +7,7 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#include "video_stream_ndi.hpp"
+#include "includes.hpp"
 
 // The only persistent parts of this resource are the name and bandwidth fields.
 // I've decided to not expose/bind the url field of the NDI_source_t struct.
@@ -21,9 +21,9 @@ void VideoStreamNDI::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_name"), &VideoStreamNDI::get_name);
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "name"), "set_name", "get_name");
 
-	// ClassDB::bind_method(D_METHOD("set_url", "url"), &VideoStreamNDI::set_url);
+	ClassDB::bind_method(D_METHOD("set_url", "url"), &VideoStreamNDI::set_url);
 	ClassDB::bind_method(D_METHOD("get_url"), &VideoStreamNDI::get_url);
-	// ADD_PROPERTY(PropertyInfo(Variant::STRING, "url"), "set_url", "get_url");
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "url"), "set_url", "get_url");
 
 	ClassDB::bind_method(D_METHOD("set_bandwidth", "bandwidth"), &VideoStreamNDI::set_bandwidth);
 	ClassDB::bind_method(D_METHOD("get_bandwidth"), &VideoStreamNDI::get_bandwidth);
@@ -42,8 +42,8 @@ VideoStreamNDI::VideoStreamNDI() {
 }
 
 VideoStreamNDI::VideoStreamNDI(const NDIlib_source_t p_source) : VideoStreamNDI::VideoStreamNDI() {
-	name = p_source.p_ndi_name;
-	url = p_source.p_url_address;
+	name = p_source.p_ndi_name; // This needs to copy the memory because it might become invalid (freed by the sdk)
+	url = p_source.p_url_address; // -||-
 }
 
 VideoStreamNDI::~VideoStreamNDI() {}
@@ -54,21 +54,19 @@ void VideoStreamNDI::set_name(const String p_name) {
 	} else {
 		name = p_name.utf8();
 	}
-	emit_changed();
 }
 
 String VideoStreamNDI::get_name() const {
 	return String::utf8(name);
 }
 
-// void VideoStreamNDI::set_url(const String p_url) {
-// 	if (p_url.is_empty()) {
-// 		url = NULL;
-// 	} else {
-// 		url = p_url.utf8();
-// 	}
-// 	emit_changed();
-// }
+void VideoStreamNDI::set_url(const String p_url) {
+	if (p_url.is_empty()) {
+		url = NULL;
+	} else {
+		url = p_url.utf8();
+	}
+}
 
 String VideoStreamNDI::get_url() const {
 	return String::utf8(url);
@@ -76,7 +74,6 @@ String VideoStreamNDI::get_url() const {
 
 void VideoStreamNDI::set_bandwidth(const NDIlib_recv_bandwidth_e p_bandwidth) {
 	bandwidth = p_bandwidth;    
-	emit_changed();
 }
 
 NDIlib_recv_bandwidth_e VideoStreamNDI::get_bandwidth() const {

@@ -9,7 +9,9 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#include "register_types.hpp"
+#include "includes.hpp"
+
+const NDIlib_v5* ndi;
 
 void initialize_gdextension_types(ModuleInitializationLevel p_level)
 {
@@ -64,11 +66,11 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 	ndi = NDIlib_v5_load();
 	ERR_FAIL_COND_EDMSG(!ndi->initialize(), "NDI isn't supported");
 
-	// GDREGISTER_CLASS(NDIFind);
 	GDREGISTER_CLASS(NDIFinder);
-	GDREGISTER_CLASS(NDIOutput);
+	// GDREGISTER_CLASS(NDIOutput);
 	GDREGISTER_CLASS(VideoStreamNDI);
 	GDREGISTER_CLASS(VideoStreamPlaybackNDI);
+
 }
 
 void uninitialize_gdextension_types(ModuleInitializationLevel p_level) {
@@ -79,6 +81,7 @@ void uninitialize_gdextension_types(ModuleInitializationLevel p_level) {
 	if (ndi != NULL) {
 		ndi->destroy();
 	}
+
 }
 
 extern "C"

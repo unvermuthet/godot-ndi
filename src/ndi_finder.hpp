@@ -7,16 +7,7 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#pragma once
-
-#include <godot_cpp/classes/node.hpp>
-#include <godot_cpp/core/class_db.hpp>
-#include <godot_cpp/classes/thread.hpp>
-#include <godot_cpp/classes/mutex.hpp>
-#include <godot_cpp/classes/semaphore.hpp>
-#include <godot_cpp/classes/hashing_context.hpp>
-#include "ndi.hpp"
-#include "video_stream_ndi.hpp"
+#include "includes.hpp"
 
 using namespace godot;
 

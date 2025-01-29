@@ -7,17 +7,15 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#pragma once
 
-#include <godot_cpp/classes/video_stream.hpp>
-#include <godot_cpp/core/class_db.hpp>
-#include "ndi.hpp"
-#include "video_stream_playback_ndi.hpp"
+#include "includes.hpp"
 
 using namespace godot;
 
 class VideoStreamNDI : public VideoStream {
 	GDCLASS(VideoStreamNDI, VideoStream)
+
+	NDIFinder* finder;
 
 	CharString name;
 	CharString url;

@@ -1,4 +1,4 @@
-#include "ndi_finder.hpp"
+#include "includes.hpp"
 
 void NDIFinder::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_sources"), &NDIFinder::get_sources);
@@ -15,6 +15,7 @@ void NDIFinder::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_extra_ips", "extra_ips"), &NDIFinder::set_extra_ips);
 	ClassDB::bind_method(D_METHOD("get_extra_ips"), &NDIFinder::get_extra_ips);
 	ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "extra_ips"), "set_extra_ips", "get_extra_ips");
+	
 }
 
 NDIFinder::NDIFinder() {
@@ -40,7 +41,7 @@ NDIFinder::~NDIFinder() {
 
 TypedArray<VideoStreamNDI> NDIFinder::get_sources() const {
 	mtx->lock();
-	TypedArray<VideoStreamNDI> sources = mtx_sources;
+	TypedArray<VideoStreamNDI> sources = mtx_sources.duplicate(true);
 	mtx->unlock();
 	return sources;
 }

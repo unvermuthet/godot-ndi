@@ -1,30 +1,30 @@
-#include "ndi_output.hpp"
+// #include "includes.hpp"
 
-void NDIOutput::_bind_methods() {
-}
+// void NDIOutput::_bind_methods() {
+// }
 
-NDIOutput::NDIOutput() {
-}
+// NDIOutput::NDIOutput() {
+// }
 
-NDIOutput::~NDIOutput() {
-}
+// NDIOutput::~NDIOutput() {
+// }
 
-void NDIOutput::_ready() {
-}
+// void NDIOutput::_ready() {
+// }
 
-void NDIOutput::_exit_tree() {
-}
+// void NDIOutput::_exit_tree() {
+// }
 
-void NDIOutput::_process(double delta) {
-	Viewport* vp = get_viewport();
+// void NDIOutput::_process(double delta) {
+// 	Viewport* vp = get_viewport();
 
-	if (vp == NULL) {
-		return;
-	}
+// 	if (vp == NULL) {
+// 		return;
+// 	}
 	
-	Ref<ViewportTexture> texture = vp->get_texture();
+// 	Ref<ViewportTexture> texture = vp->get_texture();
 
-	if (texture.is_valid()) {
-		UtilityFunctions::print(texture->get_width(), texture->get_height());
-	}
-}
+// 	if (texture.is_valid()) {
+// 		UtilityFunctions::print(texture->get_width(), texture->get_height());
+// 	}
+// }
