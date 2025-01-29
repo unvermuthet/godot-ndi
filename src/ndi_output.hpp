@@ -9,25 +9,27 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
-#include <gdextension_interface.h>
+#include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/core/class_db.hpp>
-#include <godot_cpp/core/defs.hpp>
-#include <godot_cpp/godot.hpp>
-
-#ifdef _WIN32
-#include <windows.h>
-#else
-#include <dlfcn.h>
-#include <stddef.h>
-#include <stdlib.h>
-#endif
-
+#include <godot_cpp/classes/viewport.hpp>
+#include <godot_cpp/classes/viewport_texture.hpp>
 #include "ndi.hpp"
-#include "ndi_finder.hpp"
-#include "ndi_output.hpp"
 #include "video_stream_ndi.hpp"
-#include "video_stream_playback_ndi.hpp"
 
 using namespace godot;
 
-const NDIlib_v5* ndi;
+class NDIOutput : public Node {
+	GDCLASS(NDIOutput, Node)
+
+	protected:
+		static void _bind_methods();
+
+	public:
+		NDIOutput();
+		~NDIOutput();
+
+		void _ready() override;
+		void _exit_tree() override;
+		void _process(double delta) override;
+
+};

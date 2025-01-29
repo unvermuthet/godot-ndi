@@ -66,6 +66,7 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 
 	// GDREGISTER_CLASS(NDIFind);
 	GDREGISTER_CLASS(NDIFinder);
+	GDREGISTER_CLASS(NDIOutput);
 	GDREGISTER_CLASS(VideoStreamNDI);
 	GDREGISTER_CLASS(VideoStreamPlaybackNDI);
 }
