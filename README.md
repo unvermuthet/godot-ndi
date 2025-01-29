@@ -14,20 +14,23 @@ This is early stages. I'm happy to hear suggestions and incorperate improvements
 ## Example
 
 ```GDScript
+extends Node
+
+@onready var finder: NDIFinder = %NDIFinder
 @onready var player: VideoStreamPlayer = %VideoStreamPlayer
-var ndi_find: NDIFind
-var stream: VideoStreamNDI
 
 func _ready() -> void:
-    ndi_find = NDIFind.new()
+    finder.connect("sources_changed", self.sources_changed)
+    
+func sources_changed():
+    var sources := finder.get_sources()
+    
+    if not sources.is_empty():
+        var source := sources.front() as VideoStreamNDI
+        print(source.name)
+        player.stream = source
+        player.play()
 
-    while true:
-        stream = ndi_find.get_sources().pop_front()
-        if stream != null:
-            break
-            
-    player.stream = stream
-    player.play()
 ```
 
 ## Download
