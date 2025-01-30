@@ -71,11 +71,21 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 	GDREGISTER_CLASS(VideoStreamNDI);
 	GDREGISTER_CLASS(VideoStreamPlaybackNDI);
 
+	if (!Engine::get_singleton()->has_singleton("NDIFinder")) {
+		Engine::get_singleton()->register_singleton("NDIFinder", memnew(NDIFinder));
+	}
 }
 
 void uninitialize_gdextension_types(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
+	}
+
+	if (Engine::get_singleton()->has_singleton("NDIFinder")) {
+		NDIFinder* finder = (NDIFinder*)Engine::get_singleton()->get_singleton("NDIFinder");
+		if (finder) {
+			memfree(finder);
+		}
 	}
 
 	if (ndi != NULL) {

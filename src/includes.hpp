@@ -31,6 +31,8 @@
 #include "Processing.NDI.Lib.h"
 extern const NDIlib_v5* ndi;
 
+using namespace godot;
+
 class NDIFinder;
 class VideoStreamNDI;
 class VideoStreamPlaybackNDI;

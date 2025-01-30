@@ -27,7 +27,7 @@ NDIFinder::NDIFinder() {
 }
 
 NDIFinder::~NDIFinder() {
-	exit_thread = true;
+	mtx_exit_thread = true;
 	sem->post();
 
 	if (thr.is_valid() && thr->is_alive()) {
@@ -46,16 +46,14 @@ TypedArray<VideoStreamNDI> NDIFinder::get_sources() const {
 	return sources;
 }
 
-void NDIFinder::_ready() {}
-
-void NDIFinder::_exit_tree() {}
-
-void NDIFinder::_process(double delta) {
+void NDIFinder::_process(double p_delta) {
 	sem->post();
 }
 
 void NDIFinder::process_thread() {
-	NDIlib_find_instance_t find = ndi->find_create_v2(&find_desc);
+	mtx->lock(); // make sure find_desc doesn't change during use
+	NDIlib_find_instance_t find = ndi->find_create_v2(&mtx_find_desc);
+	mtx->unlock();
 
 	Ref<HashingContext> hasher = memnew(HashingContext);
 	hasher->start(HashingContext::HASH_SHA256);
@@ -64,14 +62,24 @@ void NDIFinder::process_thread() {
 	while (true) {
 		sem->wait();
 
+		mtx->lock();
+		bool exit_thread = mtx_exit_thread;
+		bool rebuild_find = mtx_rebuild_find;
+		mtx->unlock();
+
 		if (exit_thread) {
 			break;
 		}
 
 		if (rebuild_find) {
 			ndi->find_destroy(find);
-			find = ndi->find_create_v2(&find_desc);
-			rebuild_find = false;
+
+			mtx->lock(); // make sure find_desc doesn't change during use
+			mtx_rebuild_find = false;
+			NDIlib_find_create_t find_desc = mtx_find_desc;
+			mtx->unlock();
+
+			find = ndi->find_create_v2(&mtx_find_desc);
 		}
 
 		TypedArray<VideoStreamNDI> new_sources;
@@ -97,7 +105,6 @@ void NDIFinder::process_thread() {
 
 			call_deferred("emit_signal", "sources_changed");
 		}
-
 	}
 
 	ndi->find_destroy(find);
@@ -105,12 +112,14 @@ void NDIFinder::process_thread() {
 }
 
 void NDIFinder::set_show_local_sources(const bool p_state) {
-	find_desc.show_local_sources = p_state;
-	rebuild_find = true;
+	mtx->lock();
+	mtx_find_desc.show_local_sources = p_state;
+	mtx_rebuild_find = true;
+	mtx->unlock();
 }
 
 bool NDIFinder::get_show_local_sources() const {
-	return find_desc.show_local_sources;
+	return mtx_find_desc.show_local_sources;
 }
 
 void NDIFinder::set_groups(const PackedStringArray p_groups) {
@@ -120,16 +129,18 @@ void NDIFinder::set_groups(const PackedStringArray p_groups) {
 		groups = String(",").join(p_groups).utf8();
 	}
 
-	find_desc.p_groups = groups;
-	rebuild_find = true;
+	mtx->lock();
+	mtx_find_desc.p_groups = groups;
+	mtx_rebuild_find = true;
+	mtx->unlock();
 }
 
 PackedStringArray NDIFinder::get_groups() const {
-	if (find_desc.p_groups == NULL) {
+	if (mtx_find_desc.p_groups == NULL) { // no need for mutex, thread doesn't write
 		return PackedStringArray();
 	}
 
-	return String::utf8(find_desc.p_groups).split(",");
+	return String::utf8(mtx_find_desc.p_groups).split(",");
 }
 
 void NDIFinder::set_extra_ips(const PackedStringArray p_extra_ips) {
@@ -139,14 +150,16 @@ void NDIFinder::set_extra_ips(const PackedStringArray p_extra_ips) {
 		extra_ips = String(",").join(p_extra_ips).utf8();
 	}
 
-	find_desc.p_extra_ips = extra_ips;
-	rebuild_find = true;
+	mtx->lock();
+	mtx_find_desc.p_extra_ips = extra_ips;
+	mtx_rebuild_find = true;
+	mtx->unlock();
 }
 
 PackedStringArray NDIFinder::get_extra_ips() const {
-	if (find_desc.p_extra_ips == NULL) {
+	if (mtx_find_desc.p_extra_ips == NULL) {
 		return PackedStringArray();
 	}
 
-	return String::utf8(find_desc.p_extra_ips).split(",");
+	return String::utf8(mtx_find_desc.p_extra_ips).split(",");
 }

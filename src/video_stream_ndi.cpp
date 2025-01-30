@@ -8,6 +8,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
 #include "includes.hpp"
+#include "video_stream_ndi.hpp"
 
 // The only persistent parts of this resource are the name and bandwidth fields.
 // I've decided to not expose/bind the url field of the NDI_source_t struct.
@@ -56,7 +57,8 @@ void VideoStreamNDI::set_name(const String p_name) {
 	}
 }
 
-String VideoStreamNDI::get_name() const {
+String VideoStreamNDI::get_name() {
+	update_sources_hint();
 	return String::utf8(name);
 }
 
@@ -78,6 +80,23 @@ void VideoStreamNDI::set_bandwidth(const NDIlib_recv_bandwidth_e p_bandwidth) {
 
 NDIlib_recv_bandwidth_e VideoStreamNDI::get_bandwidth() const {
 	return bandwidth;
+}
+
+void VideoStreamNDI::update_sources_hint() {
+	if (!Engine::get_singleton()->has_singleton("NDIFinder")) {
+		return;
+	}
+
+	NDIFinder* finder = (NDIFinder *)Engine::get_singleton()->get_singleton("NDIFinder");
+	if (!finder) {
+		return;
+	}
+
+	if (!finder->is_inside_tree()) {
+		finder->_process(0);
+	}
+
+	UtilityFunctions::print(finder->get_sources());
 }
 
 Ref<VideoStreamPlayback> VideoStreamNDI::_instantiate_playback() {

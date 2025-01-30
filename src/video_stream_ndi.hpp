@@ -7,6 +7,7 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+#pragma once
 
 #include "includes.hpp"
 
@@ -29,11 +30,12 @@ class VideoStreamNDI : public VideoStream {
 		VideoStreamNDI(const NDIlib_source_t p_source);
 		~VideoStreamNDI();
 		void set_name(const String p_name);
-		String get_name() const;
+		String get_name();
 		void set_url(const String p_url);
 		String get_url() const;
 		void set_bandwidth(const NDIlib_recv_bandwidth_e p_bandwidth);
 		NDIlib_recv_bandwidth_e get_bandwidth() const;
+		void update_sources_hint();
 		Ref<VideoStreamPlayback> _instantiate_playback() override;
 };
 

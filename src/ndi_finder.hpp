@@ -7,6 +7,8 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+#pragma once
+
 #include "includes.hpp"
 
 using namespace godot;
@@ -14,20 +16,19 @@ using namespace godot;
 class NDIFinder : public Node {
 	GDCLASS(NDIFinder, Node)
 
-	NDIlib_find_create_t find_desc;
-	CharString groups;
-	CharString extra_ips;
-
 	Ref<Thread> thr;
 	Ref<Mutex> mtx;
 	Ref<Semaphore> sem;
 
-	bool exit_thread = false;
-	bool rebuild_find = false;
+	TypedArray<VideoStreamNDI> mtx_sources;
+	NDIlib_find_create_t mtx_find_desc;
+	bool mtx_exit_thread = false;
+	bool mtx_rebuild_find = false;
+
+	CharString groups;
+	CharString extra_ips;
 
 	void process_thread();
-
-	TypedArray<VideoStreamNDI> mtx_sources;
 
 	protected:
 		static void _bind_methods();
@@ -36,9 +37,7 @@ class NDIFinder : public Node {
 		NDIFinder();
 		~NDIFinder();
 
-		void _ready() override;
-		void _exit_tree() override;
-		void _process(double delta) override;
+		void _process(double p_delta) override;
 
 		TypedArray<VideoStreamNDI> get_sources() const;
 
