@@ -9,6 +9,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "includes.hpp"
 #include "video_stream_ndi.hpp"
+// #include "video_stream_ndi.hpp"
 
 // The only persistent parts of this resource are the name and bandwidth fields.
 // I've decided to not expose/bind the url field of the NDI_source_t struct.
@@ -22,9 +23,9 @@ void VideoStreamNDI::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_name"), &VideoStreamNDI::get_name);
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "name"), "set_name", "get_name");
 
-	ClassDB::bind_method(D_METHOD("set_url", "url"), &VideoStreamNDI::set_url);
+	// ClassDB::bind_method(D_METHOD("set_url", "url"), &VideoStreamNDI::set_url);
 	ClassDB::bind_method(D_METHOD("get_url"), &VideoStreamNDI::get_url);
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "url"), "set_url", "get_url");
+	// ADD_PROPERTY(PropertyInfo(Variant::STRING, "url", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_RESOURCE_NOT_PERSISTENT), "set_url", "get_url");
 
 	ClassDB::bind_method(D_METHOD("set_bandwidth", "bandwidth"), &VideoStreamNDI::set_bandwidth);
 	ClassDB::bind_method(D_METHOD("get_bandwidth"), &VideoStreamNDI::get_bandwidth);
@@ -37,7 +38,6 @@ void VideoStreamNDI::_bind_methods() {
 }
 
 VideoStreamNDI::VideoStreamNDI() {
-
 	name = NULL;
 	url = NULL;
 	bandwidth = NDIlib_recv_bandwidth_highest;
@@ -47,8 +47,10 @@ VideoStreamNDI::VideoStreamNDI() {
 	}
 
 	if (finder) {
-		finder->connect("sources_changed", callable_mp(this, &VideoStreamNDI::update_sources_hint));
+		finder->connect("sources_changed", callable_mp(this, &VideoStreamNDI::update_available_sources_hint));
 	}
+
+	update_available_sources_hint();
 }
 
 VideoStreamNDI::VideoStreamNDI(const NDIlib_source_t p_source) : VideoStreamNDI::VideoStreamNDI() {
@@ -58,23 +60,35 @@ VideoStreamNDI::VideoStreamNDI(const NDIlib_source_t p_source) : VideoStreamNDI:
 
 VideoStreamNDI::~VideoStreamNDI() {
 	if (finder) {
-		finder->disconnect("sources_changed", callable_mp(this, &VideoStreamNDI::update_sources_hint));
+		finder->disconnect("sources_changed", callable_mp(this, &VideoStreamNDI::update_available_sources_hint));
 	}
 }
 
 void VideoStreamNDI::set_name(const String p_name) {
 	if (p_name.is_empty()) {
 		name = NULL;
-	} else {
-		name = p_name.utf8();
+		return;
 	}
+
+	name = p_name.utf8();
+
+	if (!finder) {
+		return;
+	}
+
+	TypedArray<VideoStreamNDI> sources = finder->get_sources();
+	for (int64_t i = 0; i < sources.size(); i++)
+	{
+		VideoStreamNDI* source = (VideoStreamNDI*)(Object*)sources[i];
+		if (source && source->get_name() == name) {
+			set_url(source->get_url());
+			return;
+		}
+	}
+		
 }
 
 String VideoStreamNDI::get_name() const {
-	if (finder && !finder->is_inside_tree()) {
-		finder->_process(0); // Manually tick the finder
-	}
-
 	return String::utf8(name);
 }
 
@@ -98,7 +112,33 @@ NDIlib_recv_bandwidth_e VideoStreamNDI::get_bandwidth() const {
 	return bandwidth;
 }
 
-void VideoStreamNDI::update_sources_hint() {
+void VideoStreamNDI::_get_property_list(godot::List<godot::PropertyInfo> *p_list) {
+	p_list->push_back(PropertyInfo(Variant::STRING, "available_sources", PROPERTY_HINT_ENUM_SUGGESTION, available_sources_hint));
+}
+
+bool VideoStreamNDI::_set(const StringName &p_name, const Variant &p_property) {
+	if (String(p_name) == "available_sources") {
+		set_name(p_property);
+		return true;
+	}
+
+	return false;
+}
+
+bool VideoStreamNDI::_get(const StringName &p_name, Variant &r_ret) {
+	if (finder && !finder->is_inside_tree()) { // Could be replaced with Engine::get_singleton()->is_editor_hint()
+		finder->_process(0); // Manually tick the finder
+	}
+
+	if (String(p_name) == "available_sources") {
+		r_ret = String("");
+		return true;
+	}
+
+	return false;
+}
+
+void VideoStreamNDI::update_available_sources_hint() {
 	if (!finder) {
 		return;
 	}
@@ -111,14 +151,8 @@ void VideoStreamNDI::update_sources_hint() {
 		source_names.push_back(((VideoStreamNDI*)(Object*)sources[i])->get_name());
 	}
 
-	sources_hint = String(",").join(source_names);
-	// UtilityFunctions::print(sources_hint);
-
+	available_sources_hint = String(",").join(source_names);
 	notify_property_list_changed();
-}
-
-void VideoStreamNDI::_get_property_list(godot::List<godot::PropertyInfo> *p_list) {
-	p_list->push_front(PropertyInfo(Variant::STRING, "name", PROPERTY_HINT_ENUM_SUGGESTION, sources_hint));
 }
 
 Ref<VideoStreamPlayback> VideoStreamNDI::_instantiate_playback() {
