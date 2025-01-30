@@ -112,7 +112,7 @@ void VideoStreamNDI::update_sources_hint() {
 	}
 
 	sources_hint = String(",").join(source_names);
-	UtilityFunctions::print(sources_hint);
+	// UtilityFunctions::print(sources_hint);
 
 	notify_property_list_changed();
 }
