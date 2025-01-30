@@ -37,9 +37,18 @@ void VideoStreamNDI::_bind_methods() {
 }
 
 VideoStreamNDI::VideoStreamNDI() {
+
 	name = NULL;
 	url = NULL;
 	bandwidth = NDIlib_recv_bandwidth_highest;
+
+	if (Engine::get_singleton()->has_singleton("NDIFinder")) {
+		finder = (NDIFinder *)Engine::get_singleton()->get_singleton("NDIFinder");
+	}
+
+	if (finder) {
+		finder->connect("sources_changed", callable_mp(this, &VideoStreamNDI::update_sources_hint));
+	}
 }
 
 VideoStreamNDI::VideoStreamNDI(const NDIlib_source_t p_source) : VideoStreamNDI::VideoStreamNDI() {
@@ -47,7 +56,11 @@ VideoStreamNDI::VideoStreamNDI(const NDIlib_source_t p_source) : VideoStreamNDI:
 	url = p_source.p_url_address; // -||-
 }
 
-VideoStreamNDI::~VideoStreamNDI() {}
+VideoStreamNDI::~VideoStreamNDI() {
+	if (finder) {
+		finder->disconnect("sources_changed", callable_mp(this, &VideoStreamNDI::update_sources_hint));
+	}
+}
 
 void VideoStreamNDI::set_name(const String p_name) {
 	if (p_name.is_empty()) {
@@ -57,8 +70,11 @@ void VideoStreamNDI::set_name(const String p_name) {
 	}
 }
 
-String VideoStreamNDI::get_name() {
-	update_sources_hint();
+String VideoStreamNDI::get_name() const {
+	if (finder && !finder->is_inside_tree()) {
+		finder->_process(0); // Manually tick the finder
+	}
+
 	return String::utf8(name);
 }
 
@@ -83,20 +99,26 @@ NDIlib_recv_bandwidth_e VideoStreamNDI::get_bandwidth() const {
 }
 
 void VideoStreamNDI::update_sources_hint() {
-	if (!Engine::get_singleton()->has_singleton("NDIFinder")) {
-		return;
-	}
-
-	NDIFinder* finder = (NDIFinder *)Engine::get_singleton()->get_singleton("NDIFinder");
 	if (!finder) {
 		return;
 	}
 
-	if (!finder->is_inside_tree()) {
-		finder->_process(0);
+	TypedArray<VideoStreamNDI> sources = finder->get_sources();
+	PackedStringArray source_names;
+
+	for (int64_t i = 0; i < sources.size(); i++)
+	{
+		source_names.push_back(((VideoStreamNDI*)(Object*)sources[i])->get_name());
 	}
 
-	UtilityFunctions::print(finder->get_sources());
+	sources_hint = String(",").join(source_names);
+	UtilityFunctions::print(sources_hint);
+
+	notify_property_list_changed();
+}
+
+void VideoStreamNDI::_get_property_list(godot::List<godot::PropertyInfo> *p_list) {
+	p_list->push_front(PropertyInfo(Variant::STRING, "name", PROPERTY_HINT_ENUM_SUGGESTION, sources_hint));
 }
 
 Ref<VideoStreamPlayback> VideoStreamNDI::_instantiate_playback() {

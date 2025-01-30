@@ -82,29 +82,32 @@ void NDIFinder::process_thread() {
 			find = ndi->find_create_v2(&mtx_find_desc);
 		}
 
-		TypedArray<VideoStreamNDI> new_sources;
-		hasher->start(HashingContext::HASH_SHA256);
-
 		uint32_t num_sources = 0;
 		const NDIlib_source_t *sources_pointer = ndi->find_get_current_sources(find, &num_sources);
+		hasher->start(HashingContext::HASH_SHA256);
 
 		for (int i = 0; i < num_sources; i++) {
-			Ref<VideoStreamNDI> source = memnew(VideoStreamNDI(sources_pointer[i]));
-			hasher->update(source->get_name().to_utf8_buffer());
-			hasher->update(source->get_url().to_utf8_buffer());
-			new_sources.push_back(source);
+			hasher->update(String::utf8(sources_pointer[i].p_ndi_name).to_utf8_buffer());
+			hasher->update(String::utf8(sources_pointer[i].p_url_address).to_utf8_buffer());
 		}
 
 		PackedByteArray current_hash = hasher->finish();
-		if (current_hash != previous_hash) {
-			previous_hash = current_hash;
-
-			mtx->lock();
-			mtx_sources.assign(new_sources);
-			mtx->unlock();
-
-			call_deferred("emit_signal", "sources_changed");
+		if (current_hash == previous_hash) {
+			continue;
 		}
+
+		previous_hash = current_hash;
+
+		TypedArray<VideoStreamNDI> new_sources;
+		for (int i = 0; i < num_sources; i++) {
+			new_sources.push_back(memnew(VideoStreamNDI(sources_pointer[i])));
+		}
+
+		mtx->lock();
+		mtx_sources.assign(new_sources);
+		mtx->unlock();
+
+		call_deferred("emit_signal", "sources_changed");
 	}
 
 	ndi->find_destroy(find);
