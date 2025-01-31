@@ -334,10 +334,16 @@ jobs:
         with:
           name: ${{ env.LIBNAME }}
           path: ${{ env.LIBNAME }}
+
+      - name: Zip Artifact Back Up
+        run: |
+          sudo apt-get install -y zip
+          zip -r ${{ env.LIBNAME }}.zip ${{ env.LIBNAME }}
+          
       - name: Create Release Draft
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: ${{ env.LIBNAME }}/**
+          files: ${{ env.LIBNAME }}.zip
           draft: true
           generate_release_notes: true
