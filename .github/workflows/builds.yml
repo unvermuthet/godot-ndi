@@ -304,11 +304,11 @@ jobs:
         if: ${{ matrix.platform == 'windows' }}
         shell: pwsh
         run: |
-          Remove-Item ${{ github.workspace }}/dist/addons/godot-ndi/bin/windows/* -Include *.exp,*.lib,*.pdb -Force
+          Remove-Item ${{ github.workspace }}/dist/addons/${{ env.LIBNAME }}/bin/windows/* -Include *.exp,*.lib,*.pdb -Force
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: godot-ndi-${{ matrix.platform }}-${{ matrix.arch }}-${{ matrix.float-precision }}-${{ matrix.target-type }}
+          name: ${{ env.LIBNAME }}-${{ matrix.platform }}-${{ matrix.arch }}-${{ matrix.float-precision }}-${{ matrix.target-type }}
           path: |
             ${{ github.workspace }}/dist/**
             !${{ github.workspace }}/dist/addons/godot-ndi/project.godot
@@ -321,13 +321,23 @@ jobs:
       - name: Merge Artifacts
         uses: actions/upload-artifact/merge@v4
         with:
-          name: godot-ndi
-          pattern: godot-ndi-*
+          name: ${{ env.LIBNAME }}
+          pattern: ${{ env.LIBNAME }}-*
           delete-merged: true
+  
+  release:
+    runs-on: ubuntu-20.04
+    needs: merge
+    steps:
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ env.LIBNAME }}
+          path: ${{ env.LIBNAME }}
       - name: Create Release Draft
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: godot-ndi.zip
+          files: ${{ env.LIBNAME }}/**
           draft: true
           generate_release_notes: true
