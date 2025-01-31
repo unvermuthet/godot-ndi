@@ -277,7 +277,7 @@ jobs:
       #    clang-format src/** --dry-run --Werror
 
 # Build
-      - name: 🔗 GDExtension Debug Build
+      - name: 🔗 GDExtension Build
         uses: ./.github/actions/build
         with:
           platform: ${{ matrix.platform }}
@@ -293,7 +293,7 @@ jobs:
           APPLE_CERT_BASE64: ${{ secrets.APPLE_CERT_BASE64 }}
         uses: ./.github/actions/sign
         with:
-          FRAMEWORK_PATH: bin/macos/macos.framework
+          FRAMEWORK_PATH: ${{ github.workspace }}/bin/addons/godot-ndi/macos/macos.framework
           APPLE_CERT_BASE64: ${{ secrets.APPLE_CERT_BASE64 }}
           APPLE_CERT_PASSWORD: ${{ secrets.APPLE_CERT_PASSWORD }}
           APPLE_DEV_PASSWORD: ${{ secrets.APPLE_DEV_PASSWORD }}
@@ -305,7 +305,7 @@ jobs:
         if: ${{ matrix.platform == 'windows' }}
         shell: pwsh
         run: |
-          Remove-Item ${{ github.workspace }}/bin/* -Include *.exp,*.lib,*.pdb,*.a -Force
+          Remove-Item ${{ github.workspace }}/bin/addons/godot-ndi/windows/* -Include *.exp,*.lib,*.pdb -Force
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:

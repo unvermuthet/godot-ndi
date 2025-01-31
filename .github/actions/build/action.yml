@@ -105,7 +105,7 @@ runs:
           ${{ github.workspace }}/${{ inputs.gdextension-directory }}${{ inputs.scons-cache }}
         key: ${{ inputs.platform }}_${{ inputs.arch }}_${{ inputs.float-precision }}_${{ inputs.build-target-type }}_cache
 # Build gdextension
-    - name: Build GDExtension Debug Build
+    - name: Build GDExtension
       shell: sh
       env:
         SCONS_CACHE: ${{ github.workspace }}/${{ inputs.gdextension-directory }}${{ inputs.scons-cache }}
