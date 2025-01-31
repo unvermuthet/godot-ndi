@@ -338,7 +338,8 @@ jobs:
       - name: Zip Artifact Back Up
         run: |
           sudo apt-get install -y zip
-          zip -r ${{ env.LIBNAME }}.zip ${{ env.LIBNAME }}
+          cd ${{ env.LIBNAME }}
+          zip -r ../${{ env.LIBNAME }}.zip .
           
       - name: Create Release Draft
         uses: softprops/action-gh-release@v2
