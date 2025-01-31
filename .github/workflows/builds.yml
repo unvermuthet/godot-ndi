@@ -21,12 +21,6 @@ jobs:
             target-type: template_debug
             os: ubuntu-20.04
 
-          - platform: linux
-            float-precision: single
-            arch: arm64
-            target-type: template_debug
-            os: ubuntu-20.04
-
           # - platform: windows
           #   float-precision: single
           #   arch: x86_32
@@ -85,12 +79,6 @@ jobs:
           - platform: linux
             float-precision: single
             arch: x86_64
-            target-type: template_release
-            os: ubuntu-20.04
-
-          - platform: linux
-            float-precision: single
-            arch: arm64
             target-type: template_release
             os: ubuntu-20.04
 
@@ -338,6 +326,7 @@ jobs:
           delete-merged: true
       - name: Create Release Draft
         uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: godot-ndi.zip
           draft: true
