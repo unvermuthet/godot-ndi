@@ -1,13 +1,12 @@
-# godot-ndi
+# godot-ndi [![Made with Godot](https://img.shields.io/badge/Made%20with-Godot-478CBF?style=flat&logo=godot%20engine&logoColor=white)](https://godotengine.org)
 
-> GDExtension for NDI
+> GDExtension for NDI®
+
+[ NDI® is a registered trademark of Vizrt NDI AB ]
 
 Licensed under MPL 2.0
 
-[![Made with Godot](https://img.shields.io/badge/Made%20with-Godot-478CBF?style=flat&logo=godot%20engine&logoColor=white)](https://godotengine.org)
-
-The extension can **currently only receive video and audio**, because that's all I need. Viewport output as NDI is planned. Extends the [VideoStream](https://docs.godotengine.org/en/stable/classes/class_videostream.html) and [VideoStreamPlayer](https://docs.godotengine.org/en/stable/classes/class_videostreamplayer.html) classes to implement NDI playback.
-
+The extension can **currently only receive video and audio**. Viewport output as NDI is planned. Extends the [VideoStream](https://docs.godotengine.org/en/stable/classes/class_videostream.html) and [VideoStreamPlayer](https://docs.godotengine.org/en/stable/classes/class_videostreamplayer.html) classes to implement NDI playback.
 
 This is early stages. I'm happy to hear suggestions and incorperate improvements. [![Static Badge](https://img.shields.io/badge/unvermuthet-gray?style=flat&logo=discord&logoColor=white&labelColor=%235865F2)](https://discord.com/users/203583245223198722)
 
