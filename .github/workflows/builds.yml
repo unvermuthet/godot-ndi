@@ -330,7 +330,7 @@ jobs:
     needs: merge
     steps:
       - name: Download Build Artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: ${{ env.LIBNAME }}
           path: ${{ env.LIBNAME }}
