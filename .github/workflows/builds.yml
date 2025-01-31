@@ -1,10 +1,9 @@
 name: Build GDExtension
 on:
-  # workflow_call:
-  # push:
+  push:
+    tags:
+      - 'v*'
   workflow_dispatch:
-  # pull_request:
-  # merge_group:
 
 env:
   LIBNAME: godot-ndi
@@ -305,7 +304,7 @@ jobs:
           APPLE_CERT_BASE64: ${{ secrets.APPLE_CERT_BASE64 }}
         uses: ./.github/actions/sign
         with:
-          FRAMEWORK_PATH: ${{ github.workspace }}/bin/addons/godot-ndi/macos/macos.framework
+          FRAMEWORK_PATH: ${{ github.workspace }}/dist/addons/godot-ndi/bin/macos/macos.framework
           APPLE_CERT_BASE64: ${{ secrets.APPLE_CERT_BASE64 }}
           APPLE_CERT_PASSWORD: ${{ secrets.APPLE_CERT_PASSWORD }}
           APPLE_DEV_PASSWORD: ${{ secrets.APPLE_DEV_PASSWORD }}
@@ -317,14 +316,14 @@ jobs:
         if: ${{ matrix.platform == 'windows' }}
         shell: pwsh
         run: |
-          Remove-Item ${{ github.workspace }}/bin/addons/godot-ndi/windows/* -Include *.exp,*.lib,*.pdb -Force
+          Remove-Item ${{ github.workspace }}/dist/addons/godot-ndi/bin/windows/* -Include *.exp,*.lib,*.pdb -Force
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: godot-ndi-${{ matrix.platform }}-${{ matrix.arch }}-${{ matrix.float-precision }}-${{ matrix.target-type }}
           path: |
-            ${{ github.workspace }}/bin/**
-
+            ${{ github.workspace }}/dist/**
+            !${{ github.workspace }}/dist/addons/godot-ndi/project.godot
   # Merges all the build artifacts together into a single godot-cpp-template artifact.
   # If you comment out this step, all the builds will be uploaded individually.
   merge:
@@ -337,3 +336,9 @@ jobs:
           name: godot-ndi
           pattern: godot-ndi-*
           delete-merged: true
+      - name: Create Release Draft
+        uses: softprops/action-gh-release@v2
+        with:
+          files: godot-ndi.zip
+          draft: true
+          generate_release_notes: true

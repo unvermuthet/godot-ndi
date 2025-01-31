@@ -2,9 +2,6 @@
 *.gen.*
 .godot/
 
-# Ignore library files but not the gdextension file
-
-
 # Ignore custom.py
 custom.py
 

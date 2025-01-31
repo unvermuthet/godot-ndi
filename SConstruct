@@ -5,8 +5,7 @@ import sys
 from methods import print_error
 
 libname = "godot-ndi"
-bindir = "bin/addons/godot-ndi"
-demodir = "demo/addons/godot-ndi"
+bindir = "dist/addons/godot-ndi/bin"
 
 localEnv = Environment(tools=["default"], PLATFORM="")
 
@@ -17,8 +16,6 @@ opts = Variables(customs, ARGUMENTS)
 opts.Update(localEnv)
 
 Help(opts.GenerateHelpText(localEnv))
-
-env = localEnv.Clone()
 
 submodule_initialized = False
 if os.path.isdir("godot-cpp"):
@@ -32,6 +29,7 @@ Run the following command to download godot-cpp:
     git submodule update --init --recursive""")
     sys.exit(1)
 
+env = localEnv.Clone()
 env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 
 env.Append(CPPPATH=["src/", "ndi/"])
@@ -57,8 +55,5 @@ if env["platform"] == "macos" or env["platform"] == "ios":
 libraryfile = "{}/{}/{}{}".format(bindir, env["platform"], filepath, file)
 library = env.SharedLibrary(libraryfile, source=sources)
 
-demofile = "{}/{}/{}{}".format(demodir, env["platform"], filepath, file)
-demo = env.InstallAs(demofile, library)
-
-default_args = [library, demo]
+default_args = [library]
 Default(*default_args)
