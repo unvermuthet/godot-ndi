@@ -4,20 +4,6 @@
 
 # Ignore library files but not the gdextension file
 
-bin/android/*
-!bin/android/.gitkeep
-
-bin/ios/*
-!bin/ios/.gitkeep
-
-bin/linux/*
-!bin/linux/.gitkeep
-
-bin/macos/*
-!bin/macos/.gitkeep
-
-bin/windows/*
-!bin/windows/.gitkeep
 
 # Ignore custom.py
 custom.py
@@ -29,6 +15,8 @@ compile_commands.json
 /src/gen
 
 # Binaries
+*.dll
+*.a
 *.o
 *.os
 *.so

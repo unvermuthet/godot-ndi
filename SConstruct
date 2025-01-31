@@ -5,10 +5,8 @@ import sys
 from methods import print_error
 
 libname = "godot-ndi"
-
-# This is nice for development, since this whole folder is .gdignored
-# installdir = "../godot-ndi-bin"
-installdir = False
+bindir = "bin/addons/godot-ndi"
+demodir = "demo/addons/godot-ndi"
 
 localEnv = Environment(tools=["default"], PLATFORM="")
 
@@ -56,16 +54,11 @@ if env["platform"] == "macos" or env["platform"] == "ios":
     filepath = "{}.framework/".format(env["platform"])
     file = "{}.{}.{}".format(libname, env["platform"], env["target"])
 
-libraryfile = "bin/{}/{}{}".format(env["platform"], filepath, file)
-library = env.SharedLibrary(
-    libraryfile,
-    source=sources,
-)
+libraryfile = "{}/{}/{}{}".format(bindir, env["platform"], filepath, file)
+library = env.SharedLibrary(libraryfile, source=sources)
 
-default_args = [library]
+demofile = "{}/{}/{}{}".format(demodir, env["platform"], filepath, file)
+demo = env.InstallAs(demofile, library)
 
-if installdir:
-    copy = env.InstallAs("{}/{}/{}lib{}".format(installdir, env["platform"], filepath, file), library)
-    default_args = [library, copy]
-
+default_args = [library, demo]
 Default(*default_args)

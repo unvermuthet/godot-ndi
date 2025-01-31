@@ -135,13 +135,18 @@ void VideoStreamPlaybackNDI::render_first_frame() {
 	}
 
 	// Fallback resolution
-	texture->set_image(Image::create_empty(100, 100, false, Image::FORMAT_RGBA8));
+	texture->set_image(Image::create_empty(1920, 1080, false, Image::FORMAT_RGBA8));
 	ERR_FAIL_MSG("NDI Source not found at playback start. Will play once found.");
 }
 
 void VideoStreamPlaybackNDI::render_video() {
 	if (img.is_valid()) {
-		texture->set_image(img);
+		if (texture->get_width() == img->get_width() && texture->get_height() == img->get_height()) {
+			texture->update(img);
+		} else {
+			texture->set_image(img);
+			UtilityFunctions::print("resize");
+		}
 	}
 
 	ndi->framesync_capture_video(sync, &video_frame, NDIlib_frame_format_type_progressive);
@@ -149,7 +154,6 @@ void VideoStreamPlaybackNDI::render_video() {
 	if (video_frame.p_data != NULL && (video_frame.FourCC == NDIlib_FourCC_type_RGBA || video_frame.FourCC == NDIlib_FourCC_type_RGBX)) {
 		video_buffer.resize(video_frame.line_stride_in_bytes * video_frame.yres);
 		memcpy(video_buffer.ptrw(), video_frame.p_data, video_buffer.size());
-
 		img = Image::create_from_data(video_frame.xres, video_frame.yres, false, Image::Format::FORMAT_RGBA8, video_buffer);
 	}
 
@@ -174,7 +178,7 @@ void VideoStreamPlaybackNDI::render_audio(double p_delta) {
 			audio_buffer_interleaved.set(i, audio_buffer_planar[stride_index + stride_offset]);
 		}
 
-		int processed_samples = Math::min(audio_frame.no_samples, 4096); // FIXME: dont hardcode this
+		int processed_samples = Math::min(audio_frame.no_samples, 8192); // FIXME: dont hardcode this
 		int skipped_samples = audio_frame.no_samples - processed_samples;
 
 		// Skip the older samples by playing the last ones in the array

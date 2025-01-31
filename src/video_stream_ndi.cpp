@@ -19,15 +19,15 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 // Read more in ndi/Processing.NDI.structs.h at line 182
 
 void VideoStreamNDI::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("set_name", "name"), &VideoStreamNDI::set_name);
+	ClassDB::bind_method(D_METHOD("set_name", "p_name"), &VideoStreamNDI::set_name);
 	ClassDB::bind_method(D_METHOD("get_name"), &VideoStreamNDI::get_name);
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "name"), "set_name", "get_name");
 
-	// ClassDB::bind_method(D_METHOD("set_url", "url"), &VideoStreamNDI::set_url);
+	ClassDB::bind_method(D_METHOD("set_url", "p_url"), &VideoStreamNDI::set_url);
 	ClassDB::bind_method(D_METHOD("get_url"), &VideoStreamNDI::get_url);
-	// ADD_PROPERTY(PropertyInfo(Variant::STRING, "url", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_RESOURCE_NOT_PERSISTENT), "set_url", "get_url");
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "url", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE), "set_url", "get_url");
 
-	ClassDB::bind_method(D_METHOD("set_bandwidth", "bandwidth"), &VideoStreamNDI::set_bandwidth);
+	ClassDB::bind_method(D_METHOD("set_bandwidth", "p_bandwidth"), &VideoStreamNDI::set_bandwidth);
 	ClassDB::bind_method(D_METHOD("get_bandwidth"), &VideoStreamNDI::get_bandwidth);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "bandwidth", PROPERTY_HINT_ENUM, "Metadata only:-10,Audio only:10,Lowest:0,Highest:100"), "set_bandwidth", "get_bandwidth");
 
