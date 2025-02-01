@@ -67,9 +67,9 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 	ERR_FAIL_COND_EDMSG(!ndi->initialize(), "NDI isn't supported");
 
 	GDREGISTER_CLASS(NDIFinder);
-	// GDREGISTER_CLASS(NDIOutput);
 	GDREGISTER_CLASS(VideoStreamNDI);
 	GDREGISTER_CLASS(VideoStreamPlaybackNDI);
+	GDREGISTER_CLASS(NDIOutput);
 
 	if (!Engine::get_singleton()->has_singleton("NDIFinder")) {
 		Engine::get_singleton()->register_singleton("NDIFinder", memnew(NDIFinder));

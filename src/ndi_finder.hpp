@@ -21,9 +21,9 @@ class NDIFinder : public Node {
 	Ref<Semaphore> sem;
 
 	TypedArray<VideoStreamNDI> mtx_sources;
-	NDIlib_find_create_t mtx_find_desc;
 	bool mtx_exit_thread = false;
 	bool mtx_rebuild_find = false;
+	NDIlib_find_create_t mtx_find_desc;
 
 	CharString groups;
 	CharString extra_ips;

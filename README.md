@@ -32,13 +32,15 @@ func sources_changed():
 
 ```
 
-## Download
+## Install
 
-Check under `Releases` or get Build Artifacts under `Actions`. Install by extracting the zip anywhere is your Godot project. The NDI Runtime is also required.
+Download the latest version under `Releases`. Install by extracting the ZIP file anywhere in your Godot project. The NDI Runtime is also required.
 
 - [NDI Runtime for Windows](http://ndi.link/NDIRedistV6)
 - [NDI Runtime for MacOS](http://ndi.link/NDIRedistV6Apple)
 - [NDI Runtime for Linux](https://github.com/DistroAV/DistroAV/wiki/1.-Installation#linux) (Doesn't work with flatpak editor since that's sandboxed)
+
+Your application needs to comply with the [NDI SDK license](http://ndi.link/ndisdk_license).
 
 ## Building from source
 

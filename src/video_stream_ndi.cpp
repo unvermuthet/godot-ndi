@@ -8,8 +8,6 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
 #include "includes.hpp"
-#include "video_stream_ndi.hpp"
-// #include "video_stream_ndi.hpp"
 
 // The only persistent parts of this resource are the name and bandwidth fields.
 // I've decided to not expose/bind the url field of the NDI_source_t struct.
@@ -25,7 +23,7 @@ void VideoStreamNDI::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("set_url", "p_url"), &VideoStreamNDI::set_url);
 	ClassDB::bind_method(D_METHOD("get_url"), &VideoStreamNDI::get_url);
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "url", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE), "set_url", "get_url");
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "url", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_RESOURCE_NOT_PERSISTENT), "set_url", "get_url");
 
 	ClassDB::bind_method(D_METHOD("set_bandwidth", "p_bandwidth"), &VideoStreamNDI::set_bandwidth);
 	ClassDB::bind_method(D_METHOD("get_bandwidth"), &VideoStreamNDI::get_bandwidth);

@@ -41,7 +41,6 @@ class VideoStreamNDI : public VideoStream {
 
 		NDIFinder* finder;
 		String available_sources_hint;
-		String get_available_sources() const;
 		void update_available_sources_hint();
 
 };
