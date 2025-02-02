@@ -21,6 +21,7 @@ class NDIOutput : public Node {
 		~NDIOutput();
 
 		void _enter_tree() override;
+		void _exit_tree() override;
 		void _process(double p_delta) override;
 
 		void set_name(const String p_name);
@@ -33,7 +34,7 @@ class NDIOutput : public Node {
 		static void _bind_methods();
 
 	private:
-		Viewport* vp;
+		Ref<Image> mtx_img;
 
 		Ref<Thread> thr;
 		Ref<Mutex> mtx;

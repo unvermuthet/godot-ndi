@@ -7,12 +7,23 @@ NDIOutput::NDIOutput() {
 	thr.instantiate();
 	mtx.instantiate();
 	sem.instantiate();
-
-
-	thr->start(callable_mp(this, &NDIOutput::process_thread));
 }
 
 NDIOutput::~NDIOutput() {
+	thr.unref();
+	mtx.unref();
+	sem.unref();
+}
+
+void NDIOutput::_enter_tree() {
+	thr->start(callable_mp(this, &NDIOutput::process_thread));
+
+	mtx->lock();
+	mtx_rebuild_send = true;
+	mtx->unlock();
+}
+
+void NDIOutput::_exit_tree() {
 	mtx->lock();
 	mtx_exit_thread = true;
 	mtx->unlock();
@@ -22,17 +33,16 @@ NDIOutput::~NDIOutput() {
 	if (thr.is_valid() && thr->is_alive()) {
 		thr->wait_to_finish();
 	}
-
-	thr.unref();
-	mtx.unref();
-	sem.unref();
-}
-
-void NDIOutput::_enter_tree() {
-	vp = get_viewport();
 }
 
 void NDIOutput::_process(double p_delta) {
+	if (Engine::get_singleton()->is_editor_hint()) {
+		return;
+	}
+
+	mtx->lock();
+	mtx_img = get_viewport()->get_texture()->get_image();
+	mtx->unlock();
 	sem->post();
 }
 
@@ -94,7 +104,10 @@ void NDIOutput::process_thread() {
 		if (!name.is_empty()) {
 			send_desc.p_ndi_name = name.utf8();
 			send = ndi->send_create(&send_desc);
+			UtilityFunctions::print("rebuilt ", name);
+
 		}
+
 
 		mtx->lock();
 		rebuild_send = false;
@@ -105,50 +118,47 @@ void NDIOutput::process_thread() {
 		while (!exit_thread && !rebuild_send) {
 			sem->wait();
 
-			mtx->lock(); // Update loop conditions
+			Ref<Image> img = Ref(memnew(Image));
+
+			mtx->lock();
 			exit_thread = mtx_exit_thread;
 			rebuild_send = mtx_rebuild_send;
+			if (mtx_img.is_valid()) {
+				img->copy_from(mtx_img);
+			}
 			mtx->unlock();
 
-			// Check if send is valid
 			if (send == NULL) {
+				UtilityFunctions::print("send null");
+				img.unref();
 				continue;
 			}
 
-			// if (vp == NULL) {
-			// 	UtilityFunctions::print("vp null");
-			// 	continue;
-			// }
+			if (img.is_null()) {
+				UtilityFunctions::print("img null");
+				img.unref();
+				continue;
+			}
 
-			// Ref<ViewportTexture> tex = vp->get_texture();
-			// if (tex.is_null()) {
-			// 	UtilityFunctions::print("tex null");
-			// 	continue;
-			// }
+			if (img->is_empty()) {
+				UtilityFunctions::print("img empty");
+				img.unref();
+				continue;
+			}
 
-			// Ref<Image> img = tex->get_image();
-			// if (img.is_null()) {
-			// 	UtilityFunctions::print("img null");
-			// 	continue;
-			// }
+			img->convert(Image::FORMAT_RGBA8);
 
-			// NDIlib_video_frame_v2_t video_frame = {};
-			// video_frame.xres = img->get_width();
-			// video_frame.yres = img->get_height();
-			// video_frame.FourCC = NDIlib_FourCC_type_RGBA;
-			// video_frame.frame_rate_N = Engine::get_singleton()->get_frames_per_second();
-			// video_frame.frame_rate_D = 1;
-			// video_frame.frame_format_type = NDIlib_frame_format_type_progressive;
+			NDIlib_video_frame_v2_t video_frame = {};
+			video_frame.xres = img->get_width();
+			video_frame.yres = img->get_height();
+			video_frame.FourCC = NDIlib_FourCC_type_RGBA;
+			video_frame.frame_rate_N = (int)Engine::get_singleton()->get_frames_per_second();
+			video_frame.frame_rate_D = 1;
+			video_frame.p_data = (uint8_t *)img->get_data().ptr();
+			video_frame.line_stride_in_bytes = img->get_width() * 4;
 
-			// switch (img->get_format()) {
-			// 	case Image::FORMAT_RGBA8:
-			// 		video_frame.p_data = img->get_data().ptrw();
-			// 		UtilityFunctions::print("sneed");
-			// 		break;
-
-			// 	default:
-			// 		continue;
-			// }
+			ndi->send_send_video_v2(send, &video_frame);
+			img.unref();
 		}
 
 		if (send != NULL) {
