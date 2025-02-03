@@ -20,10 +20,6 @@ class NDIOutput : public Node {
 		NDIOutput();
 		~NDIOutput();
 
-		void _enter_tree() override;
-		void _exit_tree() override;
-		void _process(double p_delta) override;
-
 		void set_name(const String p_name);
 		String get_name() const;
 
@@ -32,19 +28,20 @@ class NDIOutput : public Node {
 
 	protected:
 		static void _bind_methods();
+		void _notification(int what);
 
 	private:
-		Ref<Image> mtx_img;
+		NDIlib_send_instance_t send;
+		bool sending = false;
 
-		Ref<Thread> thr;
-		Ref<Mutex> mtx;
-		Ref<Semaphore> sem;
+		void create_sender();
+		void destroy_sender();
+		void send_video(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format = Ref<RDTextureFormat>());
 
-		bool mtx_exit_thread = false;
-		bool mtx_rebuild_send = false;
+		RenderingServer* rs;
+		RenderingDevice* rd;
 
-		String mtx_name;
-		PackedStringArray mtx_groups;
+		String name;
+		PackedStringArray groups;
 
-		void process_thread();
 };
