@@ -16,6 +16,8 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/os.hpp>
+#include <godot_cpp/classes/rendering_server.hpp>
+#include <godot_cpp/classes/rd_texture_format.hpp>
 #include <godot_cpp/classes/project_settings.hpp>
 #include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/classes/thread.hpp>

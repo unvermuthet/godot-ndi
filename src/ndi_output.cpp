@@ -1,76 +1,28 @@
 #include "ndi_output.hpp"
 
 NDIOutput::NDIOutput() {
-	mtx_exit_thread = false;
-	mtx_rebuild_send = false;
-
-	thr.instantiate();
-	mtx.instantiate();
-	sem.instantiate();
+	rs = RenderingServer::get_singleton();
+	rd = rs->get_rendering_device();
 }
 
 NDIOutput::~NDIOutput() {
-	thr.unref();
-	mtx.unref();
-	sem.unref();
-}
-
-void NDIOutput::_enter_tree() {
-	thr->start(callable_mp(this, &NDIOutput::process_thread));
-
-	mtx->lock();
-	mtx_rebuild_send = true;
-	mtx->unlock();
-}
-
-void NDIOutput::_exit_tree() {
-	mtx->lock();
-	mtx_exit_thread = true;
-	mtx->unlock();
-
-	sem->post();
-
-	if (thr.is_valid() && thr->is_alive()) {
-		thr->wait_to_finish();
-	}
-}
-
-void NDIOutput::_process(double p_delta) {
-	if (Engine::get_singleton()->is_editor_hint()) {
-		return;
-	}
-
-	mtx->lock();
-	mtx_img = get_viewport()->get_texture()->get_image();
-	mtx->unlock();
-	sem->post();
 }
 
 void NDIOutput::set_name(const String p_name) {
-	mtx->lock();
-	mtx_name = p_name;
-	mtx_rebuild_send = true;
-	mtx->unlock();
+	name = p_name;
+	create_sender();
 }
 
 String NDIOutput::get_name() const {
-	mtx->lock();
-	String name = mtx_name;
-	mtx->unlock();
 	return name;
 }
 
 void NDIOutput::set_groups(const PackedStringArray p_groups) {
-	mtx->lock();
-	mtx_groups = p_groups;
-	mtx_rebuild_send = true;
-	mtx->unlock();
+	groups = p_groups;
+	create_sender();
 }
 
 PackedStringArray NDIOutput::get_groups() const {
-	mtx->lock();
-	PackedStringArray groups = mtx_groups;
-	mtx->unlock();
 	return groups;
 }
 
@@ -84,85 +36,78 @@ void NDIOutput::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "groups"), "set_groups", "get_groups");
 }
 
-void NDIOutput::process_thread() {
-	bool exit_thread = false;
-	bool rebuild_send = false;
+void NDIOutput::_notification(int p_what) {
+	switch (p_what) {
+		case Node::NOTIFICATION_ENTER_TREE: {
+			create_sender();
+			set_process_internal(true);
+		} break;
 
-	while (!exit_thread) {
-		NDIlib_send_instance_t send = NULL;
+		case Node::NOTIFICATION_EXIT_TREE: {
+			set_process_internal(false);
+			destroy_sender();
+		} break;
 
-		NDIlib_send_create_t send_desc = {};
-		send_desc.clock_video = true;
-		send_desc.clock_audio = false;
-
-		PackedStringArray groups = get_groups();
-		if (!groups.is_empty()) {
-			send_desc.p_groups = String(",").join(groups).utf8();
-		}
-
-		String name = get_name();
-		if (!name.is_empty()) {
-			send_desc.p_ndi_name = name.utf8();
-			send = ndi->send_create(&send_desc);
-			UtilityFunctions::print("rebuilt ", name);
-
-		}
-
-
-		mtx->lock();
-		rebuild_send = false;
-		mtx_rebuild_send = false;
-		mtx->unlock();
-
-		// Sending loop
-		while (!exit_thread && !rebuild_send) {
-			sem->wait();
-
-			Ref<Image> img = Ref(memnew(Image));
-
-			mtx->lock();
-			exit_thread = mtx_exit_thread;
-			rebuild_send = mtx_rebuild_send;
-			if (mtx_img.is_valid()) {
-				img->copy_from(mtx_img);
-			}
-			mtx->unlock();
-
-			if (send == NULL) {
-				UtilityFunctions::print("send null");
-				img.unref();
-				continue;
+		case Node::NOTIFICATION_INTERNAL_PROCESS: {
+			if (!is_inside_tree() || !get_viewport() || !sending) {
+				break;
 			}
 
-			if (img.is_null()) {
-				UtilityFunctions::print("img null");
-				img.unref();
-				continue;
-			}
-
-			if (img->is_empty()) {
-				UtilityFunctions::print("img empty");
-				img.unref();
-				continue;
-			}
-
-			img->convert(Image::FORMAT_RGBA8);
-
-			NDIlib_video_frame_v2_t video_frame = {};
-			video_frame.xres = img->get_width();
-			video_frame.yres = img->get_height();
-			video_frame.FourCC = NDIlib_FourCC_type_RGBA;
-			video_frame.frame_rate_N = (int)Engine::get_singleton()->get_frames_per_second();
-			video_frame.frame_rate_D = 1;
-			video_frame.p_data = (uint8_t *)img->get_data().ptr();
-			video_frame.line_stride_in_bytes = img->get_width() * 4;
-
-			ndi->send_send_video_v2(send, &video_frame);
-			img.unref();
-		}
-
-		if (send != NULL) {
-			ndi->send_destroy(send);
-		}
+			RID rd_texture_rid = rs->texture_get_rd_texture(get_viewport()->get_texture()->get_rid());
+			Ref<RDTextureFormat> texture_format = rd->texture_get_format(rd_texture_rid);
+			rd->texture_get_data_async(rd_texture_rid, 0, callable_mp(this, &NDIOutput::send_video).bind(texture_format));
+		} break;
 	}
+}
+
+void NDIOutput::create_sender() {
+	destroy_sender();
+
+	if (get_name().is_empty()) {
+		return;
+	}
+
+	NDIlib_send_create_t send_desc = {};
+	send_desc.clock_video = true;
+	send_desc.clock_audio = false;
+
+	if (Engine::get_singleton()->is_editor_hint()) {
+		send_desc.p_ndi_name = (get_name() + " Preview").utf8();
+	} else {
+		send_desc.p_ndi_name = get_name().utf8();
+	}
+
+	if (!get_groups().is_empty()) {
+		send_desc.p_groups = String(",").join(groups).utf8();
+	}
+
+	send = ndi->send_create(&send_desc);
+	sending = true;
+}
+
+void NDIOutput::destroy_sender() {
+	if (sending) {
+		ndi->send_destroy(send);
+		sending = false;
+	}
+}
+
+void NDIOutput::send_video(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format) {
+	ERR_FAIL_COND_MSG(!sending, "Send not configured");
+	ERR_FAIL_COND_MSG(p_format.is_null(), "Format is null");
+	ERR_FAIL_COND_MSG(p_format->get_format() != RenderingDevice::DATA_FORMAT_R8G8B8A8_UNORM, "Format is not R8G8B8A8_UNORM");
+	ERR_FAIL_COND_MSG(p_data.size() != p_format->get_width() * p_format->get_height() * 4, "Frame size doesn't match");
+
+	UtilityFunctions::print(p_format->get_width() * p_format->get_height() * 4);
+
+	NDIlib_video_frame_v2_t video_frame = {};
+	video_frame.xres = p_format->get_width();
+	video_frame.yres = p_format->get_height();
+	video_frame.FourCC = NDIlib_FourCC_type_RGBA;
+	// video_frame.frame_rate_N = (int)Engine::get_singleton()->get_frames_per_second();
+	// video_frame.frame_rate_D = 1;
+	video_frame.p_data = (uint8_t *)p_data.ptr();
+	video_frame.line_stride_in_bytes = p_format->get_width() * 4;
+	ndi->send_send_video_async_v2(send, &video_frame);
+
 }
