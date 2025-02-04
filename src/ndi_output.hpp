@@ -31,17 +31,28 @@ class NDIOutput : public Node {
 		void _notification(int what);
 
 	private:
-		NDIlib_send_instance_t send;
-		bool sending = false;
-
-		void create_sender();
-		void destroy_sender();
-		void send_video(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format = Ref<RDTextureFormat>());
-
-		RenderingServer* rs;
-		RenderingDevice* rd;
+		Ref<Thread> thr;
+		Ref<Semaphore> sem;
+		bool mtx_exit_thread = false;
 
 		String name;
 		PackedStringArray groups;
 
+		Ref<Mutex> mtx_send;
+		NDIlib_send_instance_t mtx_send_instance;
+		bool mtx_sending = false;
+
+		void create_sender();
+		void destroy_sender();
+
+		RenderingServer* rs;
+		RenderingDevice* rd;
+
+		Ref<Mutex> mtx_texture;
+		PackedByteArray mtx_texture_data;
+		Ref<RDTextureFormat> mtx_texture_format;
+
+		void request_texture();
+		void receive_texture(PackedByteArray p_data, const Ref<RDTextureFormat> & p_format);
+		void send_video_thread();
 };

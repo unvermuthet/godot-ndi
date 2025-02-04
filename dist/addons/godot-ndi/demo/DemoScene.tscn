@@ -1,7 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://ddr3hiaft61tl"]
+[gd_scene load_steps=3 format=3 uid="uid://ddr3hiaft61tl"]
 
-[sub_resource type="VideoStreamNDI" id="VideoStreamNDI_b2v5y"]
-name = "DESKTOP-95S84I5 (GodotSource)"
+[ext_resource type="VideoStream" uid="uid://r1t8nkpoyq1o" path="res://demo/Big_Buck_Bunny_first_23_seconds_1080p.ogv" id="1_h7vc7"]
+[ext_resource type="Script" uid="uid://bi1f4i2ur1n3u" path="res://demo/video_stream_player.gd" id="2_1vj5h"]
 
 [node name="DemoScene" type="Control"]
 layout_mode = 3
@@ -18,9 +18,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-stream = SubResource("VideoStreamNDI_b2v5y")
+stream = ExtResource("1_h7vc7")
 autoplay = true
 expand = true
+script = ExtResource("2_1vj5h")
 
 [node name="NDIOutput" type="NDIOutput" parent="."]
-name = "GodotSource"
+name = "GodotNDI"
