@@ -2,7 +2,7 @@
 
 [ext_resource type="VideoStream" uid="uid://r1t8nkpoyq1o" path="res://demo/Big_Buck_Bunny_first_23_seconds_1080p.ogv" id="1_h7vc7"]
 
-[node name="DemoScene" type="Control"]
+[node name="Output" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

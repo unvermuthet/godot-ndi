@@ -8,6 +8,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
 #include "includes.hpp"
+#include "video_stream_ndi.hpp"
 
 // The only persistent parts of this resource are the name and bandwidth fields.
 // I've decided to not expose/bind the url field of the NDI_source_t struct.
@@ -19,7 +20,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 void VideoStreamNDI::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_name", "p_name"), &VideoStreamNDI::set_name);
 	ClassDB::bind_method(D_METHOD("get_name"), &VideoStreamNDI::get_name);
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "name"), "set_name", "get_name");
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "name", PROPERTY_HINT_ENUM_SUGGESTION), "set_name", "get_name");
 
 	ClassDB::bind_method(D_METHOD("set_url", "p_url"), &VideoStreamNDI::set_url);
 	ClassDB::bind_method(D_METHOD("get_url"), &VideoStreamNDI::get_url);
@@ -33,6 +34,12 @@ void VideoStreamNDI::_bind_methods() {
 	BIND_ENUM_CONSTANT(NDIlib_recv_bandwidth_audio_only);
 	BIND_ENUM_CONSTANT(NDIlib_recv_bandwidth_lowest);
 	BIND_ENUM_CONSTANT(NDIlib_recv_bandwidth_highest);
+}
+
+void VideoStreamNDI::_validate_property(PropertyInfo &p_property) {
+	if (p_property.name == StringName("name")) {
+		p_property.hint_string = available_sources_hint;
+	}
 }
 
 VideoStreamNDI::VideoStreamNDI() {
@@ -87,6 +94,10 @@ void VideoStreamNDI::set_name(const String p_name) {
 }
 
 String VideoStreamNDI::get_name() const {
+	if (finder && !finder->is_inside_tree()) {
+		finder->_process(0); // Manually tick the finder
+	}
+
 	return String::utf8(name);
 }
 
@@ -108,32 +119,6 @@ void VideoStreamNDI::set_bandwidth(const NDIlib_recv_bandwidth_e p_bandwidth) {
 
 NDIlib_recv_bandwidth_e VideoStreamNDI::get_bandwidth() const {
 	return bandwidth;
-}
-
-void VideoStreamNDI::_get_property_list(godot::List<godot::PropertyInfo> *p_list) {
-	p_list->push_back(PropertyInfo(Variant::STRING, "available_sources", PROPERTY_HINT_ENUM_SUGGESTION, available_sources_hint));
-}
-
-bool VideoStreamNDI::_set(const StringName &p_name, const Variant &p_property) {
-	if (String(p_name) == "available_sources") {
-		set_name(p_property);
-		return true;
-	}
-
-	return false;
-}
-
-bool VideoStreamNDI::_get(const StringName &p_name, Variant &r_ret) {
-	if (finder && !finder->is_inside_tree()) { // Could be replaced with Engine::get_singleton()->is_editor_hint()
-		finder->_process(0); // Manually tick the finder
-	}
-
-	if (String(p_name) == "available_sources") {
-		r_ret = String("");
-		return true;
-	}
-
-	return false;
 }
 
 void VideoStreamNDI::update_available_sources_hint() {

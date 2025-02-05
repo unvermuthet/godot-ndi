@@ -30,9 +30,7 @@ class VideoStreamNDI : public VideoStream {
 
 	protected:
 		static void _bind_methods();
-		void _get_property_list(List<PropertyInfo> *p_list);
-		bool _set(const StringName &p_name, const Variant &p_property);
-		bool _get(const StringName &p_name, Variant &r_ret);
+		void _validate_property(PropertyInfo & p_property);
 
 	private:
 		CharString name;
