@@ -17,30 +17,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 // The SDK will spin up a find instance itself and obtain the url that way.
 // Read more in ndi/Processing.NDI.structs.h at line 182
 
-void VideoStreamNDI::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("set_name", "p_name"), &VideoStreamNDI::set_name);
-	ClassDB::bind_method(D_METHOD("get_name"), &VideoStreamNDI::get_name);
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "name", PROPERTY_HINT_ENUM_SUGGESTION), "set_name", "get_name");
 
-	ClassDB::bind_method(D_METHOD("set_url", "p_url"), &VideoStreamNDI::set_url);
-	ClassDB::bind_method(D_METHOD("get_url"), &VideoStreamNDI::get_url);
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "url", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_RESOURCE_NOT_PERSISTENT), "set_url", "get_url");
-
-	ClassDB::bind_method(D_METHOD("set_bandwidth", "p_bandwidth"), &VideoStreamNDI::set_bandwidth);
-	ClassDB::bind_method(D_METHOD("get_bandwidth"), &VideoStreamNDI::get_bandwidth);
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "bandwidth", PROPERTY_HINT_ENUM, "Metadata only:-10,Audio only:10,Lowest:0,Highest:100"), "set_bandwidth", "get_bandwidth");
-
-	BIND_ENUM_CONSTANT(NDIlib_recv_bandwidth_metadata_only);
-	BIND_ENUM_CONSTANT(NDIlib_recv_bandwidth_audio_only);
-	BIND_ENUM_CONSTANT(NDIlib_recv_bandwidth_lowest);
-	BIND_ENUM_CONSTANT(NDIlib_recv_bandwidth_highest);
-}
-
-void VideoStreamNDI::_validate_property(PropertyInfo &p_property) {
-	if (p_property.name == StringName("name")) {
-		p_property.hint_string = available_sources_hint;
-	}
-}
 
 VideoStreamNDI::VideoStreamNDI() {
 	name = NULL;
@@ -118,6 +95,48 @@ NDIlib_recv_bandwidth_e VideoStreamNDI::get_bandwidth() const {
 	return bandwidth;
 }
 
+Ref<VideoStreamPlayback> VideoStreamNDI::_instantiate_playback() {
+	NDIlib_source_t source;
+	source.p_ndi_name = name;
+	source.p_url_address = url;
+
+	NDIlib_recv_create_v3_t recv_desc;
+	recv_desc.source_to_connect_to = source;
+	recv_desc.color_format = NDIlib_recv_color_format_RGBX_RGBA;
+	recv_desc.bandwidth = bandwidth;
+	recv_desc.allow_video_fields = false;
+	recv_desc.p_ndi_recv_name = NULL;
+
+	Ref<VideoStreamPlaybackNDI> p = memnew(VideoStreamPlaybackNDI);
+	p->recv_desc = recv_desc;
+	return p;
+}
+
+void VideoStreamNDI::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("set_name", "p_name"), &VideoStreamNDI::set_name);
+	ClassDB::bind_method(D_METHOD("get_name"), &VideoStreamNDI::get_name);
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "name", PROPERTY_HINT_ENUM_SUGGESTION), "set_name", "get_name");
+
+	ClassDB::bind_method(D_METHOD("set_url", "p_url"), &VideoStreamNDI::set_url);
+	ClassDB::bind_method(D_METHOD("get_url"), &VideoStreamNDI::get_url);
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "url", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_RESOURCE_NOT_PERSISTENT), "set_url", "get_url");
+
+	ClassDB::bind_method(D_METHOD("set_bandwidth", "p_bandwidth"), &VideoStreamNDI::set_bandwidth);
+	ClassDB::bind_method(D_METHOD("get_bandwidth"), &VideoStreamNDI::get_bandwidth);
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "bandwidth", PROPERTY_HINT_ENUM, "Metadata only:-10,Audio only:10,Lowest:0,Highest:100"), "set_bandwidth", "get_bandwidth");
+
+	BIND_ENUM_CONSTANT(NDIlib_recv_bandwidth_metadata_only);
+	BIND_ENUM_CONSTANT(NDIlib_recv_bandwidth_audio_only);
+	BIND_ENUM_CONSTANT(NDIlib_recv_bandwidth_lowest);
+	BIND_ENUM_CONSTANT(NDIlib_recv_bandwidth_highest);
+}
+
+void VideoStreamNDI::_validate_property(PropertyInfo &p_property) {
+	if (p_property.name == StringName("name")) {
+		p_property.hint_string = available_sources_hint;
+	}
+}
+
 void VideoStreamNDI::update_available_sources_hint() {
 	if (!finder) {
 		return;
@@ -135,19 +154,3 @@ void VideoStreamNDI::update_available_sources_hint() {
 	notify_property_list_changed();
 }
 
-Ref<VideoStreamPlayback> VideoStreamNDI::_instantiate_playback() {
-	NDIlib_source_t source;
-	source.p_ndi_name = name;
-	source.p_url_address = url;
-
-	NDIlib_recv_create_v3_t recv_desc;
-	recv_desc.source_to_connect_to = source;
-	recv_desc.color_format = NDIlib_recv_color_format_RGBX_RGBA;
-	recv_desc.bandwidth = bandwidth;
-	recv_desc.allow_video_fields = false;
-	recv_desc.p_ndi_recv_name = NULL;
-
-	Ref<VideoStreamPlaybackNDI> p = memnew(VideoStreamPlaybackNDI);
-	p->recv_desc = recv_desc;
-	return p;
-}

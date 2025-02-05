@@ -20,12 +20,16 @@ class VideoStreamNDI : public VideoStream {
 		VideoStreamNDI();
 		VideoStreamNDI(const NDIlib_source_t p_source);
 		~VideoStreamNDI();
+
 		void set_name(const String p_name);
 		String get_name() const;
+
 		void set_url(const String p_url);
 		String get_url() const;
+
 		void set_bandwidth(const NDIlib_recv_bandwidth_e p_bandwidth);
 		NDIlib_recv_bandwidth_e get_bandwidth() const;
+		
 		Ref<VideoStreamPlayback> _instantiate_playback() override;
 
 	protected:
