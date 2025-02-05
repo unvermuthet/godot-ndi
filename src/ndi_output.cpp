@@ -1,18 +1,23 @@
-#include "ndi_output.hpp"
+#include "includes.hpp"
 
 NDIOutput::NDIOutput() {
-	rs = RenderingServer::get_singleton();
-	rd = rs->get_rendering_device();
-
 	thr.instantiate();
 	mtx_send.instantiate();
 	mtx_texture.instantiate();
 	sem.instantiate();
 
+	if (Engine::get_singleton()->has_singleton("ViewportTextureRouter")) {
+		((ViewportTextureRouter *)Engine::get_singleton()->get_singleton("ViewportTextureRouter"))->connect("texture_arrived", callable_mp(this, &NDIOutput::receive_texture));
+	}
+
 	thr->start(callable_mp(this, &NDIOutput::send_video_thread));
 }
 
 NDIOutput::~NDIOutput() {
+	if (Engine::get_singleton()->has_singleton("ViewportTextureRouter")) {
+		((ViewportTextureRouter *)Engine::get_singleton()->get_singleton("ViewportTextureRouter"))->disconnect("texture_arrived", callable_mp(this, &NDIOutput::receive_texture));
+	}
+
 	mtx_exit_thread = true;
 	sem->post();
 
@@ -62,20 +67,18 @@ void NDIOutput::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_groups"), &NDIOutput::get_groups);
 	ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "groups"), "set_groups", "get_groups");
 
-	// ClassDB::bind_method(D_METHOD("set_preview", "p_state"), &NDIOutput::set_preview);
-	// ClassDB::bind_method(D_METHOD("get_preview"), &NDIOutput::get_preview);
-	// ADD_PROPERTY(PropertyInfo(Variant::BOOL, "preview"), "set_preview", "get_preview");
+	ClassDB::bind_method(D_METHOD("set_preview", "p_state"), &NDIOutput::set_preview);
+	ClassDB::bind_method(D_METHOD("get_preview"), &NDIOutput::get_preview);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "preview"), "set_preview", "get_preview");
 }
 
 void NDIOutput::_notification(int p_what) {
 	switch (p_what) {
 		case Node::NOTIFICATION_ENTER_TREE: {
 			create_sender();
-			rs->connect("frame_post_draw", callable_mp(this, &NDIOutput::request_texture));
 		} break;
 
 		case Node::NOTIFICATION_EXIT_TREE: {
-			rs->disconnect("frame_post_draw", callable_mp(this, &NDIOutput::request_texture));
 			destroy_sender();
 		} break;
 	}
@@ -110,10 +113,14 @@ void NDIOutput::create_sender() {
 	mtx_send_instance = ndi->send_create(&send_desc);
 	mtx_sending = true;
 	mtx_send->unlock();
+
+	RenderingServer::get_singleton()->connect("frame_post_draw", callable_mp(this, &NDIOutput::request_texture));
 }
 
 void NDIOutput::destroy_sender() {
 	if (mtx_sending) {
+		RenderingServer::get_singleton()->disconnect("frame_post_draw", callable_mp(this, &NDIOutput::request_texture));
+
 		mtx_send->lock();
 		mtx_sending = false;
 		ndi->send_destroy(mtx_send_instance);
@@ -130,12 +137,16 @@ void NDIOutput::request_texture() {
 		return;
 	}
 
-	RID rd_texture_rid = rs->texture_get_rd_texture(get_viewport()->get_texture()->get_rid());
-	Ref<RDTextureFormat> texture_format = rd->texture_get_format(rd_texture_rid);
-	rd->texture_get_data_async(rd_texture_rid, 0, callable_mp(this, &NDIOutput::receive_texture).bind(texture_format));
+	if (Engine::get_singleton()->has_singleton("ViewportTextureRouter")) {
+		((ViewportTextureRouter *)Engine::get_singleton()->get_singleton("ViewportTextureRouter"))->request_texture(get_viewport());
+	}
 }
 
-void NDIOutput::receive_texture(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format) {
+void NDIOutput::receive_texture(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format, Viewport *viewport) {
+	if (viewport != get_viewport()) {
+		return; // Not my request
+	}
+
 	mtx_texture->lock();
 	mtx_texture_data = p_data;
 	mtx_texture_format = p_format;
@@ -159,7 +170,7 @@ void NDIOutput::send_video_thread() {
 		texture_buffer = mtx_texture_data;
 		texture_format = mtx_texture_format;
 		mtx_texture->unlock();
-		
+
 		ERR_CONTINUE_MSG(texture_format.is_null() || texture_buffer.is_empty(), "Viewport texture invalid");
 		ERR_CONTINUE_MSG(texture_format->get_format() != RenderingDevice::DATA_FORMAT_R8G8B8A8_UNORM, "Viewport texture format isn't DATA_FORMAT_R8G8B8A8_UNORM");
 		ERR_CONTINUE_MSG(texture_format->get_width() * texture_format->get_height() * 4 != texture_buffer.size(), "Unexpected texture size");

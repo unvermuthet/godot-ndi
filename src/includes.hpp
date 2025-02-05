@@ -48,8 +48,10 @@ class NDIFinder;
 class VideoStreamNDI;
 class VideoStreamPlaybackNDI;
 class NDIOutput;
+class ViewportTextureRouter;
 
 #include "ndi_finder.hpp"
 #include "video_stream_ndi.hpp"
 #include "video_stream_playback_ndi.hpp"
 #include "ndi_output.hpp"
+#include "viewport_texture_router.hpp"

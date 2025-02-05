@@ -49,9 +49,6 @@ VideoStreamNDI::VideoStreamNDI() {
 
 	if (Engine::get_singleton()->has_singleton("NDIFinder")) {
 		finder = (NDIFinder *)Engine::get_singleton()->get_singleton("NDIFinder");
-	}
-
-	if (finder) {
 		finder->connect("sources_changed", callable_mp(this, &VideoStreamNDI::update_available_sources_hint));
 	}
 

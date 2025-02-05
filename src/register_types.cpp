@@ -70,9 +70,14 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 	GDREGISTER_CLASS(VideoStreamNDI);
 	GDREGISTER_CLASS(VideoStreamPlaybackNDI);
 	GDREGISTER_CLASS(NDIOutput);
+	GDREGISTER_CLASS(ViewportTextureRouter);
 
 	if (!Engine::get_singleton()->has_singleton("NDIFinder")) {
 		Engine::get_singleton()->register_singleton("NDIFinder", memnew(NDIFinder));
+	}
+
+	if (!Engine::get_singleton()->has_singleton("ViewportTextureRouter")) {
+		Engine::get_singleton()->register_singleton("ViewportTextureRouter", memnew(ViewportTextureRouter));
 	}
 }
 
@@ -81,17 +86,17 @@ void uninitialize_gdextension_types(ModuleInitializationLevel p_level) {
 		return;
 	}
 
-	if (Engine::get_singleton()->has_singleton("NDIFinder")) {
-		NDIFinder* finder = (NDIFinder*)Engine::get_singleton()->get_singleton("NDIFinder");
-		if (finder) {
-			memfree(finder);
-		}
+	if (Engine::get_singleton()->has_singleton("NDIFinder")) {		
+		memfree((NDIFinder*)Engine::get_singleton()->get_singleton("NDIFinder"));
+	}
+
+	if (Engine::get_singleton()->has_singleton("ViewportTextureRouter")) {		
+		memfree((NDIFinder*)Engine::get_singleton()->get_singleton("ViewportTextureRouter"));
 	}
 
 	if (ndi != NULL) {
 		ndi->destroy();
 	}
-
 }
 
 extern "C"
