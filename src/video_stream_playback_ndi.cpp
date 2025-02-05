@@ -145,7 +145,6 @@ void VideoStreamPlaybackNDI::render_video() {
 			texture->update(img);
 		} else {
 			texture->set_image(img);
-			UtilityFunctions::print("resize");
 		}
 	}
 
