@@ -87,11 +87,11 @@ void uninitialize_gdextension_types(ModuleInitializationLevel p_level) {
 	}
 
 	if (Engine::get_singleton()->has_singleton("NDIFinder")) {		
-		memfree((NDIFinder*)Engine::get_singleton()->get_singleton("NDIFinder"));
+		memdelete((NDIFinder*)Engine::get_singleton()->get_singleton("NDIFinder"));
 	}
 
-	if (Engine::get_singleton()->has_singleton("ViewportTextureRouter")) {		
-		memfree((NDIFinder*)Engine::get_singleton()->get_singleton("ViewportTextureRouter"));
+	if (Engine::get_singleton()->has_singleton("ViewportTextureRouter")) {
+		memdelete((NDIFinder*)Engine::get_singleton()->get_singleton("ViewportTextureRouter"));
 	}
 
 	if (ndi != NULL) {
