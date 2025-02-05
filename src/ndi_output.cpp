@@ -8,9 +8,18 @@ NDIOutput::NDIOutput() {
 	mtx_send.instantiate();
 	mtx_texture.instantiate();
 	sem.instantiate();
+
+	thr->start(callable_mp(this, &NDIOutput::send_video_thread));
 }
 
 NDIOutput::~NDIOutput() {
+	mtx_exit_thread = true;
+	sem->post();
+
+	if (thr.is_valid() && thr->is_alive()) {
+		thr->wait_to_finish();
+	}
+
 	thr.unref();
 	mtx_send.unref();
 	mtx_texture.unref();
@@ -35,6 +44,15 @@ PackedStringArray NDIOutput::get_groups() const {
 	return groups;
 }
 
+void NDIOutput::set_preview(const bool p_state) {
+	preview = p_state;
+	create_sender();
+}
+
+bool NDIOutput::get_preview() const {
+	return preview;
+}
+
 void NDIOutput::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_name", "p_name"), &NDIOutput::set_name);
 	ClassDB::bind_method(D_METHOD("get_name"), &NDIOutput::get_name);
@@ -43,6 +61,10 @@ void NDIOutput::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_groups", "p_groups"), &NDIOutput::set_groups);
 	ClassDB::bind_method(D_METHOD("get_groups"), &NDIOutput::get_groups);
 	ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "groups"), "set_groups", "get_groups");
+
+	// ClassDB::bind_method(D_METHOD("set_preview", "p_state"), &NDIOutput::set_preview);
+	// ClassDB::bind_method(D_METHOD("get_preview"), &NDIOutput::get_preview);
+	// ADD_PROPERTY(PropertyInfo(Variant::BOOL, "preview"), "set_preview", "get_preview");
 }
 
 void NDIOutput::_notification(int p_what) {
@@ -50,26 +72,11 @@ void NDIOutput::_notification(int p_what) {
 		case Node::NOTIFICATION_ENTER_TREE: {
 			create_sender();
 			rs->connect("frame_post_draw", callable_mp(this, &NDIOutput::request_texture));
-			thr->start(callable_mp(this, &NDIOutput::send_video_thread));
 		} break;
 
 		case Node::NOTIFICATION_EXIT_TREE: {
 			rs->disconnect("frame_post_draw", callable_mp(this, &NDIOutput::request_texture));
-			
-			mtx_send->lock();
-			mtx_texture->lock();
-			mtx_exit_thread = true;
-			mtx_texture->unlock();
-			mtx_send->unlock();
-
-			sem->post();
-
-			if (thr.is_valid() && thr->is_alive()) {
-				thr->wait_to_finish();
-			}
-
 			destroy_sender();
-
 		} break;
 	}
 }
@@ -77,12 +84,16 @@ void NDIOutput::_notification(int p_what) {
 void NDIOutput::create_sender() {
 	destroy_sender();
 
+	if (Engine::get_singleton()->is_editor_hint() && !get_preview()) {
+		return;
+	}
+
 	if (get_name().is_empty()) {
 		return;
 	}
 
 	NDIlib_send_create_t send_desc = {};
-	send_desc.clock_video = false;
+	send_desc.clock_video = true;
 	send_desc.clock_audio = false;
 
 	if (Engine::get_singleton()->is_editor_hint()) {
@@ -104,14 +115,18 @@ void NDIOutput::create_sender() {
 void NDIOutput::destroy_sender() {
 	if (mtx_sending) {
 		mtx_send->lock();
-		ndi->send_destroy(mtx_send_instance);
 		mtx_sending = false;
+		ndi->send_destroy(mtx_send_instance);
 		mtx_send->unlock();
 	}
 }
 
 void NDIOutput::request_texture() {
-	if (!get_viewport() || !is_inside_tree()) {
+	if (!get_viewport() || !is_inside_tree() || is_queued_for_deletion()) {
+		return;
+	}
+
+	if (Engine::get_singleton()->is_editor_hint() && !get_preview()) {
 		return;
 	}
 
@@ -121,10 +136,6 @@ void NDIOutput::request_texture() {
 }
 
 void NDIOutput::receive_texture(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format) {
-	if (mtx_texture.is_null() || sem.is_null()) {
-		return;
-	}
-
 	mtx_texture->lock();
 	mtx_texture_data = p_data;
 	mtx_texture_format = p_format;
@@ -133,29 +144,26 @@ void NDIOutput::receive_texture(PackedByteArray p_data, const Ref<RDTextureForma
 }
 
 void NDIOutput::send_video_thread() {
+	PackedByteArray texture_buffer;
+	Ref<RDTextureFormat> texture_format;
+	NDIlib_video_frame_v2_t video_frame = {};
+
 	while (true) {
 		sem->wait();
 
-		mtx_send->lock();
-		mtx_texture->lock();
-		bool exit_thread = mtx_exit_thread;
-		mtx_texture->unlock();
-		mtx_send->unlock();
-
-		if (exit_thread) {
+		if (mtx_exit_thread) {
 			break;
 		}
 
 		mtx_texture->lock();
-		PackedByteArray texture_buffer = mtx_texture_data.duplicate();
-		Ref<RDTextureFormat> texture_format = mtx_texture_format;
+		texture_buffer = mtx_texture_data;
+		texture_format = mtx_texture_format;
 		mtx_texture->unlock();
 		
 		ERR_CONTINUE_MSG(texture_format.is_null() || texture_buffer.is_empty(), "Viewport texture invalid");
 		ERR_CONTINUE_MSG(texture_format->get_format() != RenderingDevice::DATA_FORMAT_R8G8B8A8_UNORM, "Viewport texture format isn't DATA_FORMAT_R8G8B8A8_UNORM");
 		ERR_CONTINUE_MSG(texture_format->get_width() * texture_format->get_height() * 4 != texture_buffer.size(), "Unexpected texture size");
 
-		NDIlib_video_frame_v2_t video_frame = {};
 		video_frame.xres = texture_format->get_width();
 		video_frame.yres = texture_format->get_height();
 		video_frame.frame_rate_N = (int)Engine::get_singleton()->get_frames_per_second();

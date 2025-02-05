@@ -26,6 +26,10 @@ class NDIOutput : public Node {
 		void set_groups(const PackedStringArray p_groups);
 		PackedStringArray get_groups() const;
 
+
+
+		void receive_texture(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format);
+
 	protected:
 		static void _bind_methods();
 		void _notification(int what);
@@ -37,6 +41,7 @@ class NDIOutput : public Node {
 
 		String name;
 		PackedStringArray groups;
+		bool preview = false;
 
 		Ref<Mutex> mtx_send;
 		NDIlib_send_instance_t mtx_send_instance;
@@ -45,6 +50,9 @@ class NDIOutput : public Node {
 		void create_sender();
 		void destroy_sender();
 
+		void set_preview(const bool p_state);
+		bool get_preview() const;
+
 		RenderingServer* rs;
 		RenderingDevice* rd;
 
@@ -52,7 +60,7 @@ class NDIOutput : public Node {
 		PackedByteArray mtx_texture_data;
 		Ref<RDTextureFormat> mtx_texture_format;
 
+		Ref<Mutex> mtx_callback;
 		void request_texture();
-		void receive_texture(PackedByteArray p_data, const Ref<RDTextureFormat> & p_format);
 		void send_video_thread();
 };
