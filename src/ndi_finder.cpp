@@ -9,30 +9,12 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "includes.hpp"
 
-void NDIFinder::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("get_sources"), &NDIFinder::get_sources);
-	ADD_SIGNAL(MethodInfo("sources_changed"));
-
-	ClassDB::bind_method(D_METHOD("set_show_local_sources", "show_local_sources"), &NDIFinder::set_show_local_sources);
-	ClassDB::bind_method(D_METHOD("get_show_local_sources"), &NDIFinder::get_show_local_sources);
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "show_local_sources"), "set_show_local_sources", "get_show_local_sources");
-
-	ClassDB::bind_method(D_METHOD("set_groups", "groups"), &NDIFinder::set_groups);
-	ClassDB::bind_method(D_METHOD("get_groups"), &NDIFinder::get_groups);
-	ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "groups"), "set_groups", "get_groups");
-
-	ClassDB::bind_method(D_METHOD("set_extra_ips", "extra_ips"), &NDIFinder::set_extra_ips);
-	ClassDB::bind_method(D_METHOD("get_extra_ips"), &NDIFinder::get_extra_ips);
-	ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "extra_ips"), "set_extra_ips", "get_extra_ips");
-	
-}
-
 NDIFinder::NDIFinder() {
 	thr.instantiate();
 	mtx.instantiate();
 	sem.instantiate();
 
-	thr->start(callable_mp(this, &NDIFinder::process_thread));
+	thr->start(callable_mp(this, &NDIFinder::find_sources_thread));
 }
 
 NDIFinder::~NDIFinder() {
@@ -48,6 +30,59 @@ NDIFinder::~NDIFinder() {
 	sem.unref();
 }
 
+void NDIFinder::set_show_local_sources(const bool p_state) {
+	mtx->lock();
+	mtx_find_desc.show_local_sources = p_state;
+	mtx_rebuild_find = true;
+	mtx->unlock();
+}
+
+bool NDIFinder::get_show_local_sources() const {
+	return mtx_find_desc.show_local_sources;
+}
+
+void NDIFinder::set_groups(const PackedStringArray p_groups) {
+	if (p_groups.is_empty()) {
+		groups = NULL;
+	} else {
+		groups = String(",").join(p_groups).utf8();
+	}
+
+	mtx->lock();
+	mtx_find_desc.p_groups = groups;
+	mtx_rebuild_find = true;
+	mtx->unlock();
+}
+
+PackedStringArray NDIFinder::get_groups() const {
+	if (mtx_find_desc.p_groups == NULL) { // no need for mutex, thread doesn't write
+		return PackedStringArray();
+	}
+
+	return String::utf8(mtx_find_desc.p_groups).split(",");
+}
+
+void NDIFinder::set_extra_ips(const PackedStringArray p_extra_ips) {
+	if (p_extra_ips.is_empty()) {
+		extra_ips = NULL;
+	} else {
+		extra_ips = String(",").join(p_extra_ips).utf8();
+	}
+
+	mtx->lock();
+	mtx_find_desc.p_extra_ips = extra_ips;
+	mtx_rebuild_find = true;
+	mtx->unlock();
+}
+
+PackedStringArray NDIFinder::get_extra_ips() const {
+	if (mtx_find_desc.p_extra_ips == NULL) {
+		return PackedStringArray();
+	}
+
+	return String::utf8(mtx_find_desc.p_extra_ips).split(",");
+}
+
 TypedArray<VideoStreamNDI> NDIFinder::get_sources() const {
 	mtx->lock();
 	TypedArray<VideoStreamNDI> sources = mtx_sources.duplicate(true);
@@ -55,11 +90,39 @@ TypedArray<VideoStreamNDI> NDIFinder::get_sources() const {
 	return sources;
 }
 
-void NDIFinder::_process(double p_delta) {
+void NDIFinder::update() {
 	sem->post();
 }
 
-void NDIFinder::process_thread() {
+void NDIFinder::_bind_methods() {
+	ClassDB::bind_method(D_METHOD("get_sources"), &NDIFinder::get_sources);
+	ADD_SIGNAL(MethodInfo("sources_changed"));
+
+	ClassDB::bind_method(D_METHOD("set_show_local_sources", "show_local_sources"), &NDIFinder::set_show_local_sources);
+	ClassDB::bind_method(D_METHOD("get_show_local_sources"), &NDIFinder::get_show_local_sources);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "show_local_sources"), "set_show_local_sources", "get_show_local_sources");
+
+	ClassDB::bind_method(D_METHOD("set_groups", "groups"), &NDIFinder::set_groups);
+	ClassDB::bind_method(D_METHOD("get_groups"), &NDIFinder::get_groups);
+	ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "groups"), "set_groups", "get_groups");
+
+	ClassDB::bind_method(D_METHOD("set_extra_ips", "extra_ips"), &NDIFinder::set_extra_ips);
+	ClassDB::bind_method(D_METHOD("get_extra_ips"), &NDIFinder::get_extra_ips);
+	ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "extra_ips"), "set_extra_ips", "get_extra_ips");
+}
+
+void NDIFinder::_notification(int what) {
+	switch (what) {
+		case Node::NOTIFICATION_ENTER_TREE: {
+			Timer* timer = memnew(Timer);
+			add_child(timer, false, Node::INTERNAL_MODE_FRONT);
+			timer->connect("timeout", callable_mp(this, &NDIFinder::update));
+			timer->start(1);
+		} break;
+	}
+}
+
+void NDIFinder::find_sources_thread() {
 	mtx->lock(); // make sure find_desc doesn't change during use
 	NDIlib_find_instance_t find = ndi->find_create_v2(&mtx_find_desc);
 	mtx->unlock();
@@ -121,57 +184,4 @@ void NDIFinder::process_thread() {
 
 	ndi->find_destroy(find);
 	hasher.unref();
-}
-
-void NDIFinder::set_show_local_sources(const bool p_state) {
-	mtx->lock();
-	mtx_find_desc.show_local_sources = p_state;
-	mtx_rebuild_find = true;
-	mtx->unlock();
-}
-
-bool NDIFinder::get_show_local_sources() const {
-	return mtx_find_desc.show_local_sources;
-}
-
-void NDIFinder::set_groups(const PackedStringArray p_groups) {
-	if (p_groups.is_empty()) {
-		groups = NULL;
-	} else {
-		groups = String(",").join(p_groups).utf8();
-	}
-
-	mtx->lock();
-	mtx_find_desc.p_groups = groups;
-	mtx_rebuild_find = true;
-	mtx->unlock();
-}
-
-PackedStringArray NDIFinder::get_groups() const {
-	if (mtx_find_desc.p_groups == NULL) { // no need for mutex, thread doesn't write
-		return PackedStringArray();
-	}
-
-	return String::utf8(mtx_find_desc.p_groups).split(",");
-}
-
-void NDIFinder::set_extra_ips(const PackedStringArray p_extra_ips) {
-	if (p_extra_ips.is_empty()) {
-		extra_ips = NULL;
-	} else {
-		extra_ips = String(",").join(p_extra_ips).utf8();
-	}
-
-	mtx->lock();
-	mtx_find_desc.p_extra_ips = extra_ips;
-	mtx_rebuild_find = true;
-	mtx->unlock();
-}
-
-PackedStringArray NDIFinder::get_extra_ips() const {
-	if (mtx_find_desc.p_extra_ips == NULL) {
-		return PackedStringArray();
-	}
-
-	return String::utf8(mtx_find_desc.p_extra_ips).split(",");
 }

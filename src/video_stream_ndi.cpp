@@ -69,7 +69,7 @@ void VideoStreamNDI::set_name(const String p_name) {
 
 String VideoStreamNDI::get_name() const {
 	if (finder && !finder->is_inside_tree()) {
-		finder->_process(0); // Manually tick the finder
+		finder->update();
 	}
 
 	return String::utf8(name);

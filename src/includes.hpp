@@ -20,6 +20,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #include <godot_cpp/classes/rd_texture_format.hpp>
 #include <godot_cpp/classes/project_settings.hpp>
 #include <godot_cpp/classes/node.hpp>
+#include <godot_cpp/classes/timer.hpp>
 #include <godot_cpp/classes/thread.hpp>
 #include <godot_cpp/classes/mutex.hpp>
 #include <godot_cpp/classes/semaphore.hpp>

@@ -16,30 +16,9 @@ using namespace godot;
 class NDIFinder : public Node {
 	GDCLASS(NDIFinder, Node)
 
-	Ref<Thread> thr;
-	Ref<Mutex> mtx;
-	Ref<Semaphore> sem;
-
-	TypedArray<VideoStreamNDI> mtx_sources;
-	bool mtx_exit_thread = false;
-	bool mtx_rebuild_find = false;
-	NDIlib_find_create_t mtx_find_desc;
-
-	CharString groups;
-	CharString extra_ips;
-
-	void process_thread();
-
-	protected:
-		static void _bind_methods();
-
 	public:
 		NDIFinder();
 		~NDIFinder();
-
-		void _process(double p_delta) override;
-
-		TypedArray<VideoStreamNDI> get_sources() const;
 
 		void set_show_local_sources(const bool state);
 		bool get_show_local_sources() const;
@@ -49,4 +28,28 @@ class NDIFinder : public Node {
 
 		void set_extra_ips(const PackedStringArray extra_ips);
 		PackedStringArray get_extra_ips() const;
+
+		TypedArray<VideoStreamNDI> get_sources() const;
+
+		void update();
+
+	protected:
+		static void _bind_methods();
+		void _notification(int what);
+
+	private:
+		CharString groups;
+		CharString extra_ips;
+
+		Ref<Thread> thr;
+		Ref<Mutex> mtx;
+		Ref<Semaphore> sem;
+		bool mtx_exit_thread = false;
+
+		TypedArray<VideoStreamNDI> mtx_sources;
+		NDIlib_find_create_t mtx_find_desc;
+		bool mtx_rebuild_find = false;
+
+		void find_sources_thread();
+
 };
