@@ -26,8 +26,8 @@ class NDIOutput : public Node {
 		void set_groups(const PackedStringArray p_groups);
 		PackedStringArray get_groups() const;
 
-		void set_preview(const bool p_state);
-		bool get_preview() const;
+		void set_output_editor(const bool p_state);
+		bool is_outputting_editor() const;
 
 
 	protected:
@@ -41,7 +41,7 @@ class NDIOutput : public Node {
 
 		String name;
 		PackedStringArray groups;
-		bool preview = false;
+		bool output_editor = false;
 
 		Ref<Mutex> mtx_send;
 		NDIlib_send_instance_t mtx_send_instance;

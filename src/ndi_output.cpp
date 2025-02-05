@@ -49,13 +49,13 @@ PackedStringArray NDIOutput::get_groups() const {
 	return groups;
 }
 
-void NDIOutput::set_preview(const bool p_state) {
-	preview = p_state;
+void NDIOutput::set_output_editor(const bool p_state) {
+	output_editor = p_state;
 	create_sender();
 }
 
-bool NDIOutput::get_preview() const {
-	return preview;
+bool NDIOutput::is_outputting_editor() const {
+	return output_editor;
 }
 
 void NDIOutput::_bind_methods() {
@@ -67,9 +67,9 @@ void NDIOutput::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_groups"), &NDIOutput::get_groups);
 	ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "groups"), "set_groups", "get_groups");
 
-	ClassDB::bind_method(D_METHOD("set_preview", "p_state"), &NDIOutput::set_preview);
-	ClassDB::bind_method(D_METHOD("get_preview"), &NDIOutput::get_preview);
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "preview"), "set_preview", "get_preview");
+	ClassDB::bind_method(D_METHOD("set_output_editor", "p_state"), &NDIOutput::set_output_editor);
+	ClassDB::bind_method(D_METHOD("is_outputting_editor"), &NDIOutput::is_outputting_editor);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "enable_editor_output"), "set_output_editor", "is_outputting_editor");
 }
 
 void NDIOutput::_notification(int p_what) {
@@ -87,7 +87,7 @@ void NDIOutput::_notification(int p_what) {
 void NDIOutput::create_sender() {
 	destroy_sender();
 
-	if (Engine::get_singleton()->is_editor_hint() && !get_preview()) {
+	if (Engine::get_singleton()->is_editor_hint() && !is_outputting_editor()) {
 		return;
 	}
 
@@ -100,7 +100,7 @@ void NDIOutput::create_sender() {
 	send_desc.clock_audio = false;
 
 	if (Engine::get_singleton()->is_editor_hint()) {
-		send_desc.p_ndi_name = (get_name() + " Preview").utf8();
+		send_desc.p_ndi_name = (get_name() + " (Editor)").utf8();
 	} else {
 		send_desc.p_ndi_name = get_name().utf8();
 	}
@@ -130,10 +130,6 @@ void NDIOutput::destroy_sender() {
 
 void NDIOutput::request_texture() {
 	if (!get_viewport() || !is_inside_tree() || is_queued_for_deletion()) {
-		return;
-	}
-
-	if (Engine::get_singleton()->is_editor_hint() && !get_preview()) {
 		return;
 	}
 
