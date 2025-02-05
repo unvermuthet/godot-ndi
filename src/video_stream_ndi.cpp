@@ -8,7 +8,6 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
 #include "includes.hpp"
-#include "video_stream_ndi.hpp"
 
 // The only persistent parts of this resource are the name and bandwidth fields.
 // I've decided to not expose/bind the url field of the NDI_source_t struct.
@@ -16,8 +15,6 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 // When creating this resource by hand or loading it from disk the url field stays NULL.
 // The SDK will spin up a find instance itself and obtain the url that way.
 // Read more in ndi/Processing.NDI.structs.h at line 182
-
-
 
 VideoStreamNDI::VideoStreamNDI() {
 	name = NULL;
