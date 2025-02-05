@@ -35,13 +35,13 @@ class NDIOutput : public Node {
 		void _notification(int what);
 
 	private:
-		Ref<Thread> thr;
-		Ref<Semaphore> sem;
-		bool mtx_exit_thread = false;
-
 		String name;
 		PackedStringArray groups;
 		bool output_editor = false;
+
+		Ref<Thread> thr;
+		Ref<Semaphore> sem;
+		bool mtx_exit_thread = false;
 
 		Ref<Mutex> mtx_send;
 		NDIlib_send_instance_t mtx_send_instance;
