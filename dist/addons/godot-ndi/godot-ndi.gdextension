@@ -1,0 +1,26 @@
+[configuration]
+
+entry_symbol = "godot_ndi_init"
+compatibility_minimum = "4.4"
+reloadable = false
+
+[libraries]
+
+macos.debug = "bin/macos/macos.framework/libgodot-ndi.macos.template_debug"
+macos.release = "bin/macos/macos.framework/libgodot-ndi.macos.template_release"
+windows.debug.x86_32 = "bin/windows/godot-ndi.windows.template_debug.x86_32.dll"
+windows.release.x86_32 = "bin/windows/godot-ndi.windows.template_release.x86_32.dll"
+windows.debug.x86_64 = "bin/windows/godot-ndi.windows.template_debug.x86_64.dll"
+windows.release.x86_64 = "bin/windows/godot-ndi.windows.template_release.x86_64.dll"
+linux.debug.x86_64 = "bin/linux/libgodot-ndi.linux.template_debug.x86_64.so"
+linux.release.x86_64 = "bin/linux/libgodot-ndi.linux.template_release.x86_64.so"
+linux.debug.arm64 = "bin/linux/libgodot-ndi.linux.template_debug.arm64.so"
+linux.release.arm64 = "bin/linux/libgodot-ndi.linux.template_release.arm64.so"
+linux.debug.rv64 = "bin/linux/libgodot-ndi.linux.template_debug.rv64.so"
+linux.release.rv64 = "bin/linux/libgodot-ndi.linux.template_release.rv64.so"
+
+[icons]
+
+VideoStreamNDI = "icons/VideoStreamNDI.svg"
+NDIOutput = "icons/NDIOutput.svg"
+NDIFinder = "icons/NDIFinder.svg"
