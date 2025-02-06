@@ -1,5 +1,4 @@
 # godot-ndi [![Made with Godot](https://img.shields.io/badge/Made%20with-Godot-478CBF?style=flat&logo=godot%20engine&logoColor=white)](https://godotengine.org)
-
 > GDExtension for NDI®
 
 [ NDI® is a registered trademark of Vizrt NDI AB ]
@@ -7,12 +6,12 @@
 Licensed under MPL 2.0
 
 Extends the [VideoStream](https://docs.godotengine.org/en/stable/classes/class_videostream.html) and VideoStreamPlayback classes to implement NDI playback.
-
 For outputting the Viewport as an NDI source, add the NDIOutput Node to the scene.
-
 Check out the demo scenes included with the releases.
 
-I'm happy to hear suggestions and incorperate improvements. [![Static Badge](https://img.shields.io/badge/unvermuthet-gray?style=flat&logo=discord&logoColor=white&labelColor=%235865F2)](https://discord.com/users/203583245223198722)
+I'm happy to hear suggestions and incorperate improvements. You can find my contact info on my Github profile. 
+
+<!-- [![Static Badge](https://img.shields.io/badge/unvermuthet-gray?style=flat&logo=discord&logoColor=white&labelColor=%235865F2)](https://discord.com/users/203583245223198722) -->
 
 ## Install
 
