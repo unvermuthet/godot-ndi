@@ -86,6 +86,7 @@ runs:
 
     - name: Windows - Set month for MinGW cache
       if: ${{ inputs.platform == 'windows' }}
+      shell: pwsh
       run: |
         echo ("CACHE_MONTH=" + $(date '+%b %Y')) >> $env:GITHUB_ENV
 
