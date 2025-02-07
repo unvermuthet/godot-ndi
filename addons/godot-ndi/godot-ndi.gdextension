@@ -6,18 +6,18 @@ reloadable = false
 
 [libraries]
 
-macos.debug = "bin/macos/macos.framework/libgodot-ndi.macos.template_debug"
-macos.release = "bin/macos/macos.framework/libgodot-ndi.macos.template_release"
-windows.debug.x86_32 = "bin/windows/godot-ndi.windows.template_debug.x86_32.dll"
-windows.release.x86_32 = "bin/windows/godot-ndi.windows.template_release.x86_32.dll"
-windows.debug.x86_64 = "bin/windows/godot-ndi.windows.template_debug.x86_64.dll"
-windows.release.x86_64 = "bin/windows/godot-ndi.windows.template_release.x86_64.dll"
-linux.debug.x86_64 = "bin/linux/libgodot-ndi.linux.template_debug.x86_64.so"
-linux.release.x86_64 = "bin/linux/libgodot-ndi.linux.template_release.x86_64.so"
-linux.debug.arm64 = "bin/linux/libgodot-ndi.linux.template_debug.arm64.so"
-linux.release.arm64 = "bin/linux/libgodot-ndi.linux.template_release.arm64.so"
-linux.debug.rv64 = "bin/linux/libgodot-ndi.linux.template_debug.rv64.so"
-linux.release.rv64 = "bin/linux/libgodot-ndi.linux.template_release.rv64.so"
+macos.debug.single = "bin/macos/macos.framework/libgodot-ndi.macos.template_debug.universal"
+macos.release.single = "bin/macos/macos.framework/libgodot-ndi.macos.template_release.universal"
+macos.debug.double = "bin/macos/macos.framework/libgodot-ndi.macos.template_debug.double.universal"
+macos.release.double = "bin/macos/macos.framework/libgodot-ndi.macos.template_release.double.universal"
+windows.debug.x86_64.single = "bin/windows/godot-ndi.windows.template_debug.x86_64.dll"
+windows.release.x86_64.single = "bin/windows/godot-ndi.windows.template_release.x86_64.dll"
+windows.debug.x86_64.double = "bin/windows/godot-ndi.windows.template_debug.x86_64.dll"
+windows.release.x86_64.double = "bin/windows/godot-ndi.windows.template_release.x86_64.dll"
+linux.debug.x86_64.single = "bin/linux/libgodot-ndi.linux.template_debug.x86_64.so"
+linux.release.x86_64.single = "bin/linux/libgodot-ndi.linux.template_release.x86_64.so"
+linux.debug.x86_64.double = "bin/linux/libgodot-ndi.linux.template_debug.x86_64.so"
+linux.release.x86_64.double = "bin/linux/libgodot-ndi.linux.template_release.x86_64.so"
 
 [icons]
 
