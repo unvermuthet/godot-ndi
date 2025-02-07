@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://dydvtidqppffs"]
+[gd_scene load_steps=2 format=3 uid="uid://byblss3lhwvqm"]
 
-[sub_resource type="VideoStreamNDI" id="VideoStreamNDI_wr0hy"]
+[sub_resource type="VideoStreamNDI" id="VideoStreamNDI_lv7vm"]
 
-[node name="Input" type="Control"]
+[node name="Canvas" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -17,6 +17,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-stream = SubResource("VideoStreamNDI_wr0hy")
+stream = SubResource("VideoStreamNDI_lv7vm")
 autoplay = true
 expand = true
