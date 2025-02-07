@@ -11,15 +11,14 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "includes.hpp"
 
-const NDIlib_v5* ndi;
+const NDIlib_v5 *ndi;
 
-void initialize_gdextension_types(ModuleInitializationLevel p_level)
-{
+void initialize_gdextension_types(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
 
-	const char* ndi_runtime_folder = getenv(NDILIB_REDIST_FOLDER);
+	const char *ndi_runtime_folder = getenv(NDILIB_REDIST_FOLDER);
 
 #ifdef _WIN32
 	ERR_FAIL_NULL_EDMSG(ndi_runtime_folder, NDILIB_REDIST_FOLDER "doesn't exist on PATH. Make sure you have the NDI Runtime installed on your system.");
@@ -30,8 +29,8 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 	HMODULE ndi_lib = LoadLibraryA(ndi_runtime_path.c_str());
 	ERR_FAIL_NULL_EDMSG(ndi_lib, "Couldn't open NDI Library " NDILIB_LIBRARY_NAME ". Make sure you have the NDI Runtime installed on your system.");
 
-	const NDIlib_v5* (*NDIlib_v5_load)(void) = NULL;
-	*((FARPROC*)&NDIlib_v5_load) = GetProcAddress(ndi_lib, "NDIlib_v5_load");
+	const NDIlib_v5 *(*NDIlib_v5_load)(void) = NULL;
+	*((FARPROC *)&NDIlib_v5_load) = GetProcAddress(ndi_lib, "NDIlib_v5_load");
 
 	if (!NDIlib_v5_load) {
 		if (ndi_lib) {
@@ -48,11 +47,11 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 		ndi_runtime_path = NDILIB_LIBRARY_NAME;
 	}
 
-	void* ndi_lib = dlopen(ndi_runtime_path.c_str(), RTLD_LAZY | RTLD_LOCAL);
+	void *ndi_lib = dlopen(ndi_runtime_path.c_str(), RTLD_LAZY | RTLD_LOCAL);
 	ERR_FAIL_NULL_EDMSG(ndi_lib, "Couldn't open NDI Library " NDILIB_LIBRARY_NAME ". Make sure you have the NDI Runtime installed on your system.");
 
-	const NDIlib_v5* (*NDIlib_v5_load)(void) = NULL;
-	*((void**)&NDIlib_v5_load) = dlsym(ndi_lib, "NDIlib_v5_load");
+	const NDIlib_v5 *(*NDIlib_v5_load)(void) = NULL;
+	*((void **)&NDIlib_v5_load) = dlsym(ndi_lib, "NDIlib_v5_load");
 
 	if (!NDIlib_v5_load) {
 		if (ndi_lib) {
@@ -86,12 +85,12 @@ void uninitialize_gdextension_types(ModuleInitializationLevel p_level) {
 		return;
 	}
 
-	if (Engine::get_singleton()->has_singleton("NDIFinder")) {		
-		memdelete((NDIFinder*)Engine::get_singleton()->get_singleton("NDIFinder"));
+	if (Engine::get_singleton()->has_singleton("NDIFinder")) {
+		memdelete((NDIFinder *)Engine::get_singleton()->get_singleton("NDIFinder"));
 	}
 
 	if (Engine::get_singleton()->has_singleton("ViewportTextureRouter")) {
-		memdelete((NDIFinder*)Engine::get_singleton()->get_singleton("ViewportTextureRouter"));
+		memdelete((NDIFinder *)Engine::get_singleton()->get_singleton("ViewportTextureRouter"));
 	}
 
 	if (ndi != NULL) {
@@ -99,15 +98,13 @@ void uninitialize_gdextension_types(ModuleInitializationLevel p_level) {
 	}
 }
 
-extern "C"
-{
-	// Initialization
-	GDExtensionBool GDE_EXPORT godot_ndi_init(GDExtensionInterfaceGetProcAddress p_get_proc_address, GDExtensionClassLibraryPtr p_library, GDExtensionInitialization *r_initialization)
-	{
-		GDExtensionBinding::InitObject init_obj(p_get_proc_address, p_library, r_initialization);
-		init_obj.register_initializer(initialize_gdextension_types);
-		init_obj.register_terminator(uninitialize_gdextension_types);
-		init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_SCENE);
-		return init_obj.init();
-	}
+extern "C" {
+// Initialization
+GDExtensionBool GDE_EXPORT godot_ndi_init(GDExtensionInterfaceGetProcAddress p_get_proc_address, GDExtensionClassLibraryPtr p_library, GDExtensionInitialization *r_initialization) {
+	GDExtensionBinding::InitObject init_obj(p_get_proc_address, p_library, r_initialization);
+	init_obj.register_initializer(initialize_gdextension_types);
+	init_obj.register_terminator(uninitialize_gdextension_types);
+	init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_SCENE);
+	return init_obj.init();
+}
 }

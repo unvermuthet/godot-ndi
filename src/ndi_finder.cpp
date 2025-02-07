@@ -114,7 +114,7 @@ void NDIFinder::_bind_methods() {
 void NDIFinder::_notification(int what) {
 	switch (what) {
 		case Node::NOTIFICATION_ENTER_TREE: {
-			Timer* timer = memnew(Timer);
+			Timer *timer = memnew(Timer);
 			add_child(timer, false, Node::INTERNAL_MODE_FRONT);
 			timer->connect("timeout", callable_mp(this, &NDIFinder::update));
 			timer->start(1);

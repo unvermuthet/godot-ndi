@@ -29,7 +29,8 @@ VideoStreamNDI::VideoStreamNDI() {
 	update_available_sources_hint();
 }
 
-VideoStreamNDI::VideoStreamNDI(const NDIlib_source_t p_source) : VideoStreamNDI::VideoStreamNDI() {
+VideoStreamNDI::VideoStreamNDI(const NDIlib_source_t p_source) :
+		VideoStreamNDI::VideoStreamNDI() {
 	name = p_source.p_ndi_name; // This needs to copy the memory because it might become invalid (freed by the sdk)
 	url = p_source.p_url_address; // -||-
 }
@@ -53,15 +54,13 @@ void VideoStreamNDI::set_name(const String p_name) {
 	}
 
 	TypedArray<VideoStreamNDI> sources = finder->get_sources();
-	for (int64_t i = 0; i < sources.size(); i++)
-	{
-		VideoStreamNDI* source = (VideoStreamNDI*)(Object*)sources[i];
+	for (int64_t i = 0; i < sources.size(); i++) {
+		VideoStreamNDI *source = (VideoStreamNDI *)(Object *)sources[i];
 		if (source && source->get_name() == name) {
 			set_url(source->get_url());
 			return;
 		}
 	}
-		
 }
 
 String VideoStreamNDI::get_name() const {
@@ -85,7 +84,7 @@ String VideoStreamNDI::get_url() const {
 }
 
 void VideoStreamNDI::set_bandwidth(const NDIlib_recv_bandwidth_e p_bandwidth) {
-	bandwidth = p_bandwidth;    
+	bandwidth = p_bandwidth;
 }
 
 NDIlib_recv_bandwidth_e VideoStreamNDI::get_bandwidth() const {
@@ -142,12 +141,10 @@ void VideoStreamNDI::update_available_sources_hint() {
 	TypedArray<VideoStreamNDI> sources = finder->get_sources();
 	PackedStringArray source_names;
 
-	for (int64_t i = 0; i < sources.size(); i++)
-	{
-		source_names.push_back(((VideoStreamNDI*)(Object*)sources[i])->get_name());
+	for (int64_t i = 0; i < sources.size(); i++) {
+		source_names.push_back(((VideoStreamNDI *)(Object *)sources[i])->get_name());
 	}
 
 	available_sources_hint = String(",").join(source_names);
 	notify_property_list_changed();
 }
-

@@ -16,16 +16,15 @@ using namespace godot;
 class ViewportTextureRouter : public Node {
 	GDCLASS(ViewportTextureRouter, Node)
 
-	public:
-		ViewportTextureRouter();
-		~ViewportTextureRouter();
+public:
+	ViewportTextureRouter();
+	~ViewportTextureRouter();
 
-		void request_texture(Viewport* viewport);
+	void request_texture(Viewport *viewport);
 
-	protected:
-		static void _bind_methods();
+protected:
+	static void _bind_methods();
 
-	private:
-		void forward_texture(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format, Viewport* p_viewport);
-
+private:
+	void forward_texture(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format, Viewport *p_viewport);
 };

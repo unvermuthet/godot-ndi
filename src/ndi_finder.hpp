@@ -16,40 +16,39 @@ using namespace godot;
 class NDIFinder : public Node {
 	GDCLASS(NDIFinder, Node)
 
-	public:
-		NDIFinder();
-		~NDIFinder();
+public:
+	NDIFinder();
+	~NDIFinder();
 
-		void set_show_local_sources(const bool state);
-		bool get_show_local_sources() const;
+	void set_show_local_sources(const bool state);
+	bool get_show_local_sources() const;
 
-		void set_groups(const PackedStringArray groups);
-		PackedStringArray get_groups() const;
+	void set_groups(const PackedStringArray groups);
+	PackedStringArray get_groups() const;
 
-		void set_extra_ips(const PackedStringArray extra_ips);
-		PackedStringArray get_extra_ips() const;
+	void set_extra_ips(const PackedStringArray extra_ips);
+	PackedStringArray get_extra_ips() const;
 
-		TypedArray<VideoStreamNDI> get_sources() const;
+	TypedArray<VideoStreamNDI> get_sources() const;
 
-		void update();
+	void update();
 
-	protected:
-		static void _bind_methods();
-		void _notification(int what);
+protected:
+	static void _bind_methods();
+	void _notification(int what);
 
-	private:
-		CharString groups;
-		CharString extra_ips;
+private:
+	CharString groups;
+	CharString extra_ips;
 
-		Ref<Thread> thr;
-		Ref<Mutex> mtx;
-		Ref<Semaphore> sem;
-		bool mtx_exit_thread = false;
+	Ref<Thread> thr;
+	Ref<Mutex> mtx;
+	Ref<Semaphore> sem;
+	bool mtx_exit_thread = false;
 
-		TypedArray<VideoStreamNDI> mtx_sources;
-		NDIlib_find_create_t mtx_find_desc;
-		bool mtx_rebuild_find = false;
+	TypedArray<VideoStreamNDI> mtx_sources;
+	NDIlib_find_create_t mtx_find_desc;
+	bool mtx_rebuild_find = false;
 
-		void find_sources_thread();
-
+	void find_sources_thread();
 };

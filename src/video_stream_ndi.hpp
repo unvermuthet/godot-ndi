@@ -16,35 +16,34 @@ using namespace godot;
 class VideoStreamNDI : public VideoStream {
 	GDCLASS(VideoStreamNDI, VideoStream)
 
-	public:
-		VideoStreamNDI();
-		VideoStreamNDI(const NDIlib_source_t p_source);
-		~VideoStreamNDI();
+public:
+	VideoStreamNDI();
+	VideoStreamNDI(const NDIlib_source_t p_source);
+	~VideoStreamNDI();
 
-		void set_name(const String p_name);
-		String get_name() const;
+	void set_name(const String p_name);
+	String get_name() const;
 
-		void set_url(const String p_url);
-		String get_url() const;
+	void set_url(const String p_url);
+	String get_url() const;
 
-		void set_bandwidth(const NDIlib_recv_bandwidth_e p_bandwidth);
-		NDIlib_recv_bandwidth_e get_bandwidth() const;
-		
-		Ref<VideoStreamPlayback> _instantiate_playback() override;
+	void set_bandwidth(const NDIlib_recv_bandwidth_e p_bandwidth);
+	NDIlib_recv_bandwidth_e get_bandwidth() const;
 
-	protected:
-		static void _bind_methods();
-		void _validate_property(PropertyInfo & p_property);
+	Ref<VideoStreamPlayback> _instantiate_playback() override;
 
-	private:
-		CharString name;
-		CharString url;
-		NDIlib_recv_bandwidth_e bandwidth;
+protected:
+	static void _bind_methods();
+	void _validate_property(PropertyInfo &p_property);
 
-		NDIFinder* finder;
-		String available_sources_hint;
-		void update_available_sources_hint();
+private:
+	CharString name;
+	CharString url;
+	NDIlib_recv_bandwidth_e bandwidth;
 
+	NDIFinder *finder;
+	String available_sources_hint;
+	void update_available_sources_hint();
 };
 
 VARIANT_ENUM_CAST(NDIlib_recv_bandwidth_e);
