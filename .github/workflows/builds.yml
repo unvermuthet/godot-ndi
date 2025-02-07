@@ -2,7 +2,7 @@ name: Build GDExtension
 on:
   push:
     branches: [main]
-  pull_request: 
+  pull_request:
     branches: [main]
   workflow_dispatch:
 
@@ -19,7 +19,12 @@ jobs:
       matrix:
         float-precision: [single, double]
         target-type: [template_debug, template_release]
-        target: [ { platform: linux, arch: x86_64, os: ubuntu-20.04 }, { platform: windows, arch: x86_64, os: windows-latest }, { platform: macos, arch: universal, os: macos-latest } ]
+        target:
+          [
+            { platform: linux, arch: x86_64, os: ubuntu-20.04 },
+            { platform: windows, arch: x86_64, os: windows-latest },
+            { platform: macos, arch: universal, os: macos-latest },
+          ]
 
     runs-on: ${{ matrix.target.os }}
     steps:
@@ -28,7 +33,7 @@ jobs:
         with:
           submodules: true
 
-# Lint
+      # Lint
       - name: Setup clang-format
         shell: bash
         run: |
@@ -38,7 +43,7 @@ jobs:
         run: |
           clang-format src/** --dry-run --Werror
 
-# Build
+      # Build
       - name: 🔗 GDExtension Build
         uses: ./.github/actions/build
         with:
@@ -47,7 +52,7 @@ jobs:
           float-precision: ${{ matrix.float-precision }}
           build-target-type: ${{ matrix.target-type }}
 
-# Sign
+      # Sign
       - name: Mac Sign
         # Disable sign if secrets are not set
         if: ${{ matrix.target.platform == 'macos' && env.APPLE_CERT_BASE64 }}
@@ -68,6 +73,14 @@ jobs:
         shell: pwsh
         run: |
           Remove-Item ${{ github.workspace }}/addons/${{ env.LIBNAME }}/bin/windows/* -Include *.exp,*.lib,*.pdb -Force
+
+      - name: Copy license files
+        run: |
+          cd ${{ github.workspace }}
+          cp LICENSE addons/godot-ndi/LICENSE
+          cp README.md addons/godot-ndi/README.md
+          cp NOTICE.md addons/godot-ndi/NOTICE.md
+
       - name: Upload Artifact
         if: ${{ !env.ACT }}
         uses: actions/upload-artifact@v4
@@ -104,7 +117,7 @@ jobs:
           sudo apt-get install -y zip
           cd ${{ env.LIBNAME }}
           zip -r ../${{ env.LIBNAME }}.zip .
-          
+
       - name: Create Release Draft
         uses: softprops/action-gh-release@v2
         with:
