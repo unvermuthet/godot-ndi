@@ -19,20 +19,9 @@ jobs:
       matrix:
         float-precision: [single, double]
         target-type: [template_debug, template_release]
-        include:
-          - platform: linux
-            arch: x86_64
-            os: ubuntu-20.04
+        target: [ { platform: linux, arch: x86_64, os: ubuntu-20.04 }, { platform: windows, arch: x86_64, os: windows-latest }, { platform: macos, arch: universal, os: macos-latest } ]
 
-          - platform: windows
-            arch: x86_64
-            os: windows-latest
-
-          - platform: macos
-            arch: universal
-            os: macos-latest
-
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.target.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -53,15 +42,15 @@ jobs:
       - name: 🔗 GDExtension Build
         uses: ./.github/actions/build
         with:
-          platform: ${{ matrix.platform }}
-          arch: ${{ matrix.arch }}
+          platform: ${{ matrix.target.platform }}
+          arch: ${{ matrix.target.arch }}
           float-precision: ${{ matrix.float-precision }}
           build-target-type: ${{ matrix.target-type }}
 
 # Sign
       - name: Mac Sign
         # Disable sign if secrets are not set
-        if: ${{ matrix.platform == 'macos' && env.APPLE_CERT_BASE64 }}
+        if: ${{ matrix.target.platform == 'macos' && env.APPLE_CERT_BASE64 }}
         env:
           APPLE_CERT_BASE64: ${{ secrets.APPLE_CERT_BASE64 }}
         uses: ./.github/actions/sign
@@ -75,7 +64,7 @@ jobs:
           APPLE_DEV_APP_ID: ${{ secrets.APPLE_DEV_APP_ID }}
 
       - name: Windows - Delete compilation files
-        if: ${{ matrix.platform == 'windows' }}
+        if: ${{ matrix.target.platform == 'windows' }}
         shell: pwsh
         run: |
           Remove-Item ${{ github.workspace }}/dist/addons/${{ env.LIBNAME }}/bin/windows/* -Include *.exp,*.lib,*.pdb -Force
@@ -83,7 +72,7 @@ jobs:
         if: ${{ !env.ACT }}
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.LIBNAME }}-${{ matrix.platform }}-${{ matrix.arch }}-${{ matrix.float-precision }}-${{ matrix.target-type }}
+          name: ${{ env.LIBNAME }}-${{ matrix.target.platform }}-${{ matrix.target.arch }}-${{ matrix.float-precision }}-${{ matrix.target-type }}
           path: |
             ${{ github.workspace }}/dist/**
             !${{ github.workspace }}/dist/addons/godot-ndi/project.godot
