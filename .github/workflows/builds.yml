@@ -74,7 +74,7 @@ jobs:
         with:
           name: ${{ env.LIBNAME }}-${{ matrix.target.platform }}-${{ matrix.target.arch }}-${{ matrix.float-precision }}-${{ matrix.target-type }}
           path: |
-            ./addons
+            ./*/godot-ndi
             !./addons/godot-ndi/project.godot
 
   merge:
