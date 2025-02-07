@@ -1,7 +1,5 @@
 {
     "cmake.options.statusBarVisibility": "hidden",
     "cmake.ignoreCMakeListsMissing": true,
-    "editor.formatOnSaveMode": "modifications",
-    "editor.formatOnSave": true,
     "C_Cpp.formatting": "clangFormat"
 }
