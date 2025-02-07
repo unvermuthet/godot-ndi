@@ -1,0 +1,27 @@
+[gd_scene load_steps=2 format=3 uid="uid://dydvtidqppffs"]
+
+[ext_resource type="Script" uid="uid://kbgdevvugj7k" path="res://demo/ndi_finder.gd" id="1_0rvup"]
+
+[node name="Canvas" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+autoplay = true
+expand = true
+
+[node name="NDIFinder" type="NDIFinder" parent="."]
+script = ExtResource("1_0rvup")
+
+[connection signal="sources_changed" from="NDIFinder" to="VideoStreamPlayer" method="_on_ndi_finder_sources_changed"]
+[connection signal="sources_changed" from="NDIFinder" to="NDIFinder" method="_on_sources_changed"]
