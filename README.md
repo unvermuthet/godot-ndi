@@ -1,13 +1,12 @@
-# godot-ndi [![Made with Godot](https://img.shields.io/badge/Made%20with-Godot-478CBF?style=flat&logo=godot%20engine&logoColor=white)](https://godotengine.org)
-> GDExtension for NDI®
+# godot-ndi [![Made with Godot](https://img.shields.io/badge/Made%20with-Godot-478CBF?style=flat&logo=godot%20engine&logoColor=white)](https://godotengine.org) [![Build GDExtension](https://github.com/unvermuthet/godot-ndi/actions/workflows/builds.yml/badge.svg)](https://github.com/unvermuthet/godot-ndi/actions/workflows/builds.yml)
 
-[ NDI® is a registered trademark of Vizrt NDI AB ]
+> Integrates the NDI® SDK with Godot
 
-Licensed under MPL 2.0
+> [ NDI® is a registered trademark of Vizrt NDI AB ]
 
-Extends the [VideoStream](https://docs.godotengine.org/en/stable/classes/class_videostream.html) and VideoStreamPlayback classes to implement NDI playback.
-For outputting the Viewport as an NDI source, add the NDIOutput Node to the scene.
-Check out the demo scenes included with the releases.
+Extends the [VideoStream](https://docs.godotengine.org/en/stable/classes/class_videostream.html) and VideoStreamPlayback classes to implement **NDI playback**.
+For **outputting the Viewport** as an NDI source, add the NDIOutput Node to the scene.
+Check out the **demo scenes** included with the releases.
 
 I'm happy to hear suggestions and incorperate improvements. You can find my contact info on my Github profile. 
 
@@ -26,7 +25,7 @@ Your application needs to comply with the [NDI SDK license](http://ndi.link/ndis
 
 ## Building from source
 
-This project is based on the typical Godot build system (scons).
+This project is based on the typical [Godot build system](https://docs.godotengine.org/en/latest/contributing/development/compiling/).
 
 There is a Dev Container configured that will allow you to target Linux.
 If you want to target Windows you could install MSYS2 and run `scons use_mingw=yes` for example.
