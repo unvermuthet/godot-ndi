@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://ddr3hiaft61tl"]
 
-[ext_resource type="VideoStream" uid="uid://r1t8nkpoyq1o" path="res://demo/Big_Buck_Bunny_first_23_seconds_1080p.ogv" id="1_h7vc7"]
+[ext_resource type="VideoStream" path="res://demo/Liftoff_Space_Shuttle_Atlantis.ogv" id="1_utmvk"]
 
 [node name="Output" type="Control"]
 layout_mode = 3
@@ -17,9 +17,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-stream = ExtResource("1_h7vc7")
+stream = ExtResource("1_utmvk")
 autoplay = true
-expand = true
+loop = true
 
 [node name="NDIOutput" type="NDIOutput" parent="."]
 name = "GodotNDI"
