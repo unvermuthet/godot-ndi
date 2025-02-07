@@ -74,10 +74,8 @@ jobs:
         with:
           name: ${{ env.LIBNAME }}-${{ matrix.target.platform }}-${{ matrix.target.arch }}-${{ matrix.float-precision }}-${{ matrix.target-type }}
           path: |
-            !${{ github.workspace }}/**
-            ${{ github.workspace }}/addons
-            ${{ github.workspace }}/addons/**
-            !${{ github.workspace }}/addons/godot-ndi/project.godot
+            ./addons
+            !./addons/godot-ndi/project.godot
 
   merge:
     runs-on: ubuntu-20.04
