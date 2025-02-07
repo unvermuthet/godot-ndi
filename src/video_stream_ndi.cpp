@@ -21,8 +21,8 @@ VideoStreamNDI::VideoStreamNDI() {
 	url = NULL;
 	bandwidth = NDIlib_recv_bandwidth_highest;
 
-	if (Engine::get_singleton()->has_singleton("NDIFinder")) {
-		finder = (NDIFinder *)Engine::get_singleton()->get_singleton("NDIFinder");
+	if (Engine::get_singleton()->has_singleton("GlobalNDIFinder")) {
+		finder = (NDIFinder *)Engine::get_singleton()->get_singleton("GlobalNDIFinder");
 		finder->connect("sources_changed", callable_mp(this, &VideoStreamNDI::update_available_sources_hint));
 	}
 

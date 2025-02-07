@@ -71,8 +71,8 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level) {
 	GDREGISTER_CLASS(NDIOutput);
 	GDREGISTER_CLASS(ViewportTextureRouter);
 
-	if (!Engine::get_singleton()->has_singleton("NDIFinder")) {
-		Engine::get_singleton()->register_singleton("NDIFinder", memnew(NDIFinder));
+	if (!Engine::get_singleton()->has_singleton("GlobalNDIFinder")) {
+		Engine::get_singleton()->register_singleton("GlobalNDIFinder", memnew(NDIFinder));
 	}
 
 	if (!Engine::get_singleton()->has_singleton("ViewportTextureRouter")) {
@@ -85,8 +85,8 @@ void uninitialize_gdextension_types(ModuleInitializationLevel p_level) {
 		return;
 	}
 
-	if (Engine::get_singleton()->has_singleton("NDIFinder")) {
-		memdelete((NDIFinder *)Engine::get_singleton()->get_singleton("NDIFinder"));
+	if (Engine::get_singleton()->has_singleton("GlobalNDIFinder")) {
+		memdelete((NDIFinder *)Engine::get_singleton()->get_singleton("GlobalNDIFinder"));
 	}
 
 	if (Engine::get_singleton()->has_singleton("ViewportTextureRouter")) {
