@@ -55,7 +55,7 @@ jobs:
           APPLE_CERT_BASE64: ${{ secrets.APPLE_CERT_BASE64 }}
         uses: ./.github/actions/sign
         with:
-          FRAMEWORK_PATH: ${{ github.workspace }}/dist/addons/godot-ndi/bin/macos/macos.framework
+          FRAMEWORK_PATH: ${{ github.workspace }}/addons/godot-ndi/bin/macos/macos.framework
           APPLE_CERT_BASE64: ${{ secrets.APPLE_CERT_BASE64 }}
           APPLE_CERT_PASSWORD: ${{ secrets.APPLE_CERT_PASSWORD }}
           APPLE_DEV_PASSWORD: ${{ secrets.APPLE_DEV_PASSWORD }}
@@ -67,15 +67,17 @@ jobs:
         if: ${{ matrix.target.platform == 'windows' }}
         shell: pwsh
         run: |
-          Remove-Item ${{ github.workspace }}/dist/addons/${{ env.LIBNAME }}/bin/windows/* -Include *.exp,*.lib,*.pdb -Force
+          Remove-Item ${{ github.workspace }}/addons/${{ env.LIBNAME }}/bin/windows/* -Include *.exp,*.lib,*.pdb -Force
       - name: Upload Artifact
         if: ${{ !env.ACT }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.LIBNAME }}-${{ matrix.target.platform }}-${{ matrix.target.arch }}-${{ matrix.float-precision }}-${{ matrix.target-type }}
           path: |
-            ${{ github.workspace }}/dist/**
-            !${{ github.workspace }}/dist/addons/godot-ndi/project.godot
+            !${{ github.workspace }}/**
+            ${{ github.workspace }}/addons
+            ${{ github.workspace }}/addons/**
+            !${{ github.workspace }}/addons/godot-ndi/project.godot
 
   merge:
     runs-on: ubuntu-20.04

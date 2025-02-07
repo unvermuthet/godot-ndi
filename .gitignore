@@ -2,7 +2,6 @@
 *.gen.*
 .godot/
 *.import
-*.uid
 
 # Ignore custom.py
 custom.py

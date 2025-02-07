@@ -5,7 +5,7 @@ import sys
 from methods import print_error
 
 libname = "godot-ndi"
-bindir = "dist/addons/godot-ndi/bin"
+bindir = "addons/godot-ndi/bin"
 
 localEnv = Environment(tools=["default"], PLATFORM="")
 
