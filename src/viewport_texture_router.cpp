@@ -15,8 +15,7 @@ ViewportTextureRouter::ViewportTextureRouter() {
 ViewportTextureRouter::~ViewportTextureRouter() {
 	RenderingServer::get_singleton()->set_render_loop_enabled(false);
 	RenderingServer::get_singleton()->set_block_signals(true);
-	
-	// UtilityFunctions::print("ViewportTextureRouter destructor");
+	RenderingServer::get_singleton()->get_rendering_device()->set_block_signals(true);
 }
 
 void ViewportTextureRouter::add_viewport(Viewport *viewport) {
@@ -41,6 +40,12 @@ void ViewportTextureRouter::remove_viewport(Viewport *viewport) {
 	}
 }
 
+void ViewportTextureRouter::_bind_methods() {
+	// ClassDB::bind_method(D_METHOD("forward_texture", "p_data", "p_format", "p_viewport_rid"), &ViewportTextureRouter::forward_texture);
+
+	ADD_SIGNAL(MethodInfo("texture_arrived", PropertyInfo(Variant::PACKED_BYTE_ARRAY, "p_data"), PropertyInfo(Variant::INT, "p_viewport_rid"), PropertyInfo(Variant::OBJECT, "p_format")));
+}
+
 void ViewportTextureRouter::request_textures() {
 	for (int i = 0; i < vps.size(); i++) {
 		Viewport *vp = Object::cast_to<Viewport>(vps[i]);
@@ -53,15 +58,10 @@ void ViewportTextureRouter::request_textures() {
 		Ref<RDTextureFormat> texture_format = rd->texture_get_format(rd_texture_rid);
 		ERR_FAIL_COND_MSG(texture_format.is_null(), "Couldn't get viewport texture format");
 
-		rd->texture_get_data_async(rd_texture_rid, 0, callable_mp(this, &ViewportTextureRouter::forward_texture).bind(texture_format, vp));
-		UtilityFunctions::print("texture requested");
+		rd->texture_get_data_async(rd_texture_rid, 0, callable_mp(this, &ViewportTextureRouter::forward_texture).bind(texture_format, vp->get_viewport_rid().get_id()));
 	}
 }
 
-void ViewportTextureRouter::forward_texture(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format, Viewport *p_viewport) {
-	emit_signal("texture_arrived", p_data, p_format, p_viewport);
-}
-
-void ViewportTextureRouter::_bind_methods() {
-	ADD_SIGNAL(MethodInfo("texture_arrived", PropertyInfo(Variant::PACKED_BYTE_ARRAY, "p_data"), PropertyInfo(Variant::OBJECT, "p_format"), PropertyInfo(Variant::OBJECT, "p_viewport")));
+void ViewportTextureRouter::forward_texture(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format, int64_t p_viewport_rid) {
+	emit_signal("texture_arrived", p_data, p_format, p_viewport_rid);
 }

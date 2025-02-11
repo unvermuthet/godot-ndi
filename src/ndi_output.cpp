@@ -71,6 +71,8 @@ void NDIOutput::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_output_editor", "p_state"), &NDIOutput::set_output_editor);
 	ClassDB::bind_method(D_METHOD("is_outputting_editor"), &NDIOutput::is_outputting_editor);
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "enable_editor_output"), "set_output_editor", "is_outputting_editor");
+
+	// ClassDB::bind_method(D_METHOD("receive_texture", "p_data"), &NDIOutput::receive_texture);
 }
 
 void NDIOutput::_notification(int p_what) {
@@ -107,7 +109,7 @@ void NDIOutput::create_sender() {
 	if (Engine::get_singleton()->is_editor_hint()) {
 		send_desc.p_ndi_name = (get_name() + " (Editor)").utf8();
 	} else {
-		send_desc.p_ndi_name = get_name().utf8();
+		send_desc.p_ndi_name = (get_name() + " (Game)").utf8();
 	}
 
 	if (!get_groups().is_empty()) {
@@ -153,8 +155,8 @@ void NDIOutput::unregister_viewport() {
 	vp_texture_router->remove_viewport(get_viewport());
 }
 
-void NDIOutput::receive_texture(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format, Viewport *viewport) {
-	if (viewport != get_viewport() || !is_inside_tree()) {
+void NDIOutput::receive_texture(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format, int64_t p_viewport_rid) {
+	if (!is_inside_tree() || p_viewport_rid != get_viewport()->get_viewport_rid().get_id() ) {
 		return; // Not my request
 	}
 

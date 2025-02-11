@@ -51,12 +51,11 @@ private:
 
 	void register_viewport();
 	void unregister_viewport();
+	void receive_texture(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format, int64_t p_viewport_rid);
 
 	Ref<Mutex> mtx_texture;
 	PackedByteArray mtx_texture_data;
 	Ref<RDTextureFormat> mtx_texture_format;
 
-	void request_texture();
-	void receive_texture(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format, Viewport *p_viewport);
 	void send_video_thread();
 };

@@ -29,5 +29,5 @@ protected:
 private:
 	TypedArray<Viewport> vps;
 	void request_textures();
-	void forward_texture(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format, Viewport *p_viewport);
+	void forward_texture(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format, int64_t p_viewport_rid);
 };
