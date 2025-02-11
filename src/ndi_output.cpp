@@ -15,18 +15,10 @@ NDIOutput::NDIOutput() {
 	mtx_texture.instantiate();
 	sem.instantiate();
 
-	if (Engine::get_singleton()->has_singleton("ViewportTextureRouter")) {
-		((ViewportTextureRouter *)Engine::get_singleton()->get_singleton("ViewportTextureRouter"))->connect("texture_arrived", callable_mp(this, &NDIOutput::receive_texture));
-	}
-
 	thr->start(callable_mp(this, &NDIOutput::send_video_thread));
 }
 
 NDIOutput::~NDIOutput() {
-	if (Engine::get_singleton()->has_singleton("ViewportTextureRouter")) {
-		((ViewportTextureRouter *)Engine::get_singleton()->get_singleton("ViewportTextureRouter"))->disconnect("texture_arrived", callable_mp(this, &NDIOutput::receive_texture));
-	}
-
 	mtx_exit_thread = true;
 	sem->post();
 
@@ -83,7 +75,7 @@ void NDIOutput::_bind_methods() {
 
 void NDIOutput::_notification(int p_what) {
 	switch (p_what) {
-		case Node::NOTIFICATION_ENTER_TREE: {
+		case Node::NOTIFICATION_POST_ENTER_TREE: {
 			create_sender();
 		} break;
 
@@ -101,6 +93,10 @@ void NDIOutput::create_sender() {
 	}
 
 	if (get_name().is_empty()) {
+		return;
+	}
+
+	if (!is_inside_tree()) {
 		return;
 	}
 
@@ -123,32 +119,42 @@ void NDIOutput::create_sender() {
 	mtx_sending = true;
 	mtx_send->unlock();
 
-	RenderingServer::get_singleton()->connect("frame_post_draw", callable_mp(this, &NDIOutput::request_texture));
+	register_viewport();
 }
 
 void NDIOutput::destroy_sender() {
-	if (mtx_sending) {
-		RenderingServer::get_singleton()->disconnect("frame_post_draw", callable_mp(this, &NDIOutput::request_texture));
-
-		mtx_send->lock();
-		mtx_sending = false;
-		ndi->send_destroy(mtx_send_instance);
-		mtx_send->unlock();
-	}
-}
-
-void NDIOutput::request_texture() {
-	if (!get_viewport() || !is_inside_tree() || is_queued_for_deletion()) {
+	if (!mtx_sending || !is_inside_tree()) {
 		return;
 	}
 
-	if (Engine::get_singleton()->has_singleton("ViewportTextureRouter")) {
-		((ViewportTextureRouter *)Engine::get_singleton()->get_singleton("ViewportTextureRouter"))->request_texture(get_viewport());
-	}
+	unregister_viewport();
+
+	mtx_send->lock();
+	mtx_sending = false;
+	ndi->send_destroy(mtx_send_instance);
+	mtx_send->unlock();
+}
+
+void NDIOutput::register_viewport() {
+	ViewportTextureRouter* vp_texture_router = Object::cast_to<ViewportTextureRouter>(Engine::get_singleton()->get_singleton("ViewportTextureRouter"));
+	ERR_FAIL_NULL_MSG(get_viewport(), "No viewport found");
+	ERR_FAIL_NULL_MSG(vp_texture_router, "No viewport texture router found");
+
+	vp_texture_router->connect("texture_arrived", callable_mp(this, &NDIOutput::receive_texture));
+	vp_texture_router->add_viewport(get_viewport());
+}
+
+void NDIOutput::unregister_viewport() {
+	ViewportTextureRouter* vp_texture_router = Object::cast_to<ViewportTextureRouter>(Engine::get_singleton()->get_singleton("ViewportTextureRouter"));
+	ERR_FAIL_NULL_MSG(get_viewport(), "No viewport found");
+	ERR_FAIL_NULL_MSG(vp_texture_router, "No viewport texture router found");
+	
+	vp_texture_router->disconnect("texture_arrived", callable_mp(this, &NDIOutput::receive_texture));
+	vp_texture_router->remove_viewport(get_viewport());
 }
 
 void NDIOutput::receive_texture(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format, Viewport *viewport) {
-	if (viewport != get_viewport()) {
+	if (viewport != get_viewport() || !is_inside_tree()) {
 		return; // Not my request
 	}
 

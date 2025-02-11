@@ -20,11 +20,14 @@ public:
 	ViewportTextureRouter();
 	~ViewportTextureRouter();
 
-	void request_texture(Viewport *viewport);
+	void add_viewport(Viewport *viewport);
+	void remove_viewport(Viewport *viewport);
 
 protected:
 	static void _bind_methods();
 
 private:
+	TypedArray<Viewport> vps;
+	void request_textures();
 	void forward_texture(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format, Viewport *p_viewport);
 };

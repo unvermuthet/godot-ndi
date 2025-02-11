@@ -49,6 +49,9 @@ private:
 	void create_sender();
 	void destroy_sender();
 
+	void register_viewport();
+	void unregister_viewport();
+
 	Ref<Mutex> mtx_texture;
 	PackedByteArray mtx_texture_data;
 	Ref<RDTextureFormat> mtx_texture_format;
