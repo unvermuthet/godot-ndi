@@ -13,9 +13,9 @@ ViewportTextureRouter::ViewportTextureRouter() {
 }
 
 ViewportTextureRouter::~ViewportTextureRouter() {
-	RenderingServer::get_singleton()->set_render_loop_enabled(false);
-	RenderingServer::get_singleton()->set_block_signals(true);
-	RenderingServer::get_singleton()->get_rendering_device()->set_block_signals(true);
+	// RenderingServer::get_singleton()->set_render_loop_enabled(false);
+	// RenderingServer::get_singleton()->set_block_signals(true);
+	// RenderingServer::get_singleton()->get_rendering_device()->set_block_signals(true);
 }
 
 void ViewportTextureRouter::add_viewport(Viewport *viewport) {
