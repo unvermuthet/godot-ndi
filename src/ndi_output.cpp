@@ -138,7 +138,7 @@ void NDIOutput::destroy_sender() {
 }
 
 void NDIOutput::register_viewport() {
-	ViewportTextureRouter* vp_texture_router = Object::cast_to<ViewportTextureRouter>(Engine::get_singleton()->get_singleton("ViewportTextureRouter"));
+	ViewportTextureRouter *vp_texture_router = Object::cast_to<ViewportTextureRouter>(Engine::get_singleton()->get_singleton("ViewportTextureRouter"));
 	ERR_FAIL_NULL_MSG(get_viewport(), "No viewport found");
 	ERR_FAIL_NULL_MSG(vp_texture_router, "No viewport texture router found");
 
@@ -147,16 +147,16 @@ void NDIOutput::register_viewport() {
 }
 
 void NDIOutput::unregister_viewport() {
-	ViewportTextureRouter* vp_texture_router = Object::cast_to<ViewportTextureRouter>(Engine::get_singleton()->get_singleton("ViewportTextureRouter"));
+	ViewportTextureRouter *vp_texture_router = Object::cast_to<ViewportTextureRouter>(Engine::get_singleton()->get_singleton("ViewportTextureRouter"));
 	ERR_FAIL_NULL_MSG(get_viewport(), "No viewport found");
 	ERR_FAIL_NULL_MSG(vp_texture_router, "No viewport texture router found");
-	
+
 	vp_texture_router->disconnect("texture_arrived", callable_mp(this, &NDIOutput::receive_texture));
 	vp_texture_router->remove_viewport(get_viewport());
 }
 
 void NDIOutput::receive_texture(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format, int64_t p_viewport_rid) {
-	if (!is_inside_tree() || p_viewport_rid != get_viewport()->get_viewport_rid().get_id() ) {
+	if (!is_inside_tree() || p_viewport_rid != get_viewport()->get_viewport_rid().get_id()) {
 		return; // Not my request
 	}
 
