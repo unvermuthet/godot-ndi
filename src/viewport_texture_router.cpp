@@ -21,12 +21,13 @@ ViewportTextureRouter::~ViewportTextureRouter() {
 void ViewportTextureRouter::add_viewport(Viewport *viewport) {
 	ERR_FAIL_NULL_MSG(viewport, "Viewport is null");
 
-	if (vps.size() == 0) {
-		RenderingServer::get_singleton()->connect("frame_post_draw", callable_mp(this, &ViewportTextureRouter::request_textures));
-	}
-
 	if (!vps.has(viewport)) {
 		vps.append(viewport);
+
+		// If this is the first viewport, connect to the frame_post_draw signal
+		if (vps.size() == 1) {
+			RenderingServer::get_singleton()->connect("frame_post_draw", callable_mp(this, &ViewportTextureRouter::request_textures));
+		}
 	}
 }
 
@@ -35,14 +36,13 @@ void ViewportTextureRouter::remove_viewport(Viewport *viewport) {
 
 	vps.erase(viewport);
 
+	// Last viewport removed, disconnect from the frame_post_draw signal
 	if (vps.size() == 0) {
 		RenderingServer::get_singleton()->disconnect("frame_post_draw", callable_mp(this, &ViewportTextureRouter::request_textures));
 	}
 }
 
 void ViewportTextureRouter::_bind_methods() {
-	// ClassDB::bind_method(D_METHOD("forward_texture", "p_data", "p_format", "p_viewport_rid"), &ViewportTextureRouter::forward_texture);
-
 	ADD_SIGNAL(MethodInfo("texture_arrived", PropertyInfo(Variant::PACKED_BYTE_ARRAY, "p_data"), PropertyInfo(Variant::INT, "p_viewport_rid"), PropertyInfo(Variant::OBJECT, "p_format")));
 }
 
