@@ -6,10 +6,10 @@ reloadable = false
 
 [libraries]
 
-macos.debug.single = "bin/macos/macos.framework/libgodot-ndi.macos.template_debug.universal"
-macos.release.single = "bin/macos/macos.framework/libgodot-ndi.macos.template_release.universal"
-macos.debug.double = "bin/macos/macos.framework/libgodot-ndi.macos.template_debug.double.universal"
-macos.release.double = "bin/macos/macos.framework/libgodot-ndi.macos.template_release.double.universal"
+macos.debug.single = "bin/macos/godot-ndi.framework/libgodot-ndi.macos.template_debug.universal.dylib"
+macos.release.single = "bin/macos/godot-ndi.framework/libgodot-ndi.macos.template_release.universal.dylib"
+macos.debug.double = "bin/macos/godot-ndi.framework/libgodot-ndi.macos.template_debug.double.universal.dylib"
+macos.release.double = "bin/macos/godot-ndi.framework/libgodot-ndi.macos.template_release.double.universal.dylib"
 windows.debug.x86_64.single = "bin/windows/godot-ndi.windows.template_debug.x86_64.dll"
 windows.release.x86_64.single = "bin/windows/godot-ndi.windows.template_release.x86_64.dll"
 windows.debug.x86_64.double = "bin/windows/godot-ndi.windows.template_debug.x86_64.dll"

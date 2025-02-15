@@ -49,8 +49,7 @@ file = "{}{}{}".format(libname, env["suffix"], env["SHLIBSUFFIX"])
 filepath = ""
 
 if env["platform"] == "macos" or env["platform"] == "ios":
-    filepath = "{}.framework/".format(env["platform"])
-    file = "{}{}".format(libname, env["suffix"])
+    filepath = "{}.framework/".format(libname)
 
 libraryfile = "{}/{}/{}{}".format(bindir, env["platform"], filepath, file)
 library = env.SharedLibrary(libraryfile, source=sources)
