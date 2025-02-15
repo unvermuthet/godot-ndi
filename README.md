@@ -15,9 +15,8 @@ I'm happy to hear suggestions and incorperate improvements. You can find my cont
 ## Install
 
 > [!IMPORTANT]
-> Minimum Godot version is `4.4-beta3`
-> 
-> MacOS is untested
+> - Minimum Godot version is `4.4-beta3`
+> - [MacOS is untested](https://github.com/unvermuthet/godot-ndi/issues/9)
 
 Download the latest version under `Releases`. Install by extracting the ZIP file anywhere in your Godot project.
 
