@@ -24,3 +24,9 @@ linux.release.x86_64.double = "bin/linux/libgodot-ndi.linux.template_release.x86
 VideoStreamNDI = "icons/VideoStreamNDI.svg"
 NDIOutput = "icons/NDIOutput.svg"
 NDIFinder = "icons/NDIFinder.svg"
+
+[dependencies]
+
+macos = {
+    "bin/macos/godot-ndi.framework" : "Contents/Frameworks"
+}
