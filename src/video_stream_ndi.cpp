@@ -9,39 +9,35 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "includes.hpp"
 
-// The only persistent parts of this resource are the name and bandwidth fields.
-// I've decided to not expose/bind the url field of the NDI_source_t struct.
-// Its only set when obtaining a VideoStreamNDI from NDIFind.
-// When creating this resource by hand or loading it from disk the url field stays NULL.
-// The SDK will spin up a find instance itself and obtain the url that way.
-// Read more in ndi/Processing.NDI.structs.h at line 182
-
 VideoStreamNDI::VideoStreamNDI() {
-	name = NULL;
-	url = NULL;
+	name = nullptr;
+	url = nullptr;
 	bandwidth = NDIlib_recv_bandwidth_highest;
 
-	if (Engine::get_singleton()->has_singleton("GlobalNDIFinder")) {
-		finder = (NDIFinder *)Engine::get_singleton()->get_singleton("GlobalNDIFinder");
-		finder->connect("sources_changed", callable_mp(this, &VideoStreamNDI::update_available_sources_hint));
-	}
+	finder = nullptr;
+
+	ERR_FAIL_COND_MSG(!Engine::get_singleton()->has_singleton("GlobalNDIFinder"), "NDIFinder Singleton not found");
+	finder = Object::cast_to<NDIFinder>(Engine::get_singleton()->get_singleton("GlobalNDIFinder"));
+	finder->connect("sources_changed", callable_mp(this, &VideoStreamNDI::update_available_sources_hint));
 
 	update_available_sources_hint();
 }
 
 VideoStreamNDI::VideoStreamNDI(const NDIlib_source_t p_source) :
 		VideoStreamNDI::VideoStreamNDI() {
-	name = p_source.p_ndi_name; // This needs to copy the memory because it might become invalid (freed by the sdk)
-	url = p_source.p_url_address; // -||-
+	name = p_source.p_ndi_name;
+	url = p_source.p_url_address;
 }
 
 VideoStreamNDI::~VideoStreamNDI() {
-	if (finder) {
+	if (finder != nullptr) {
 		finder->disconnect("sources_changed", callable_mp(this, &VideoStreamNDI::update_available_sources_hint));
 	}
 }
 
 void VideoStreamNDI::set_name(const String p_name) {
+	set_url("");
+
 	if (p_name.is_empty()) {
 		name = NULL;
 		return;
@@ -49,22 +45,21 @@ void VideoStreamNDI::set_name(const String p_name) {
 
 	name = p_name.utf8();
 
-	if (!finder) {
-		return;
-	}
+	if (finder != nullptr) {
+		TypedArray<VideoStreamNDI> sources = finder->get_sources();
 
-	TypedArray<VideoStreamNDI> sources = finder->get_sources();
-	for (int64_t i = 0; i < sources.size(); i++) {
-		VideoStreamNDI *source = (VideoStreamNDI *)(Object *)sources[i];
-		if (source && source->get_name() == name) {
-			set_url(source->get_url());
-			return;
+		for (int64_t i = 0; i < sources.size(); i++) {
+			VideoStreamNDI *source = Object::cast_to<VideoStreamNDI>(sources[i]);
+			if (get_name() == source->get_name()) {
+				set_url(source->get_url());
+				return;
+			}
 		}
 	}
 }
 
 String VideoStreamNDI::get_name() const {
-	if (finder && !finder->is_inside_tree()) {
+	if (finder != nullptr) {
 		finder->update();
 	}
 
@@ -73,10 +68,11 @@ String VideoStreamNDI::get_name() const {
 
 void VideoStreamNDI::set_url(const String p_url) {
 	if (p_url.is_empty()) {
-		url = NULL;
-	} else {
-		url = p_url.utf8();
+		url = nullptr;
+		return;
 	}
+
+	url = p_url.utf8();
 }
 
 String VideoStreamNDI::get_url() const {
@@ -95,17 +91,17 @@ Ref<VideoStreamPlayback> VideoStreamNDI::_instantiate_playback() {
 	NDIlib_source_t source;
 	source.p_ndi_name = name;
 	source.p_url_address = url;
-
+	
 	NDIlib_recv_create_v3_t recv_desc;
 	recv_desc.source_to_connect_to = source;
 	recv_desc.color_format = NDIlib_recv_color_format_RGBX_RGBA;
 	recv_desc.bandwidth = bandwidth;
 	recv_desc.allow_video_fields = false;
-	recv_desc.p_ndi_recv_name = NULL;
+	recv_desc.p_ndi_recv_name = nullptr;
 
-	Ref<VideoStreamPlaybackNDI> p = memnew(VideoStreamPlaybackNDI);
-	p->recv_desc = recv_desc;
-	return p;
+	Ref<VideoStreamPlaybackNDI> pb = memnew(VideoStreamPlaybackNDI);
+	pb->recv_desc = recv_desc;
+	return pb;
 }
 
 void VideoStreamNDI::_bind_methods() {
@@ -113,9 +109,9 @@ void VideoStreamNDI::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_name"), &VideoStreamNDI::get_name);
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "name", PROPERTY_HINT_ENUM_SUGGESTION), "set_name", "get_name");
 
-	ClassDB::bind_method(D_METHOD("set_url", "p_url"), &VideoStreamNDI::set_url);
-	ClassDB::bind_method(D_METHOD("get_url"), &VideoStreamNDI::get_url);
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "url", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_RESOURCE_NOT_PERSISTENT), "set_url", "get_url");
+	// ClassDB::bind_method(D_METHOD("set_url", "p_url"), &VideoStreamNDI::set_url);
+	// ClassDB::bind_method(D_METHOD("get_url"), &VideoStreamNDI::get_url);
+	// ADD_PROPERTY(PropertyInfo(Variant::STRING, "url", PROPERTY_HINT_NONE), "set_url", "get_url");
 
 	ClassDB::bind_method(D_METHOD("set_bandwidth", "p_bandwidth"), &VideoStreamNDI::set_bandwidth);
 	ClassDB::bind_method(D_METHOD("get_bandwidth"), &VideoStreamNDI::get_bandwidth);
@@ -134,7 +130,7 @@ void VideoStreamNDI::_validate_property(PropertyInfo &p_property) {
 }
 
 void VideoStreamNDI::update_available_sources_hint() {
-	if (!finder) {
+	if (finder == nullptr) {
 		return;
 	}
 
@@ -142,7 +138,7 @@ void VideoStreamNDI::update_available_sources_hint() {
 	PackedStringArray source_names;
 
 	for (int64_t i = 0; i < sources.size(); i++) {
-		source_names.push_back(((VideoStreamNDI *)(Object *)sources[i])->get_name());
+		source_names.push_back(Object::cast_to<VideoStreamNDI>(sources[i])->get_name());
 	}
 
 	available_sources_hint = String(",").join(source_names);

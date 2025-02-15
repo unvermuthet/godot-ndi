@@ -18,11 +18,9 @@ VideoStreamPlaybackNDI::~VideoStreamPlaybackNDI() {
 }
 
 void VideoStreamPlaybackNDI::_play() {
-	if (!start_receiving())
-		return;
-	if (!start_syncing())
-		return;
-	playing = true;
+	if (start_receiving() && start_syncing()) {
+		playing = true;
+	}
 }
 
 void VideoStreamPlaybackNDI::_stop() {
@@ -71,7 +69,7 @@ Ref<Texture2D> VideoStreamPlaybackNDI::_get_texture() const {
 }
 
 void VideoStreamPlaybackNDI::_update(double p_delta) {
-	ERR_FAIL_COND_MSG(receiving == false || syncing == false, "VideoStreamPlaybackNDI wasn't setup properly. Call setup() before passing to VideoStreamPlayer!");
+	ERR_FAIL_COND_MSG(receiving == false || syncing == false, "VideoStreamPlaybackNDI wasn't setup properly");
 
 	if (p_delta == 0) { // See https://github.com/godotengine/godot/blob/b15b24b087e792335d919fd83055f50f276fbe22/scene/gui/video_stream_player.cpp#L314
 		render_first_frame();
@@ -150,7 +148,7 @@ void VideoStreamPlaybackNDI::render_video() {
 
 	ndi->framesync_capture_video(sync, &video_frame, NDIlib_frame_format_type_progressive);
 
-	if (video_frame.p_data != NULL && (video_frame.FourCC == NDIlib_FourCC_type_RGBA || video_frame.FourCC == NDIlib_FourCC_type_RGBX)) {
+	if (video_frame.p_data != nullptr && (video_frame.FourCC == NDIlib_FourCC_type_RGBA || video_frame.FourCC == NDIlib_FourCC_type_RGBX)) {
 		video_buffer.resize(video_frame.line_stride_in_bytes * video_frame.yres);
 		memcpy(video_buffer.ptrw(), video_frame.p_data, video_buffer.size());
 		img = Image::create_from_data(video_frame.xres, video_frame.yres, false, Image::Format::FORMAT_RGBA8, video_buffer);
@@ -163,7 +161,7 @@ void VideoStreamPlaybackNDI::render_audio(double p_delta) {
 	int requested_samples = Math::min((double)_get_mix_rate() * p_delta, (double)ndi->framesync_audio_queue_depth(sync));
 	ndi->framesync_capture_audio_v2(sync, &audio_frame, _get_mix_rate(), _get_channels(), requested_samples);
 
-	if (audio_frame.p_data != NULL) {
+	if (audio_frame.p_data != nullptr) {
 		audio_buffer_planar.resize(audio_frame.no_channels * audio_frame.no_samples);
 		audio_buffer_interleaved.resize(audio_buffer_planar.size());
 

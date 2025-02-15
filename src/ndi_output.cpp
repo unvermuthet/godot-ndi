@@ -71,13 +71,11 @@ void NDIOutput::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_output_editor", "p_state"), &NDIOutput::set_output_editor);
 	ClassDB::bind_method(D_METHOD("is_outputting_editor"), &NDIOutput::is_outputting_editor);
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "enable_editor_output"), "set_output_editor", "is_outputting_editor");
-
-	// ClassDB::bind_method(D_METHOD("receive_texture", "p_data"), &NDIOutput::receive_texture);
 }
 
 void NDIOutput::_notification(int p_what) {
 	switch (p_what) {
-		case Node::NOTIFICATION_POST_ENTER_TREE: {
+		case Node::NOTIFICATION_ENTER_TREE: {
 			create_sender();
 		} break;
 
