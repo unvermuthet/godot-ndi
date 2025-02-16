@@ -18,9 +18,8 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level) {
 		return;
 	}
 
-	const char *ndi_runtime_folder = getenv(NDILIB_REDIST_FOLDER);
-
 #ifdef _WIN32
+	const char *ndi_runtime_folder = getenv(NDILIB_REDIST_FOLDER);
 	ERR_FAIL_NULL_EDMSG(ndi_runtime_folder, NDILIB_REDIST_FOLDER "doesn't exist on PATH. Make sure you have the NDI Runtime installed on your system.");
 
 	std::string ndi_runtime_path = ndi_runtime_folder;
@@ -39,15 +38,19 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level) {
 		ERR_FAIL_EDMSG("Couldn't obtain entry symbol for NDI. Try reinstalling the NDI Runtime.");
 	}
 #else
+	const char *ndi_runtime_folder = getenv(NDILIB_REDIST_FOLDER);
 	std::string ndi_runtime_path;
 
-	if (ndi_runtime_folder) {
+	if (ndi_runtime_folder != NULL) {
 		ndi_runtime_path = ndi_runtime_folder;
 		ndi_runtime_path += NDILIB_LIBRARY_NAME;
 	} else {
-		ndi_runtime_path = NDILIB_LIBRARY_NAME;
+		ndi_runtime_path = "/usr/local/lib/";
+		ndi_runtime_path += NDILIB_LIBRARY_NAME;
 	}
-	
+
+	print_verbose("Loading libndi from ", ndi_runtime_path.c_str());
+
 	void *ndi_lib = dlopen(ndi_runtime_path.c_str(), RTLD_LAZY | RTLD_LOCAL);
 	ERR_FAIL_NULL_EDMSG(ndi_lib, ndi_runtime_path.append(" couldn't be opened. Make sure you have the NDI Runtime installed on your system.").c_str());
 
