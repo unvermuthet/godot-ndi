@@ -47,9 +47,9 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level) {
 	} else {
 		ndi_runtime_path = NDILIB_LIBRARY_NAME;
 	}
-
+	
 	void *ndi_lib = dlopen(ndi_runtime_path.c_str(), RTLD_LAZY | RTLD_LOCAL);
-	ERR_FAIL_NULL_EDMSG(ndi_lib, "Couldn't open NDI Library " NDILIB_LIBRARY_NAME ". Make sure you have the NDI Runtime installed on your system.");
+	ERR_FAIL_NULL_EDMSG(ndi_lib, ndi_runtime_path.append(" couldn't be opened. Make sure you have the NDI Runtime installed on your system.").c_str());
 
 	const NDIlib_v5 *(*NDIlib_v5_load)(void) = NULL;
 	*((void **)&NDIlib_v5_load) = dlsym(ndi_lib, "NDIlib_v5_load");
