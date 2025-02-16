@@ -42,6 +42,7 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level) {
 	std::string ndi_runtime_path;
 
 	if (ndi_runtime_folder) {
+		ndi_runtime_path = ndi_runtime_folder;
 		ndi_runtime_path += NDILIB_LIBRARY_NAME;
 	} else {
 		ndi_runtime_path = NDILIB_LIBRARY_NAME;
