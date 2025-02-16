@@ -20,6 +20,17 @@ inputs:
   em_version:
     default: 3.1.62
     description: Emscripten version.
+  windows-compiler:
+    required: true
+    description: The compiler toolchain to use on Windows ('mingw' or 'msvc').
+    type: choice
+    options:
+      - mingw
+      - msvc
+    default: mingw
+  scons-version:
+    default: 4.4.0
+    description: SCons version.
 
 runs:
   using: composite
@@ -29,6 +40,8 @@ runs:
       with:
         platform: ${{ inputs.platform }}
         em-version: ${{ inputs.em_version }}
+        windows-compiler: ${{ inputs.windows-compiler }}
+        scons-version: ${{ inputs.scons-version }}
 
     - name: Cache .scons_cache
       uses: actions/cache@v4
