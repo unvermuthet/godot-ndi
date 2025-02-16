@@ -56,7 +56,7 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: c-cpp
-          build-mode: none
+          build-mode: manual
 
       - name: Setup godot-cpp
         uses: ./godot-cpp/.github/actions/setup-godot-cpp
