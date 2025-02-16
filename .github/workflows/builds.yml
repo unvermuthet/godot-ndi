@@ -65,7 +65,6 @@ jobs:
           arch: ${{ matrix.target.arch }}
           float-precision: ${{ matrix.float-precision }}
           target-type: ${{ matrix.target-type }}
-          windows-compiler: msvc
 
       - name: MacOS - Sign
         if: ${{ matrix.target.platform == 'macos' && env.APPLE_CERT_BASE64 }}
