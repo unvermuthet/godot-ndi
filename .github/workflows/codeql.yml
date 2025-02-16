@@ -1,0 +1,51 @@
+name: CodeQL
+on:
+  workflow_dispatch:
+
+permissions:
+  security-events: write
+
+env:
+  LIBNAME: godot-ndi
+
+jobs:
+  codeql:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - float-precision: single
+            target-type: template_debug
+            target: { platform: linux, arch: x86_64, os: ubuntu-latest }
+
+    runs-on: ${{ matrix.target.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup godot-cpp
+        uses: ./godot-cpp/.github/actions/setup-godot-cpp
+        with:
+          platform: ${{ matrix.target.platform }}
+          em-version: 3.1.62
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: c-cpp
+          build-mode: manual
+
+      # Build GDExtension (with caches)
+      - name: Build GDExtension
+        shell: sh
+        env:
+          SCONS_CACHE: ${{ github.workspace }}/.scons-cache/
+        run: |
+          scons target=${{ matrix.target-type }} platform=${{ matrix.target.platform }} arch=${{ matrix.target.arch }} precision=${{ matrix.float-precision }}
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:c-cpp"

@@ -13,42 +13,18 @@ env:
   LIBNAME: godot-ndi
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-
-      - name: Setup clang-format
-        shell: bash
-        run: |
-          python -m pip install clang-format
-
-      - name: Run clang-format
-        shell: bash
-        run: |
-          clang-format src/** --dry-run --Werror
-
   build:
     strategy:
       fail-fast: false
       matrix:
         float-precision: [single, double]
         target-type: [template_debug, template_release]
-        codeql: [false]
         target:
           [
             { platform: linux, arch: x86_64, os: ubuntu-latest },
             { platform: windows, arch: x86_64, os: windows-latest },
             { platform: macos, arch: universal, os: macos-latest },
           ]
-        include:
-          - codeql: true
-            float-precision: single
-            target-type: template_debug
-            target: { platform: linux, arch: x86_64, os: ubuntu-latest }
 
     runs-on: ${{ matrix.target.os }}
     steps:
@@ -64,18 +40,10 @@ jobs:
           em-version: 3.1.62
 
       - name: Cache .scons_cache
-        if: ${{ !matrix.codeql }}
         uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/.scons-cache/
           key: ${{ matrix.target.platform }}_${{ matrix.target.arch }}_${{ matrix.float-precision }}_${{ matrix.target-type }}_cache
-
-      - name: Initialize CodeQL
-        if: ${{ matrix.codeql }}
-        uses: github/codeql-action/init@v3
-        with:
-          languages: c-cpp
-          build-mode: manual
 
       # Build GDExtension (with caches)
       - name: Build GDExtension
@@ -84,12 +52,6 @@ jobs:
           SCONS_CACHE: ${{ github.workspace }}/.scons-cache/
         run: |
           scons target=${{ matrix.target-type }} platform=${{ matrix.target.platform }} arch=${{ matrix.target.arch }} precision=${{ matrix.float-precision }}
-
-      - name: Perform CodeQL Analysis
-        if: ${{ matrix.codeql }}
-        uses: github/codeql-action/analyze@v3
-        with:
-          category: "/language:c-cpp"
 
       # Sign the binary (macOS only)
       - name: Mac Sign
@@ -120,7 +82,6 @@ jobs:
           cp NOTICE.md addons/${{ env.LIBNAME }}/NOTICE.md
 
       - name: Upload Artifact
-        if: ${{ !env.ACT }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.LIBNAME }}-${{ matrix.target.platform }}-${{ matrix.target.arch }}-${{ matrix.float-precision }}-${{ matrix.target-type }}

@@ -1,0 +1,27 @@
+name: Lint Code
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  merge_group:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup clang-format
+        shell: bash
+        run: |
+          python -m pip install clang-format
+
+      - name: Run clang-format
+        shell: bash
+        run: |
+          clang-format src/** --dry-run --Werror
