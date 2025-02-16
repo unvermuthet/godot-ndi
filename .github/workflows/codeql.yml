@@ -38,6 +38,7 @@ jobs:
           arch: ${{ matrix.target.arch }}
           float-precision: ${{ matrix.float-precision }}
           target-type: ${{ matrix.target-type }}
+          scons-cache: ""
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
