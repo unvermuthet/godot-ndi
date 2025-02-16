@@ -27,6 +27,7 @@ runs:
         platform: ${{ inputs.platform }}
 
     - name: Cache .scons_cache
+      if: ${{ inputs.scons-cache }}
       uses: actions/cache@v4
       with:
         path: ${{ inputs.scons-cache }}
