@@ -8,6 +8,14 @@ on:
     branches: [main]
   merge_group:
   workflow_dispatch:
+  workflow_call:
+    secrets:
+      APPLE_CERT_BASE64:
+      APPLE_CERT_PASSWORD:
+      APPLE_DEV_PASSWORD:
+      APPLE_DEV_ID:
+      APPLE_DEV_TEAM_ID:
+      APPLE_DEV_APP_ID:
 
 env:
   LIBNAME: godot-ndi
