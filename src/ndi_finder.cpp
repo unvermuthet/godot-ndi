@@ -84,8 +84,6 @@ PackedStringArray NDIFinder::get_extra_ips() const {
 }
 
 TypedArray<VideoStreamNDI> NDIFinder::get_sources() const {
-	ERR_FAIL_COND_V_MSG(!is_inside_tree(), TypedArray<VideoStreamNDI>(), "NDIFinder is not inside tree. Returning empty array.");
-
 	mtx->lock();
 	TypedArray<VideoStreamNDI> sources = mtx_sources.duplicate(true);
 	mtx->unlock();
