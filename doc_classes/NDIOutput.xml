@@ -5,7 +5,8 @@
 	</brief_description>
 	<description>
 		Creates an NDI source and displays the closest [Viewport] up the tree.
-		If the Viewport should be transmitted while its not visible, for example when the window is in the background or a [SubViewport] is used without a [SubViewportContainer], make sure to have the [param render_target_update_mode] set to Always on the [SubViewport].
+		If the [Viewport] should be transmitted while its not visible, for example when the window is in the background or a [SubViewport] is used without a [SubViewportContainer], make sure to have the [param render_target_update_mode] set to Always on the [SubViewport].
+		[NDIOutput] sends a frame on every draw so to control the FPS you can set [param application/run/max_fps] in [ProjectSettings].
 	</description>
 	<tutorials>
 	</tutorials>
