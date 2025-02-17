@@ -11,17 +11,15 @@
 		<method name="get_sources" qualifiers="const">
 			<return type="VideoStreamNDI[]" />
 			<description>
-				Requires [NDIFinder] to be inside of Tree.
+				Sources can only be discovered if [NDIFinder] is inside the tree.
 				Returns an array of currently available sources according to the settings. The entries can be used directly as the stream for [VideoStreamPlayer].
-				Warning: The array will still be empty when [NDIFinder] is ready. It can take a few process calls to discover NDI sources so make use of the [signal sources_changed] signal.
+				Warning: The array will still be empty when [NDIFinder] is ready. It can take a few seconds to discover NDI sources so make use of the [signal sources_changed] signal.
 			</description>
 		</method>
 	</methods>
 	<members>
 		<member name="extra_ips" type="PackedStringArray" setter="set_extra_ips" getter="get_extra_ips" default="PackedStringArray()">
-			The list of additional IP addresses that we should query for sources.
-			For instance, if you want to find the sources on a remote machine that is not on your local sub-net then you can
-			add them here and those sources will be available locally even though they are not mDNS discoverable.
+			The list of additional IP addresses that we should query for sources. For instance, if you want to find the sources on a remote machine that is not on your local sub-net then you can add them here and those sources will be available locally even though they are not mDNS discoverable.
 		</member>
 		<member name="groups" type="PackedStringArray" setter="set_groups" getter="get_groups" default="PackedStringArray()">
 			Which groups you want to search in for sources. Leave empty for default.
