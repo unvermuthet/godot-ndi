@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="ViewportTextureRouter" inherits="Node" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<signals>
+		<signal name="texture_arrived">
+			<param index="0" name="p_data" type="PackedByteArray" />
+			<param index="1" name="p_viewport_rid" type="int" />
+			<param index="2" name="p_format" type="Object" />
+			<description>
+			</description>
+		</signal>
+	</signals>
+</class>

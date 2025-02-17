@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="NDIFinder" inherits="Node" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Detects available NDI sources
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_sources" qualifiers="const">
+			<return type="VideoStreamNDI[]" />
+			<description>
+				Requires [NDIFinder] to be inside of Tree.
+				Returns an array of currently available sources according to the settings. The entries can be used directly as the stream for [VideoStreamPlayer].
+				Warning: The array will still be empty when [NDIFinder] is ready. It can take a few process calls to discover NDI sources so make use of the [signal sources_changed] signal.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="extra_ips" type="PackedStringArray" setter="set_extra_ips" getter="get_extra_ips" default="PackedStringArray()">
+			The list of additional IP addresses that we should query for sources.
+			For instance, if you want to find the sources on a remote machine that is not on your local sub-net then you can
+			add them here and those sources will be available locally even though they are not mDNS discoverable.
+		</member>
+		<member name="groups" type="PackedStringArray" setter="set_groups" getter="get_groups" default="PackedStringArray()">
+			Which groups you want to search in for sources. Leave empty for default.
+		</member>
+		<member name="show_local_sources" type="bool" setter="set_show_local_sources" getter="get_show_local_sources" default="true">
+			Include sources from the local machine.
+		</member>
+	</members>
+	<signals>
+		<signal name="sources_changed">
+			<description>
+				Emited when the list of available sources has changed.
+			</description>
+		</signal>
+	</signals>
+</class>
