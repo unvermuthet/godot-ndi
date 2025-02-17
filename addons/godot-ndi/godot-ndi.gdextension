@@ -6,10 +6,10 @@ reloadable = false
 
 [libraries]
 
-macos.debug.double = "bin/macos/libgodot-ndi.template_debug.double.universal.framework"
-macos.debug.single = "bin/macos/libgodot-ndi.template_debug.universal.framework"
-macos.release.double = "bin/macos/libgodot-ndi.template_release.double.universal.framework"
-macos.release.single = "bin/macos/libgodot-ndi.template_release.universal.framework"
+macos.debug.double = "bin/macos/libgodot-ndi.macos.template_debug.double.universal.framework"
+macos.debug.single = "bin/macos/libgodot-ndi.macos.template_debug.universal.framework"
+macos.release.double = "bin/macos/libgodot-ndi.macos.template_release.double.universal.framework"
+macos.release.single = "bin/macos/libgodot-ndi.macos.template_release.universal.framework"
 windows.debug.x86_64.single = "bin/windows/godot-ndi.windows.template_debug.x86_64.dll"
 windows.release.x86_64.single = "bin/windows/godot-ndi.windows.template_release.x86_64.dll"
 windows.debug.x86_64.double = "bin/windows/godot-ndi.windows.template_debug.x86_64.dll"
@@ -28,17 +28,17 @@ NDIFinder = "icons/NDIFinder.svg"
 [dependencies]
 
 macos.debug.double = {
-    "bin/macos/libgodot-ndi.template_debug.double.universal.framework" : "Contents/Frameworks"
+    "bin/macos/libgodot-ndi.macos.template_debug.double.universal.framework" : "Contents/Frameworks"
 }
 
 macos.debug.single = {
-    "bin/macos/libgodot-ndi.template_debug.universal.framework" : "Contents/Frameworks"
+    "bin/macos/libgodot-ndi.macos.template_debug.universal.framework" : "Contents/Frameworks"
 }
 
 macos.release.double = {
-    "bin/macos/libgodot-ndi.template_release.double.universal.framework" : "Contents/Frameworks"
+    "bin/macos/libgodot-ndi.macos.template_release.double.universal.framework" : "Contents/Frameworks"
 }
 
 macos.release.single = {
-    "bin/macos/libgodot-ndi.template_release.universal.framework" : "Contents/Frameworks"
+    "bin/macos/libgodot-ndi.macos.template_release.universal.framework" : "Contents/Frameworks"
 }

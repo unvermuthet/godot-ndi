@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
-	<string>libgodot-ndi.template_release.universal</string>
+	<string>libgodot-ndi.macos.template_release.universal</string>
 	<key>CFBundleName</key>
 	<string>Godot Cpp Template</string>
 	<key>CFBundleDisplayName</key>
