@@ -40,6 +40,7 @@ jobs:
           clang-format src/** --dry-run --Werror
 
   build:
+    needs: lint
     strategy:
       fail-fast: false
       matrix:
