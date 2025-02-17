@@ -27,6 +27,18 @@ NDIFinder = "icons/NDIFinder.svg"
 
 [dependencies]
 
-macos = {
-    "bin/macos/godot-ndi.framework" : "Contents/Frameworks"
+macos.debug.double = {
+    "bin/macos/libgodot-ndi.template_debug.double.universal.framework" : "Contents/Frameworks"
+}
+
+macos.debug.single = {
+    "bin/macos/libgodot-ndi.template_debug.universal.framework" : "Contents/Frameworks"
+}
+
+macos.release.double = {
+    "bin/macos/libgodot-ndi.template_release.double.universal.framework" : "Contents/Frameworks"
+}
+
+macos.release.single = {
+    "bin/macos/libgodot-ndi.template_release.universal.framework" : "Contents/Frameworks"
 }
