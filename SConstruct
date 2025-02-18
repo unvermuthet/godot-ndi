@@ -48,9 +48,6 @@ if env["target"] in ["editor", "template_debug"]:
 file = "{}{}{}".format(libname, env["suffix"], env["SHLIBSUFFIX"])
 filepath = ""
 
-if env["platform"] == "macos" or env["platform"] == "ios":
-    filepath = "lib{}{}.framework/".format(libname, env["suffix"])
-
 libraryfile = "{}/{}/{}{}".format(bindir, env["platform"], filepath, file)
 library = env.SharedLibrary(libraryfile, source=sources)
 
