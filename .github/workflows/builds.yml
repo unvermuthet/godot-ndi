@@ -9,13 +9,6 @@ on:
   merge_group:
   workflow_dispatch:
   workflow_call:
-    secrets:
-      APPLE_CERT_BASE64:
-      APPLE_CERT_PASSWORD:
-      APPLE_DEV_PASSWORD:
-      APPLE_DEV_ID:
-      APPLE_DEV_TEAM_ID:
-      APPLE_DEV_APP_ID:
 
 env:
   LIBNAME: godot-ndi
@@ -66,20 +59,6 @@ jobs:
           arch: ${{ matrix.target.arch }}
           float-precision: ${{ matrix.float-precision }}
           target-type: ${{ matrix.target-type }}
-
-      - name: MacOS - Sign
-        if: ${{ matrix.target.platform == 'macos' && env.APPLE_CERT_BASE64 }}
-        env:
-          APPLE_CERT_BASE64: ${{ secrets.APPLE_CERT_BASE64 }}
-        uses: ./.github/actions/sign
-        with:
-          FRAMEWORK_PATH: addons/${{ env.LIBNAME }}/bin/macos/${{ env.LIBNAME }}.framework
-          APPLE_CERT_BASE64: ${{ secrets.APPLE_CERT_BASE64 }}
-          APPLE_CERT_PASSWORD: ${{ secrets.APPLE_CERT_PASSWORD }}
-          APPLE_DEV_PASSWORD: ${{ secrets.APPLE_DEV_PASSWORD }}
-          APPLE_DEV_ID: ${{ secrets.APPLE_DEV_ID }}
-          APPLE_DEV_TEAM_ID: ${{ secrets.APPLE_DEV_TEAM_ID }}
-          APPLE_DEV_APP_ID: ${{ secrets.APPLE_DEV_APP_ID }}
 
       - name: Windows - Delete compilation files
         if: ${{ matrix.target.platform == 'windows' }}
