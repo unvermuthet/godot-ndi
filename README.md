@@ -15,9 +15,9 @@ I'm happy to hear suggestions and incorperate improvements. You can find my cont
 ## Install
 
 > [!IMPORTANT]
-> - Minimum Godot version is `4.4-beta3`
+> - Only compatible with Godot `4.4-beta1` and later
 
-Download the latest version under `Releases`. Install by extracting the ZIP file anywhere in your Godot project.
+Download the latest version under `Releases`. Install by extracting the ZIP file in your Godot project.
 
 The NDI Runtime is also required.
 - [NDI Runtime for Windows](http://ndi.link/NDIRedistV6)
