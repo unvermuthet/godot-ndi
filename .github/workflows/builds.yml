@@ -37,14 +37,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        float-precision: [single, double]
-        target-type: [template_debug, template_release]
         target:
           [
             { platform: linux, arch: x86_64, os: ubuntu-latest },
             { platform: windows, arch: x86_64, os: windows-latest },
             { platform: macos, arch: universal, os: macos-latest },
           ]
+        target-type: [template_debug, template_release]
+        float-precision: [single, double]
+
     runs-on: ${{ matrix.target.os }}
     steps:
       - name: Checkout
