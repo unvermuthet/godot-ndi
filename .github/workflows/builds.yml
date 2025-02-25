@@ -69,7 +69,7 @@ jobs:
 
       - name: Copy license files
         run: |
-          cp LICENSE addons/${{ env.LIBNAME }}/LICENSE
+          cp LICENSE.txt addons/${{ env.LIBNAME }}/LICENSE.txt
           cp README.md addons/${{ env.LIBNAME }}/README.md
           cp NOTICE.md addons/${{ env.LIBNAME }}/NOTICE.md
 
