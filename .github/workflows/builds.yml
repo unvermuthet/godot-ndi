@@ -79,16 +79,23 @@ jobs:
           name: ${{ env.LIBNAME }}-${{ matrix.target.platform }}-${{ matrix.target.arch }}-${{ matrix.float-precision }}-${{ matrix.target-type }}
           path: project/*/${{ env.LIBNAME }}
 
-  test:
-    runs-on: ubuntu-latest
-    needs: build
-    continue-on-error: true
-    steps:
       - name: Run Tests
         uses: ./.github/actions/test
+        if: runner.os == 'Linux'
         with:
           godot-url: https://github.com/godotengine/godot-builds/releases/download/4.4-rc2/Godot_v4.4-rc2_linux.x86_64.zip
           godot-bin: ./Godot_v4.4-rc2_linux.x86_64
+
+  # test:
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   continue-on-error: true
+  #   steps:
+  #     - name: Run Tests
+  #       uses: ./.github/actions/test
+  #       with:
+  #         godot-url: https://github.com/godotengine/godot-builds/releases/download/4.4-rc2/Godot_v4.4-rc2_linux.x86_64.zip
+  #         godot-bin: ./Godot_v4.4-rc2_linux.x86_64
 
   merge:
     runs-on: ubuntu-latest
