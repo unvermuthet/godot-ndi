@@ -11,22 +11,27 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "includes.hpp"
 
-const NDIlib_v5 *ndi;
+const NDIlib_v5 *ndi = nullptr;
 
 void initialize_gdextension_types(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
 
+	String runtime_folder = getenv(NDILIB_REDIST_FOLDER);
+
 #ifdef _WIN32
-	const char *ndi_runtime_folder = getenv(NDILIB_REDIST_FOLDER);
-	ERR_FAIL_NULL_EDMSG(ndi_runtime_folder, NDILIB_REDIST_FOLDER "doesn't exist on PATH. Make sure you have the NDI Runtime installed on your system.");
 
-	std::string ndi_runtime_path = ndi_runtime_folder;
-	ndi_runtime_path += "\\" NDILIB_LIBRARY_NAME;
+	String runtime_path = runtime_folder;
+	if (runtime_folder.is_empty()) {
+		runtime_path = NDILIB_LIBRARY_NAME;
+	} else {
+		runtime_path = runtime_folder + "\\" NDILIB_LIBRARY_NAME;
+	}
 
-	HMODULE ndi_lib = LoadLibraryA(ndi_runtime_path.c_str());
-	ERR_FAIL_NULL_EDMSG(ndi_lib, "Couldn't open NDI Library " NDILIB_LIBRARY_NAME ". Make sure you have the NDI Runtime installed on your system.");
+	print_verbose("NDI: Trying to load ", runtime_path);
+	HMODULE ndi_lib = LoadLibraryA(runtime_path.utf8());
+	ERR_FAIL_NULL_EDMSG(ndi_lib, "NDI: Failed to load NDI Runtime. Make sure its installed on your system. Path tried: " + runtime_path);
 
 	const NDIlib_v5 *(*NDIlib_v5_load)(void) = NULL;
 	*((FARPROC *)&NDIlib_v5_load) = GetProcAddress(ndi_lib, "NDIlib_v5_load");
@@ -35,39 +40,47 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level) {
 		if (ndi_lib) {
 			FreeLibrary(ndi_lib);
 		}
-		ERR_FAIL_EDMSG("Couldn't obtain entry symbol for NDI. Try reinstalling the NDI Runtime.");
+		ERR_FAIL_EDMSG("NDI: Couldn't obtain entry symbol for " + runtime_path);
 	}
+
+	ndi = NDIlib_v5_load();
+
 #else
-	const char *ndi_runtime_folder = getenv(NDILIB_REDIST_FOLDER);
-	std::string ndi_runtime_path;
 
-	if (ndi_runtime_folder != NULL) {
-		ndi_runtime_path = ndi_runtime_folder;
-		ndi_runtime_path += NDILIB_LIBRARY_NAME;
-	} else {
-		ndi_runtime_path = "/usr/local/lib/";
-		ndi_runtime_path += NDILIB_LIBRARY_NAME;
-	}
+	PackedStringArray runtime_paths;
+	runtime_paths.append(runtime_folder.path_join(NDILIB_LIBRARY_NAME));
+	runtime_paths.append(NDILIB_LIBRARY_NAME);
+	runtime_paths.append("/usr/local/lib/" NDILIB_LIBRARY_NAME);
 
-	print_verbose("Loading libndi from ", ndi_runtime_path.c_str());
+	for (int64_t i = 0; i < runtime_paths.size(); i++) {
+		print_verbose("NDI: Trying to load ", runtime_paths[i]);
 
-	void *ndi_lib = dlopen(ndi_runtime_path.c_str(), RTLD_LAZY | RTLD_LOCAL);
-	ERR_FAIL_NULL_EDMSG(ndi_lib, ndi_runtime_path.append(" couldn't be opened. Make sure you have the NDI Runtime installed on your system.").c_str());
-
-	const NDIlib_v5 *(*NDIlib_v5_load)(void) = NULL;
-	*((void **)&NDIlib_v5_load) = dlsym(ndi_lib, "NDIlib_v5_load");
-
-	if (!NDIlib_v5_load) {
-		if (ndi_lib) {
-			dlclose(ndi_lib);
+		void *ndi_lib = dlopen(runtime_paths[i].utf8(), RTLD_LAZY | RTLD_LOCAL);
+		if (!ndi_lib) {
+			print_verbose("NDI: Failed to open ", runtime_paths[i]);
+			continue;
 		}
-		ERR_FAIL_EDMSG("Couldn't obtain entry symbol for NDI. Try reinstalling the NDI Runtime.");
+
+		const NDIlib_v5 *(*NDIlib_v5_load)(void) = nullptr;
+		*((void **)&NDIlib_v5_load) = dlsym(ndi_lib, "NDIlib_v5_load");
+
+		if (!NDIlib_v5_load) {
+			if (ndi_lib) {
+				dlclose(ndi_lib);
+			}
+			print_verbose("NDI: Couldn't obtain entry symbol for ", runtime_paths[i]);
+			continue;
+		}
+
+		ndi = NDIlib_v5_load();
+		break;
 	}
+
+	ERR_FAIL_NULL_EDMSG(ndi, "NDI: Failed to load NDI Runtime. Make sure its installed on your system. Paths tried: \n" + String("\n").join(runtime_paths));
 
 #endif
 
-	ndi = NDIlib_v5_load();
-	ERR_FAIL_COND_EDMSG(!ndi->initialize(), "NDI isn't supported");
+	ERR_FAIL_COND_EDMSG(!ndi->initialize(), "NDI: NDI isn't supported on your device");
 
 	GDREGISTER_CLASS(NDIFinder);
 	GDREGISTER_CLASS(VideoStreamNDI);
@@ -97,7 +110,7 @@ void uninitialize_gdextension_types(ModuleInitializationLevel p_level) {
 		memdelete(Engine::get_singleton()->get_singleton("ViewportTextureRouter"));
 	}
 
-	if (ndi != NULL) {
+	if (ndi != nullptr) {
 		ndi->destroy();
 	}
 }
