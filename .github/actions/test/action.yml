@@ -20,6 +20,7 @@ runs:
       uses: jaywcjlove/github-action-folder-tree@main
       with:
         depth: 10
+        path: ./project
 
     - name: Run GUT
       shell: bash
