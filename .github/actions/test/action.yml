@@ -5,6 +5,8 @@ inputs:
     require: true
   godot-bin:
     require: true
+  project-dir:
+    require: true
 
 runs:
   using: composite
@@ -16,12 +18,6 @@ runs:
         unzip -q godot.zip
         chmod +x ${{ inputs.godot-bin }}
 
-    - name: Print Folder Tree
-      uses: jaywcjlove/github-action-folder-tree@main
-      with:
-        depth: 10
-        path: ./project
-
     - name: Run GUT
       shell: bash
-      run: ${{ inputs.godot-bin }} --headless -d -s --path ./project addons/gut/gut_cmdln.gd -gdir=res://test -ginclude_subdirs -gexit
+      run: ${{ inputs.godot-bin }} --headless -d -s --path ${{ inputs.project-dir }} addons/gut/gut_cmdln.gd -gexit
