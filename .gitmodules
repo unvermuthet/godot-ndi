@@ -2,6 +2,3 @@
 	path = godot-cpp
 	url = https://github.com/godotengine/godot-cpp.git
 	branch = 4.0
-[submodule "project/addons/gut"]
-	path = project/addons/gut
-	url = https://github.com/bitwes/Gut.git
