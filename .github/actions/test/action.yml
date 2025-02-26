@@ -16,6 +16,11 @@ runs:
         unzip -q godot.zip
         chmod +x ${{ inputs.godot-bin }}
 
+    - name: Print Folder Tree
+      uses: jaywcjlove/github-action-folder-tree@main
+      with:
+        depth: 10
+
     - name: Run GUT
       shell: bash
       run: ${{ inputs.godot-bin }} --headless -d -s --path ./project addons/gut/addons/gut/gut_cmdln.gd -gdir=res://test -ginclude_subdirs -gexit
