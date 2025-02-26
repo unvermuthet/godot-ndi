@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="godot-ndi-demo"
+config/name="godot-ndi"
 run/main_scene="uid://ddr3hiaft61tl"
 config/features=PackedStringArray("4.4", "Forward Plus")
 run/max_fps=60

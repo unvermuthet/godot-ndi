@@ -65,21 +65,19 @@ jobs:
         if: ${{ matrix.target.platform == 'windows' }}
         shell: pwsh
         run: |
-          Remove-Item addons/${{ env.LIBNAME }}/bin/windows/* -Include *.exp,*.lib,*.pdb -Force
+          Remove-Item project/addons/${{ env.LIBNAME }}/bin/windows/* -Include *.exp,*.lib,*.pdb -Force
 
       - name: Copy license files
         run: |
-          cp LICENSE addons/${{ env.LIBNAME }}/LICENSE
-          cp README.md addons/${{ env.LIBNAME }}/README.md
-          cp NOTICE.md addons/${{ env.LIBNAME }}/NOTICE.md
+          cp LICENSE project/addons/${{ env.LIBNAME }}/LICENSE
+          cp README.md project/addons/${{ env.LIBNAME }}/README.md
+          cp NOTICE.md project/addons/${{ env.LIBNAME }}/NOTICE.md
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.LIBNAME }}-${{ matrix.target.platform }}-${{ matrix.target.arch }}-${{ matrix.float-precision }}-${{ matrix.target-type }}
-          path: |
-            ./*/${{ env.LIBNAME }}
-            !./addons/${{ env.LIBNAME }}/project.godot
+          path: project/*/${{ env.LIBNAME }}
 
   merge:
     runs-on: ubuntu-latest
@@ -108,8 +106,7 @@ jobs:
       - name: Zip Artifact Back Up
         run: |
           sudo apt-get install -y zip
-          cd ${{ env.LIBNAME }}
-          zip -r ../${{ env.LIBNAME }}.zip .
+          zip -r ${{ env.LIBNAME }}.zip ${{ env.LIBNAME }}
 
       - name: Create Release Draft
         uses: softprops/action-gh-release@c95fe1489396fe8a9eb87c0abf8aa5b2ef267fda
