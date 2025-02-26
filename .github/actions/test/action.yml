@@ -12,7 +12,7 @@ runs:
     - name: Install Godot
       shell: bash
       run: |
-        curl -s -S ${{ inputs.godot-url }} --output godot.zip
+        curl -s -S -L ${{ inputs.godot-url }} --output godot.zip
         unzip -q godot.zip
         chmod +x ${{ inputs.godot-bin }}
 
