@@ -20,4 +20,6 @@ runs:
 
     - name: Run GUT
       shell: bash
-      run: ${{ inputs.godot-bin }} --headless -d -s --path ${{ inputs.project-dir }} addons/gut/gut_cmdln.gd -gexit
+      run: |
+        ${{ inputs.godot-bin }} --headless -d --path ${{ inputs.project-dir }} --import
+        ${{ inputs.godot-bin }} --headless -d --path ${{ inputs.project-dir }} -s addons/gut/gut_cmdln.gd -gexit
