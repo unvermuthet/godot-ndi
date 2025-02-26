@@ -106,11 +106,17 @@ jobs:
         with:
           submodules: true
 
-      - name: Download Build Artifacts
+      - name: Download Build Artifact
         uses: actions/download-artifact@v4
         with:
           name: ${{ env.LIBNAME }}-${{ github.sha }}
-          path: project
+          path: project # Results in project/addons/godot-ndi/...
+
+      - name: Install NDI Runtime
+        run: |
+          wget https://raw.githubusercontent.com/DistroAV/DistroAV/refs/heads/master/CI/libndi-get.sh
+          chmod +x libndi-get.sh
+          ./libndi-get.sh install
 
       - name: Run Tests
         uses: ./.github/actions/test
