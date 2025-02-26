@@ -24,4 +24,4 @@ runs:
 
     - name: Run GUT
       shell: bash
-      run: ${{ inputs.godot-bin }} --headless -d -s --path ./project addons/gut/addons/gut/gut_cmdln.gd -gdir=res://test -ginclude_subdirs -gexit
+      run: ${{ inputs.godot-bin }} --headless -d -s --path ./project addons/gut/gut_cmdln.gd -gdir=res://test -ginclude_subdirs -gexit

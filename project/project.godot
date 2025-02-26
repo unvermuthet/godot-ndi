@@ -17,4 +17,4 @@ run/max_fps=60
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/gut/addons/gut/plugin.cfg")
+enabled=PackedStringArray("res://addons/gut/plugin.cfg")
