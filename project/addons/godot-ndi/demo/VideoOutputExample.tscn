@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://ddr3hiaft61tl"]
 
-[ext_resource type="VideoStream" uid="uid://djpk24xapxnq4" path="res://demo/Liftoff_Space_Shuttle_Atlantis.ogv" id="1_utmvk"]
+[ext_resource type="VideoStream" uid="uid://djpk24xapxnq4" path="res://addons/godot-ndi/demo/Liftoff_Space_Shuttle_Atlantis.ogv" id="1_utmvk"]
 
 [node name="Canvas" type="Control"]
 layout_mode = 3

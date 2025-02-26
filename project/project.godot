@@ -14,3 +14,7 @@ config/name="godot-ndi"
 run/main_scene="uid://ddr3hiaft61tl"
 config/features=PackedStringArray("4.4", "Forward Plus")
 run/max_fps=60
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gut/addons/gut/plugin.cfg")

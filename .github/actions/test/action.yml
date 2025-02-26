@@ -1,0 +1,20 @@
+name: Run GUT Tests
+
+inputs:
+  godot-url:
+    require: true
+  godot-bin:
+    require: true
+
+runs:
+  using: composite
+  steps:
+    - name: Install Godot
+      shell: bash
+      run: |
+        curl -s -S ${{ inputs.godot-url }} --output godot.zip
+        unzip -q godot.zip
+        chmod +x ${{ inputs.godot-bin }}
+
+    - name: Run GUT
+      run: ${{ inputs.godot-bin }} -d -s --path ./project addons/gut/addons/gut/gut_cmdln.gd -gdir=res://test -ginclude_subdirs -gexit

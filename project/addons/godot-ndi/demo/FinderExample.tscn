@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dydvtidqppffs"]
 
-[ext_resource type="Script" uid="uid://kbgdevvugj7k" path="res://demo/ndi_finder.gd" id="1_0rvup"]
+[ext_resource type="Script" uid="uid://kbgdevvugj7k" path="res://addons/godot-ndi/demo/ndi_finder.gd" id="1_0rvup"]
 
 [node name="Canvas" type="Control"]
 layout_mode = 3
