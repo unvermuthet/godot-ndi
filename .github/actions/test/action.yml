@@ -7,6 +7,9 @@ inputs:
     require: true
   project-dir:
     require: true
+  gut-dir:
+    default: "addons/gut"
+    require: true
 
 runs:
   using: composite
@@ -22,4 +25,4 @@ runs:
       shell: bash
       run: |
         ${{ inputs.godot-bin }} --headless --path ${{ inputs.project-dir }} --import
-        ${{ inputs.godot-bin }} --headless --path ${{ inputs.project-dir }} -s addons/gut/gut_cmdln.gd -gexit
+        ${{ inputs.godot-bin }} --headless --path ${{ inputs.project-dir }} -s ${{ inputs.gut-dir }}/gut_cmdln.gd -gexit
