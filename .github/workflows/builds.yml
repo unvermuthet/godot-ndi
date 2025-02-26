@@ -117,6 +117,7 @@ jobs:
         with:
           godot-url: https://github.com/godotengine/godot-builds/releases/download/4.4-rc2/Godot_v4.4-rc2_linux.x86_64.zip
           godot-bin: ./Godot_v4.4-rc2_linux.x86_64
+          project-dir: project
 
   release:
     runs-on: ubuntu-latest
