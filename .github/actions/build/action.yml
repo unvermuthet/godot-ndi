@@ -39,4 +39,4 @@ runs:
       env:
         SCONS_CACHE: ${{ inputs.scons-cache }}
       run: |
-        scons target=${{ inputs.target-type }} platform=${{ inputs.platform }} arch=${{ inputs.arch }} precision=${{ inputs.float-precision }}
+        scons use_static_cpp=yes use_hot_reload=yes target=${{ inputs.target-type }} platform=${{ inputs.platform }} arch=${{ inputs.arch }} precision=${{ inputs.float-precision }}
