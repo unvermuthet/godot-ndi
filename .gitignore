@@ -1,7 +1,9 @@
 # Godot auto generated files
-*.gen.*
 .godot/
-*.import
+
+# Secrets
+export.cfg
+export_credentials.cfg
 
 # Ignore custom.py
 custom.py
@@ -11,6 +13,7 @@ compile_commands.json
 
 # Ignore files generated for documentation
 /src/gen
+*.gen.*
 
 # Binaries
 *.dll
