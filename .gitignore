@@ -5,6 +5,9 @@
 export.cfg
 export_credentials.cfg
 
+# Editor
+*.exe
+
 # Ignore custom.py
 custom.py
 
