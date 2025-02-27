@@ -25,6 +25,7 @@ runs:
       uses: ./godot-cpp/.github/actions/setup-godot-cpp
       with:
         platform: ${{ inputs.platform }}
+        windows-compiler: msvc
 
     - name: Cache .scons_cache
       if: ${{ inputs.scons-cache }}
