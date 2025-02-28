@@ -8,7 +8,6 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
 #include "includes.hpp"
-#include "ndi_output.hpp"
 
 NDIOutput::NDIOutput() {
 	thr.instantiate();
@@ -104,7 +103,7 @@ void NDIOutput::set_output_editor(const bool p_state) {
 	mtx_send->unlock();
 
 	sem->post();
-	
+
 	if (Engine::get_singleton()->is_editor_hint() && is_inside_tree()) { // state changed in the editor
 		if (output_editor) { // previously unregistered
 			register_viewport();
@@ -138,7 +137,7 @@ void NDIOutput::_notification(int p_what) {
 			if (Engine::get_singleton()->is_editor_hint() && !is_outputting_editor()) {
 				return;
 			}
-		
+
 			register_viewport();
 		} break;
 
