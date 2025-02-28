@@ -177,6 +177,7 @@ void NDIOutput::receive_texture(PackedByteArray p_data, const Ref<RDTextureForma
 	mtx_texture->lock();
 	mtx_texture_data = p_data;
 	mtx_texture_format = p_format;
+	mtx_texture_transparent = get_viewport()->has_transparent_background();
 	mtx_texture->unlock();
 	sem->post();
 }
@@ -185,6 +186,7 @@ void NDIOutput::send_video_thread() {
 	NDIlib_send_instance_t send = nullptr;
 	PackedByteArray texture_buffer;
 	Ref<RDTextureFormat> texture_format;
+	bool texture_transparent;
 	NDIlib_video_frame_v2_t video_frame = {};
 
 	while (true) {
@@ -222,6 +224,7 @@ void NDIOutput::send_video_thread() {
 		mtx_texture->lock();
 		texture_buffer = mtx_texture_data;
 		texture_format = mtx_texture_format;
+		texture_transparent = mtx_texture_transparent;
 		mtx_texture->unlock();
 
 		if (texture_format.is_null() || texture_buffer.is_empty()) {
@@ -235,7 +238,7 @@ void NDIOutput::send_video_thread() {
 		video_frame.yres = texture_format->get_height();
 		video_frame.frame_rate_N = (int)Engine::get_singleton()->get_frames_per_second();
 		video_frame.frame_rate_D = 1;
-		video_frame.FourCC = NDIlib_FourCC_type_RGBA;
+		video_frame.FourCC = texture_transparent ? NDIlib_FourCC_type_RGBA : NDIlib_FourCC_type_RGBX;
 		video_frame.p_data = (uint8_t *)texture_buffer.ptr();
 
 		ndi->NDIlib_send_send_video_v2(send, &video_frame);

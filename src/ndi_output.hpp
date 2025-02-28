@@ -53,6 +53,7 @@ private:
 	Ref<Mutex> mtx_texture;
 	PackedByteArray mtx_texture_data;
 	Ref<RDTextureFormat> mtx_texture_format;
+	bool mtx_texture_transparent;
 
 	void send_video_thread();
 };
