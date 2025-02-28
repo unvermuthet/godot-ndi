@@ -8,12 +8,22 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
 #include "includes.hpp"
+#include "ndi_output.hpp"
 
 NDIOutput::NDIOutput() {
 	thr.instantiate();
 	mtx_send.instantiate();
 	mtx_texture.instantiate();
 	sem.instantiate();
+
+	output_editor = false;
+	mtx_exit_thread = false;
+	mtx_rebuild_send = true;
+
+	mtx_send_desc.p_ndi_name = nullptr;
+	mtx_send_desc.p_groups = nullptr;
+	mtx_send_desc.clock_video = true;
+	mtx_send_desc.clock_audio = false;
 
 	thr->start(callable_mp(this, &NDIOutput::send_video_thread));
 }
@@ -33,26 +43,75 @@ NDIOutput::~NDIOutput() {
 }
 
 void NDIOutput::set_name(const String p_name) {
-	name = p_name;
-	create_sender();
+	mtx_send->lock();
+
+	if (p_name.is_empty()) {
+		name.resize(0);
+	} else {
+		String suffix = Engine::get_singleton()->is_editor_hint() ? " (Editor)" : " (Game)";
+		name = (p_name + suffix).utf8();
+	}
+
+	mtx_send_desc.p_ndi_name = name.ptr();
+	mtx_rebuild_send = true;
+
+	mtx_send->unlock();
+
+	sem->post();
 }
 
 String NDIOutput::get_name() const {
-	return name;
+	if (name.ptr() == nullptr) {
+		return String("");
+	} else {
+		return String::utf8(name.ptr(), name.length()).replace(" (Editor)", "").replace(" (Game)", "");
+	}
 }
 
 void NDIOutput::set_groups(const PackedStringArray p_groups) {
-	groups = p_groups;
-	create_sender();
+	mtx_send->lock();
+
+	if (p_groups.is_empty()) {
+		groups.resize(0);
+	} else {
+		groups = String(",").join(p_groups).utf8();
+	}
+
+	mtx_send_desc.p_groups = groups.ptr();
+	mtx_rebuild_send = true;
+
+	mtx_send->unlock();
+
+	sem->post();
 }
 
 PackedStringArray NDIOutput::get_groups() const {
-	return groups;
+	if (groups.ptr() == nullptr) {
+		return PackedStringArray();
+	} else {
+		return String::utf8(groups.ptr(), groups.length()).split(",", true);
+	}
 }
 
 void NDIOutput::set_output_editor(const bool p_state) {
+	if (p_state == output_editor) {
+		return;
+	}
+
+	mtx_send->lock();
 	output_editor = p_state;
-	create_sender();
+	mtx_rebuild_send = true;
+	mtx_send->unlock();
+
+	sem->post();
+	
+	if (Engine::get_singleton()->is_editor_hint() && is_inside_tree()) { // state changed in the editor
+		if (output_editor) { // previously unregistered
+			register_viewport();
+		} else { // previously registered
+			unregister_viewport();
+		}
+	}
 }
 
 bool NDIOutput::is_outputting_editor() const {
@@ -76,63 +135,21 @@ void NDIOutput::_bind_methods() {
 void NDIOutput::_notification(int p_what) {
 	switch (p_what) {
 		case Node::NOTIFICATION_ENTER_TREE: {
-			create_sender();
+			if (Engine::get_singleton()->is_editor_hint() && !is_outputting_editor()) {
+				return;
+			}
+		
+			register_viewport();
 		} break;
 
 		case Node::NOTIFICATION_EXIT_TREE: {
-			destroy_sender();
+			if (Engine::get_singleton()->is_editor_hint() && !is_outputting_editor()) {
+				return;
+			}
+
+			unregister_viewport();
 		} break;
 	}
-}
-
-void NDIOutput::create_sender() {
-	destroy_sender();
-
-	if (Engine::get_singleton()->is_editor_hint() && !is_outputting_editor()) {
-		return;
-	}
-
-	if (get_name().is_empty()) {
-		return;
-	}
-
-	if (!is_inside_tree()) {
-		return;
-	}
-
-	NDIlib_send_create_t send_desc = {};
-	send_desc.clock_video = true;
-	send_desc.clock_audio = false;
-
-	if (Engine::get_singleton()->is_editor_hint()) {
-		send_desc.p_ndi_name = (get_name() + " (Editor)").utf8();
-	} else {
-		send_desc.p_ndi_name = (get_name() + " (Game)").utf8();
-	}
-
-	if (!get_groups().is_empty()) {
-		send_desc.p_groups = String(",").join(groups).utf8();
-	}
-
-	mtx_send->lock();
-	mtx_send_instance = ndi->send_create(&send_desc);
-	mtx_sending = true;
-	mtx_send->unlock();
-
-	register_viewport();
-}
-
-void NDIOutput::destroy_sender() {
-	if (!mtx_sending || !is_inside_tree()) {
-		return;
-	}
-
-	unregister_viewport();
-
-	mtx_send->lock();
-	mtx_sending = false;
-	ndi->send_destroy(mtx_send_instance);
-	mtx_send->unlock();
 }
 
 void NDIOutput::register_viewport() {
@@ -166,6 +183,7 @@ void NDIOutput::receive_texture(PackedByteArray p_data, const Ref<RDTextureForma
 }
 
 void NDIOutput::send_video_thread() {
+	NDIlib_send_instance_t send = nullptr;
 	PackedByteArray texture_buffer;
 	Ref<RDTextureFormat> texture_format;
 	NDIlib_video_frame_v2_t video_frame = {};
@@ -173,8 +191,33 @@ void NDIOutput::send_video_thread() {
 	while (true) {
 		sem->wait();
 
-		if (mtx_exit_thread) {
+		mtx_send->lock();
+		bool exit_thread = mtx_exit_thread;
+		bool rebuild_send = mtx_rebuild_send;
+		mtx_send->unlock();
+
+		if (exit_thread) {
 			break;
+		}
+
+		if (rebuild_send) {
+			if (send != nullptr) {
+				ndi->send_destroy(send);
+				send = nullptr;
+			}
+
+			mtx_send->lock();
+
+			mtx_rebuild_send = false;
+			if (mtx_send_desc.p_ndi_name != nullptr && (is_outputting_editor() || !Engine::get_singleton()->is_editor_hint())) {
+				send = ndi->send_create(&mtx_send_desc);
+			}
+
+			mtx_send->unlock();
+		}
+
+		if (send == nullptr) {
+			continue;
 		}
 
 		mtx_texture->lock();
@@ -182,7 +225,10 @@ void NDIOutput::send_video_thread() {
 		texture_format = mtx_texture_format;
 		mtx_texture->unlock();
 
-		ERR_CONTINUE_MSG(texture_format.is_null() || texture_buffer.is_empty(), "Viewport texture invalid");
+		if (texture_format.is_null() || texture_buffer.is_empty()) {
+			continue;
+		}
+
 		ERR_CONTINUE_MSG(texture_format->get_format() != RenderingDevice::DATA_FORMAT_R8G8B8A8_UNORM, "Viewport texture format isn't DATA_FORMAT_R8G8B8A8_UNORM");
 		ERR_CONTINUE_MSG(texture_format->get_width() * texture_format->get_height() * 4 != texture_buffer.size(), "Unexpected texture size");
 
@@ -193,10 +239,11 @@ void NDIOutput::send_video_thread() {
 		video_frame.FourCC = NDIlib_FourCC_type_RGBA;
 		video_frame.p_data = (uint8_t *)texture_buffer.ptr();
 
-		mtx_send->lock();
-		if (mtx_sending) {
-			ndi->NDIlib_send_send_video_v2(mtx_send_instance, &video_frame);
-		}
-		mtx_send->unlock();
+		ndi->NDIlib_send_send_video_v2(send, &video_frame);
+	}
+
+	if (send != nullptr) {
+		ndi->send_destroy(send);
+		send = nullptr;
 	}
 }

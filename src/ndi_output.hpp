@@ -34,20 +34,17 @@ protected:
 	void _notification(int what);
 
 private:
-	String name;
-	PackedStringArray groups;
-	bool output_editor = false;
+	CharString name;
+	CharString groups;
+	bool output_editor;
 
 	Ref<Thread> thr;
 	Ref<Semaphore> sem;
-	bool mtx_exit_thread = false;
+	bool mtx_exit_thread;
 
 	Ref<Mutex> mtx_send;
-	NDIlib_send_instance_t mtx_send_instance;
-	bool mtx_sending = false;
-
-	void create_sender();
-	void destroy_sender();
+	NDIlib_send_create_t mtx_send_desc;
+	bool mtx_rebuild_send;
 
 	void register_viewport();
 	void unregister_viewport();
