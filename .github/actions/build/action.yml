@@ -27,9 +27,10 @@ runs:
         platform: ${{ inputs.platform }}
         windows-compiler: msvc
 
-    - name: Cache .scons_cache
+    - name: Restore .scons_cache
+      id: restore-cache
       if: ${{ inputs.scons-cache }}
-      uses: actions/cache@v4
+      uses: actions/cache/restore@v4
       with:
         path: ${{ inputs.scons-cache }}
         key: ${{ inputs.platform }}_${{ inputs.arch }}_${{ inputs.float-precision }}_${{ inputs.target-type }}_cache
@@ -40,3 +41,10 @@ runs:
         SCONS_CACHE: ${{ inputs.scons-cache }}
       run: |
         scons use_static_cpp=yes use_hot_reload=yes target=${{ inputs.target-type }} platform=${{ inputs.platform }} arch=${{ inputs.arch }} precision=${{ inputs.float-precision }}
+
+    - name: Save .scons_cache
+      if: ${{ inputs.scons-cache }}
+      uses: actions/cache/save@v4
+      with:
+        path: ${{ inputs.scons-cache }}
+        key: ${{ steps.restore-cache.outputs.cache-primary-key }}
