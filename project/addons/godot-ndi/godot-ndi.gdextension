@@ -9,6 +9,9 @@ reloadable = true
 linux.debug.x86_64.single = "bin/linux/libgodot-ndi.linux.template_debug.x86_64.so"
 linux.release.x86_64.single = "bin/linux/libgodot-ndi.linux.template_release.x86_64.so"
 
+linux.debug.arm64.single = "bin/linux/libgodot-ndi.linux.template_debug.arm64.so"
+linux.release.arm64.single = "bin/linux/libgodot-ndi.linux.template_release.arm64.so"
+
 windows.debug.x86_64.single = "bin/windows/godot-ndi.windows.template_debug.x86_64.dll"
 windows.release.x86_64.single = "bin/windows/godot-ndi.windows.template_release.x86_64.dll"
 
