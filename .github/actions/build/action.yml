@@ -25,7 +25,7 @@ runs:
       uses: ./godot-cpp/.github/actions/setup-godot-cpp
       with:
         platform: ${{ inputs.platform }}
-        windows-compiler: msvc
+        windows-compiler: mingw
 
     - name: Restore .scons_cache
       id: cache-restore
