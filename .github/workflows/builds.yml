@@ -90,38 +90,40 @@ jobs:
           pattern: ${{ env.LIBNAME }}-*
           delete-merged: true
 
-  test:
-    runs-on: [self-hosted]
-    continue-on-error: true
-    needs: merge
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: true
+  ## Can't test NDI features because of Github Action Runners network configuration (firewall?)
+  ## Works on self-hosted runners
 
-      - name: Download Build Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.LIBNAME }}-${{ github.sha }}
-          path: project # Results in project/addons/godot-ndi/...
+  # test:
+  #   runs-on: ubuntu-22.04
+  #   needs: merge
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #       with:
+  #         submodules: true
 
-      - name: Install NDI Runtime
-        run: |
-          wget https://raw.githubusercontent.com/DistroAV/DistroAV/refs/heads/master/CI/libndi-get.sh
-          chmod +x libndi-get.sh
-          ./libndi-get.sh install
+  #     - name: Download Build Artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: ${{ env.LIBNAME }}-${{ github.sha }}
+  #         path: project # Results in project/addons/godot-ndi/...
 
-      - name: Run Tests
-        uses: ./.github/actions/test
-        with:
-          godot-url: https://github.com/godotengine/godot-builds/releases/download/4.4-rc2/Godot_v4.4-rc2_linux.x86_64.zip
-          godot-bin: ./Godot_v4.4-rc2_linux.x86_64
-          project-dir: project
+  #     - name: Install NDI Runtime
+  #       run: |
+  #         wget https://raw.githubusercontent.com/DistroAV/DistroAV/refs/heads/master/CI/libndi-get.sh
+  #         chmod +x libndi-get.sh
+  #         ./libndi-get.sh install
+
+  #     - name: Run Tests
+  #       uses: ./.github/actions/test
+  #       with:
+  #         godot-url: https://github.com/godotengine/godot-builds/releases/download/4.4-rc2/Godot_v4.4-rc3_linux.x86_64.zip
+  #         godot-bin: ./Godot_v4.4-rc3_linux.x86_64
+  #         project-dir: project
 
   release:
     runs-on: ubuntu-22.04
-    needs: test
+    needs: merge
     if: startsWith(github.ref, 'refs/tags/')
     permissions:
       contents: write
