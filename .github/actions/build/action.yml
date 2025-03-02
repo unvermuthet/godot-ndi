@@ -28,12 +28,12 @@ runs:
         windows-compiler: msvc
 
     - name: Restore .scons_cache
-      id: restore-cache
+      id: cache-restore
       if: ${{ inputs.scons-cache }}
       uses: actions/cache/restore@v4
       with:
         path: ${{ inputs.scons-cache }}
-        key: ${{ inputs.platform }}_${{ inputs.arch }}_${{ inputs.float-precision }}_${{ inputs.target-type }}_cache
+        key: ${{ inputs.platform }}-${{ inputs.arch }}-${{ inputs.float-precision }}-${{ inputs.target-type }}
 
     - name: Run SCons
       shell: sh
@@ -43,8 +43,9 @@ runs:
         scons use_static_cpp=yes use_hot_reload=yes target=${{ inputs.target-type }} platform=${{ inputs.platform }} arch=${{ inputs.arch }} precision=${{ inputs.float-precision }}
 
     - name: Save .scons_cache
-      if: ${{ inputs.scons-cache }}
+      id: cache-save
+      if: always() && ${{ inputs.scons-cache }}
       uses: actions/cache/save@v4
       with:
         path: ${{ inputs.scons-cache }}
-        key: ${{ steps.restore-cache.outputs.cache-primary-key }}
+        key: ${{ steps.cache-restore.outputs.cache-primary-key }}
