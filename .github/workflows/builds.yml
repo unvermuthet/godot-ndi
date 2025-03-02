@@ -44,7 +44,7 @@ jobs:
             { platform: macos, arch: universal, os: macos-latest },
           ]
         target-type: [template_debug, template_release]
-        float-precision: [single, double]
+        float-precision: [single]
 
     runs-on: ${{ matrix.target.os }}
     steps:

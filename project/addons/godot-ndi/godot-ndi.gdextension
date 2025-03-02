@@ -7,19 +7,13 @@ reloadable = true
 [libraries]
 
 linux.debug.x86_64.single = "bin/linux/libgodot-ndi.linux.template_debug.x86_64.so"
-linux.debug.x86_64.double = "bin/linux/libgodot-ndi.linux.template_debug.x86_64.so"
 linux.release.x86_64.single = "bin/linux/libgodot-ndi.linux.template_release.x86_64.so"
-linux.release.x86_64.double = "bin/linux/libgodot-ndi.linux.template_release.x86_64.so"
 
 windows.debug.x86_64.single = "bin/windows/godot-ndi.windows.template_debug.x86_64.dll"
-windows.debug.x86_64.double = "bin/windows/godot-ndi.windows.template_debug.x86_64.dll"
 windows.release.x86_64.single = "bin/windows/godot-ndi.windows.template_release.x86_64.dll"
-windows.release.x86_64.double = "bin/windows/godot-ndi.windows.template_release.x86_64.dll"
 
 macos.debug.single = "bin/macos/libgodot-ndi.macos.template_debug.universal.dylib"
-macos.debug.double = "bin/macos/libgodot-ndi.macos.template_debug.double.universal.dylib"
 macos.release.single = "bin/macos/libgodot-ndi.macos.template_release.universal.dylib"
-macos.release.double = "bin/macos/libgodot-ndi.macos.template_release.double.universal.dylib"
 
 [icons]
 
