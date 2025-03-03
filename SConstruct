@@ -5,7 +5,7 @@ import sys
 from methods import print_error
 
 libname = "godot-ndi"
-bindir = "project/addons/godot-ndi/bin"
+bindir = f"project/addons/{libname}/bin"
 
 localEnv = Environment(tools=["default"], PLATFORM="")
 
@@ -46,7 +46,7 @@ if env["target"] in ["editor", "template_debug"]:
         print("Not including class reference as we're targeting a pre-4.3 baseline.")
 
 file = "{}{}{}".format(libname, env["suffix"], env["SHLIBSUFFIX"])
-libraryfile = "project/addons/{}/bin/{}/{}".format(libname, env["platform"], file)
+libraryfile = "{}/{}/{}".format(bindir, env["platform"], file)
 library = env.SharedLibrary(libraryfile, source=sources)
 
 default_args = [library]
