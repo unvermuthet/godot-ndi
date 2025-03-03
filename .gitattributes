@@ -1,2 +1,6 @@
 # Normalize EOL for all files that Git considers text files.
 * text=auto eol=lf
+
+ndi/** linguist-vendored
+project/addons/gut/** linguist-vendored
+src/gen/** linguist-generated
