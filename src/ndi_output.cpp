@@ -241,7 +241,7 @@ void NDIOutput::send_video_thread() {
 		video_frame.FourCC = texture_transparent ? NDIlib_FourCC_type_RGBA : NDIlib_FourCC_type_RGBX;
 		video_frame.p_data = (uint8_t *)texture_buffer.ptr();
 
-		ndi->NDIlib_send_send_video_v2(send, &video_frame);
+		ndi->send_send_video_v2(send, &video_frame);
 	}
 
 	if (send != nullptr) {
