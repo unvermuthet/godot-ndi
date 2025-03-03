@@ -2,9 +2,6 @@ name: GDExtension Build
 description: Build GDExtension
 
 inputs:
-  scons-arguments:
-    default: ""
-    description: Additional arguments to pass to SCons.
   platform:
     required: true
     description: Target platform.
@@ -17,6 +14,9 @@ inputs:
   target-type:
     default: "template_debug"
     description: Build type (template_debug or template_release).
+  scons-arguments:
+    default: ""
+    description: Additional arguments to pass to SCons.
   scons-cache:
     default: ".scons-cache/"
     description: Scons cache folder name, relative to each scons directory. Must not contain relative path signifiers (. or ..). Must be a transparent path part (empty or 'path/to/directory/', ending in a slash).
@@ -30,7 +30,6 @@ runs:
       uses: ./godot-cpp/.github/actions/setup-godot-cpp
       with:
         platform: ${{ inputs.platform }}
-        windows-compiler: msvc
 
     - name: Restore .scons_cache
       if: ${{ inputs.scons-cache }}

@@ -44,7 +44,7 @@ jobs:
           [
             { platform: linux, arch: x86_64, os: ubuntu-latest },
             { platform: linux, arch: arm64, os: ubuntu-24.04-arm },
-            { platform: windows, arch: x86_64, os: windows-latest },
+            { platform: windows, arch: x86_64, os: ubuntu-latest },
             { platform: macos, arch: universal, os: macos-latest },
           ]
         target-type: [template_debug, template_release]
@@ -60,7 +60,7 @@ jobs:
       - name: Build GDExtension
         uses: ./.github/actions/build
         with:
-          scons-arguments: "lto=auto use_static_cpp=yes"
+          scons-arguments: "use_mingw=yes lto=auto use_static_cpp=yes debug_symbols=yes"
           platform: ${{ matrix.target.platform }}
           arch: ${{ matrix.target.arch }}
           float-precision: ${{ matrix.float-precision }}
