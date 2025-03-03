@@ -30,6 +30,7 @@ runs:
       uses: ./godot-cpp/.github/actions/setup-godot-cpp
       with:
         platform: ${{ inputs.platform }}
+        windows-compiler: msvc
 
     - name: Restore .scons_cache
       if: ${{ inputs.scons-cache }}

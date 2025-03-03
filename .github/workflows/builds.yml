@@ -60,7 +60,7 @@ jobs:
       - name: Build GDExtension
         uses: ./.github/actions/build
         with:
-          scons-arguments: "lto=auto debug_symbols=yes use_static_cpp=yes use_mingw=yes"
+          scons-arguments: "lto=auto debug_symbols=yes use_static_cpp=yes"
           platform: ${{ matrix.target.platform }}
           arch: ${{ matrix.target.arch }}
           float-precision: ${{ matrix.float-precision }}
