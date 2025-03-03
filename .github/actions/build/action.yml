@@ -64,4 +64,4 @@ runs:
         GH_REPO: ${{ github.repository }}
         CACHE_KEY: ${{ steps.cache-restore.outputs.cache-matched-key }}
       run: |
-        gh cache delete $(gh cache list --json key,id --jq '.[] | select(.key == "$CACHE_KEY") | .id')
+        gh cache delete $CACHE_KEY
