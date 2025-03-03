@@ -60,6 +60,7 @@ runs:
     - name: Delete Stale .scons_cache
       # If we saved a new cache, but also restored an old one, delete the old one
       if: ${{ steps.cache-save.outcome == 'success' && steps.cache-restore.outputs.cache-matched-key && inputs.github-token }}
+      continue-on-error: true
       shell: bash
       env:
         GH_TOKEN: ${{ inputs.github-token }}
