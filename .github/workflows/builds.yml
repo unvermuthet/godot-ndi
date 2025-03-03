@@ -61,6 +61,7 @@ jobs:
           arch: ${{ matrix.target.arch }}
           float-precision: ${{ matrix.float-precision }}
           target-type: ${{ matrix.target-type }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Windows - Delete compilation files
         if: ${{ matrix.target.platform == 'windows' }}

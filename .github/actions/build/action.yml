@@ -17,6 +17,8 @@ inputs:
   scons-cache:
     default: ".scons-cache/"
     description: Scons cache folder name, relative to each scons directory. Must not contain relative path signifiers (. or ..). Must be a transparent path part (empty or 'path/to/directory/', ending in a slash).
+  github-token:
+    description: GitHub token for cache deletion.
 
 runs:
   using: composite
@@ -55,9 +57,11 @@ runs:
 
     - name: Delete Stale .scons_cache
       # If we saved a new cache, but also restored an old one, delete the old one
-      if: ${{ steps.cache-save.outcome == 'success' && steps.cache-restore.outcome == 'success' }}
+      if: ${{ steps.cache-save.outcome == 'success' && steps.cache-restore.outcome == 'success' && inputs.github-token }}
+      shell: bash
       env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ inputs.github-token }}
+        GH_REPO: ${{ github.repository }}
         CACHE_KEY: ${{ steps.cache-restore.outputs.cache-matched-key }}
       run: |
         gh cache delete $(gh cache list --json key,id --jq '.[] | select(.key == "$CACHE_KEY") | .id')
