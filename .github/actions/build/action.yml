@@ -27,7 +27,6 @@ runs:
       uses: ./godot-cpp/.github/actions/setup-godot-cpp
       with:
         platform: ${{ inputs.platform }}
-        windows-compiler: msvc
 
     - name: Restore .scons_cache
       if: ${{ inputs.scons-cache }}
@@ -44,7 +43,7 @@ runs:
       env:
         SCONS_CACHE: ${{ inputs.scons-cache }}
       run: |
-        scons use_static_cpp=yes use_hot_reload=yes target=${{ inputs.target-type }} platform=${{ inputs.platform }} arch=${{ inputs.arch }} precision=${{ inputs.float-precision }}
+        scons lto=auto debug_symbols=yes use_static_cpp=yes use_mingw=yes target=${{ inputs.target-type }} platform=${{ inputs.platform }} arch=${{ inputs.arch }} precision=${{ inputs.float-precision }}
 
     - name: Save .scons_cache
       # If this exact cache key was not restored, save it
