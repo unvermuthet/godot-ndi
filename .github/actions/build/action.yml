@@ -27,9 +27,10 @@ runs:
         platform: ${{ inputs.platform }}
         windows-compiler: msvc
 
-    - name: Cache .scons_cache
+    - name: Restore .scons_cache
       if: ${{ inputs.scons-cache }}
-      uses: actions/cache@v4
+      id: cache-restore
+      uses: actions/cache/restore@v4
       with:
         path: ${{ inputs.scons-cache }}
         key: ${{ inputs.platform }}-${{ inputs.arch }}-${{ inputs.float-precision }}-${{ inputs.target-type }}-${{ github.run_id }}
@@ -42,3 +43,21 @@ runs:
         SCONS_CACHE: ${{ inputs.scons-cache }}
       run: |
         scons use_static_cpp=yes use_hot_reload=yes target=${{ inputs.target-type }} platform=${{ inputs.platform }} arch=${{ inputs.arch }} precision=${{ inputs.float-precision }}
+
+    - name: Save .scons_cache
+      # If this exact cache key was not restored, save it
+      if: ${{ inputs.scons-cache && steps.cache-restore.outputs.cache-hit != 'true' }}
+      id: cache-save
+      uses: actions/cache/save@v4
+      with:
+        path: ${{ inputs.scons-cache }}
+        key: ${{ steps.cache-restore.outputs.cache-primary-key }}
+
+    - name: Delete Stale .scons_cache
+      # If we saved a new cache, but also restored an old one, delete the old one
+      if: ${{ steps.cache-save.outcome == 'success' && steps.cache-restore.outcome == 'success' }}
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        CACHE_KEY: ${{ steps.cache-restore.outputs.cache-matched-key }}
+      run: |
+        gh cache delete $(gh cache list --json key,id --jq '.[] | select(.key == "$CACHE_KEY") | .id')
