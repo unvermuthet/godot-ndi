@@ -14,6 +14,9 @@ NDIFinder::NDIFinder() {
 	mtx.instantiate();
 	sem.instantiate();
 
+	mtx_exit_thread = false;
+	mtx_rebuild_find = true;
+
 	thr->start(callable_mp(this, &NDIFinder::find_sources_thread));
 }
 
@@ -42,45 +45,53 @@ bool NDIFinder::get_show_local_sources() const {
 }
 
 void NDIFinder::set_groups(const PackedStringArray p_groups) {
+	mtx->lock();
+
 	if (p_groups.is_empty()) {
-		groups = NULL;
+		groups.resize(0);
 	} else {
 		groups = String(",").join(p_groups).utf8();
 	}
 
-	mtx->lock();
-	mtx_find_desc.p_groups = groups;
+	mtx_find_desc.p_groups = groups.ptr();
 	mtx_rebuild_find = true;
+
 	mtx->unlock();
+
+	sem->post();
 }
 
 PackedStringArray NDIFinder::get_groups() const {
-	if (mtx_find_desc.p_groups == NULL) { // no need for mutex, thread doesn't write
+	if (groups.ptr() == nullptr) {
 		return PackedStringArray();
+	} else {
+		return String::utf8(mtx_find_desc.p_groups).split(",");
 	}
-
-	return String::utf8(mtx_find_desc.p_groups).split(",");
 }
 
 void NDIFinder::set_extra_ips(const PackedStringArray p_extra_ips) {
+	mtx->lock();
+
 	if (p_extra_ips.is_empty()) {
-		extra_ips = NULL;
+		extra_ips.resize(0);
 	} else {
 		extra_ips = String(",").join(p_extra_ips).utf8();
 	}
 
-	mtx->lock();
 	mtx_find_desc.p_extra_ips = extra_ips;
 	mtx_rebuild_find = true;
+
 	mtx->unlock();
+
+	sem->post();
 }
 
 PackedStringArray NDIFinder::get_extra_ips() const {
-	if (mtx_find_desc.p_extra_ips == NULL) {
+	if (extra_ips.ptr() == nullptr) {
 		return PackedStringArray();
+	} else {
+		return String::utf8(mtx_find_desc.p_extra_ips).split(",");
 	}
-
-	return String::utf8(mtx_find_desc.p_extra_ips).split(",");
 }
 
 TypedArray<VideoStreamNDI> NDIFinder::get_sources() const {
@@ -123,9 +134,7 @@ void NDIFinder::_notification(int what) {
 }
 
 void NDIFinder::find_sources_thread() {
-	mtx->lock(); // make sure find_desc doesn't change during use
-	NDIlib_find_instance_t find = ndi->find_create_v2(&mtx_find_desc);
-	mtx->unlock();
+	NDIlib_find_instance_t find = nullptr;
 
 	Ref<HashingContext> hasher = memnew(HashingContext);
 	hasher->start(HashingContext::HASH_SHA256);
@@ -144,14 +153,21 @@ void NDIFinder::find_sources_thread() {
 		}
 
 		if (rebuild_find) {
-			ndi->find_destroy(find);
+			if (find != nullptr) {
+				ndi->find_destroy(find);
+				find = nullptr;
+			}
 
 			mtx->lock(); // make sure find_desc doesn't change during use
-			mtx_rebuild_find = false;
-			NDIlib_find_create_t find_desc = mtx_find_desc;
-			mtx->unlock();
 
+			mtx_rebuild_find = false;
 			find = ndi->find_create_v2(&mtx_find_desc);
+
+			mtx->unlock();
+		}
+
+		if (find == nullptr) {
+			continue;
 		}
 
 		uint32_t num_sources = 0;
@@ -182,6 +198,8 @@ void NDIFinder::find_sources_thread() {
 		call_deferred("emit_signal", "sources_changed");
 	}
 
-	ndi->find_destroy(find);
 	hasher.unref();
+	if (find != nullptr) {
+		ndi->find_destroy(find);
+	}
 }

@@ -44,11 +44,11 @@ private:
 	Ref<Thread> thr;
 	Ref<Mutex> mtx;
 	Ref<Semaphore> sem;
-	bool mtx_exit_thread = false;
+	bool mtx_exit_thread;
 
 	TypedArray<VideoStreamNDI> mtx_sources;
 	NDIlib_find_create_t mtx_find_desc;
-	bool mtx_rebuild_find = false;
+	bool mtx_rebuild_find;
 
 	void find_sources_thread();
 };
