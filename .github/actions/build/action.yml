@@ -2,6 +2,9 @@ name: GDExtension Build
 description: Build GDExtension
 
 inputs:
+  scons-arguments:
+    default: ""
+    description: Additional arguments to pass to SCons.
   platform:
     required: true
     description: Target platform.
@@ -43,7 +46,7 @@ runs:
       env:
         SCONS_CACHE: ${{ inputs.scons-cache }}
       run: |
-        scons lto=auto debug_symbols=yes use_static_cpp=yes use_mingw=yes target=${{ inputs.target-type }} platform=${{ inputs.platform }} arch=${{ inputs.arch }} precision=${{ inputs.float-precision }}
+        scons ${{ inputs.scons-arguments }} target=${{ inputs.target-type }} platform=${{ inputs.platform }} arch=${{ inputs.arch }} precision=${{ inputs.float-precision }}
 
     - name: Save .scons_cache
       # If this exact cache key was not restored, save it
