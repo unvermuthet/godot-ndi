@@ -35,9 +35,9 @@ runs:
       uses: actions/cache/restore@v4
       with:
         path: ${{ inputs.scons-cache }}
-        key: ${{ inputs.platform }}-${{ inputs.arch }}-${{ inputs.float-precision }}-${{ inputs.target-type }}-${{ github.run_id }}
+        key: ${{ inputs.platform }}_${{ inputs.arch }}_${{ inputs.float-precision }}_${{ inputs.target-type }}_${{ github.run_id }}
         restore-keys: |
-          ${{ inputs.platform }}-${{ inputs.arch }}-${{ inputs.float-precision }}-${{ inputs.target-type }}
+          ${{ inputs.platform }}_${{ inputs.arch }}_${{ inputs.float-precision }}_${{ inputs.target-type }}_
 
     - name: Run SCons
       shell: sh
@@ -57,7 +57,7 @@ runs:
 
     - name: Delete Stale .scons_cache
       # If we saved a new cache, but also restored an old one, delete the old one
-      if: ${{ steps.cache-save.outcome == 'success' && steps.cache-restore.outcome == 'success' && inputs.github-token }}
+      if: ${{ steps.cache-save.outcome == 'success' && steps.cache-restore.outputs.cache-matched-key && inputs.github-token }}
       shell: bash
       env:
         GH_TOKEN: ${{ inputs.github-token }}
