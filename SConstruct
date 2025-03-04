@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import sys
+import subprocess
 
 from methods import print_error
 
@@ -18,6 +19,8 @@ opts.Update(localEnv)
 
 Help(opts.GenerateHelpText(localEnv))
 
+# Check if the godot-cpp submodule is initialized
+
 submodule_initialized = False
 if os.path.isdir("godot-cpp"):
     if os.listdir("godot-cpp"):
@@ -30,15 +33,22 @@ Run the following command to download godot-cpp:
     git submodule update --init --recursive""")
     sys.exit(1)
 
+# Extend the godot-cpp environment
 env = localEnv.Clone()
 env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 
+# Sources
 env.Append(CPPPATH=["src/", "ndi/"])
 sources = Glob("src/*.cpp")
 
+# Disable deprecated warnings
+env.Append(CCFLAGS=["-Wno-deprecated-declarations"])
+
+# Include Windows SDK
 if env["platform"] == "windows":
     env.Append(LIBS=["ws2_32"])
 
+# Add docs
 if env["target"] in ["editor", "template_debug"]:
     try:
         doc_data = env.GodotCPPDocData(
@@ -47,9 +57,29 @@ if env["target"] in ["editor", "template_debug"]:
     except AttributeError:
         print("Not including class reference as we're targeting a pre-4.3 baseline.")
 
+# Add the commit hash
+commit_hash = ""
+commit_tag = ""
+
+try:
+    commit_hash = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"]
+    ).strip().decode("utf-8")
+except subprocess.CalledProcessError:
+    print("Failed to get the latest commit hash.")
+
+try:
+    commit_tag = subprocess.check_output(
+        ["git", "describe", "--tags", "--exact-match"]
+    ).strip().decode("utf-8")
+except subprocess.CalledProcessError:
+    print("No tag found for the current commit.")
+
+env.Append(CPPDEFINES={"GIT_COMMIT_HASH": f'\\"{commit_hash}\\"'})
+env.Append(CPPDEFINES={"GIT_COMMIT_TAG": f'\\"{commit_tag}\\"'})
+
+# Set paths
 file = "{}{}{}".format(libname, env["suffix"], env["SHLIBSUFFIX"])
 libraryfile = "{}/{}/{}".format(bindir, env["platform"], file)
-library = env.SharedLibrary(libraryfile, source=sources)
 
-default_args = [library]
-Default(*default_args)
+Default(env.SharedLibrary(libraryfile, source=sources))

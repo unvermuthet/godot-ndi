@@ -18,6 +18,8 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level) {
 		return;
 	}
 
+	print_verbose("NDI: Godot NDI Plugin ", String(GIT_COMMIT_TAG), "(", String(GIT_COMMIT_HASH).left(9), ")");
+
 	String runtime_folder = getenv(NDILIB_REDIST_FOLDER);
 
 #ifdef _WIN32
