@@ -20,8 +20,6 @@ inputs:
   scons-cache:
     default: ".scons-cache/"
     description: Scons cache folder name, relative to each scons directory. Must not contain relative path signifiers (. or ..). Must be a transparent path part (empty or 'path/to/directory/', ending in a slash).
-  github-token:
-    description: GitHub token for cache deletion.
 
 runs:
   using: composite
@@ -34,13 +32,10 @@ runs:
 
     - name: Restore .scons_cache
       if: ${{ inputs.scons-cache }}
-      id: cache-restore
-      uses: actions/cache/restore@v4
+      uses: ./godot-cpp/.github/actions/godot-cache-restore
       with:
-        path: ${{ inputs.scons-cache }}
-        key: ${{ inputs.platform }}_${{ inputs.arch }}_${{ inputs.float-precision }}_${{ inputs.target-type }}_${{ github.run_id }}
-        restore-keys: |
-          ${{ inputs.platform }}_${{ inputs.arch }}_${{ inputs.float-precision }}_${{ inputs.target-type }}_
+        scons-cache: ${{ inputs.scons-cache }}
+        cache-name: ${{ inputs.platform }}_${{ inputs.arch }}_${{ inputs.float-precision }}_${{ inputs.target-type }}
 
     - name: Run SCons
       shell: sh
@@ -50,22 +45,7 @@ runs:
         scons ${{ inputs.scons-arguments }} target=${{ inputs.target-type }} platform=${{ inputs.platform }} arch=${{ inputs.arch }} precision=${{ inputs.float-precision }}
 
     - name: Save .scons_cache
-      # If this exact cache key was not restored, save it
-      if: ${{ inputs.scons-cache && steps.cache-restore.outputs.cache-hit != 'true' }}
-      id: cache-save
-      uses: actions/cache/save@v4
+      uses: ./godot-cpp/.github/actions/godot-cache-save
       with:
-        path: ${{ inputs.scons-cache }}
-        key: ${{ steps.cache-restore.outputs.cache-primary-key }}
-
-    - name: Delete Stale .scons_cache
-      # If we saved a new cache, but also restored an old one, delete the old one
-      if: ${{ steps.cache-save.outcome == 'success' && steps.cache-restore.outputs.cache-matched-key && inputs.github-token }}
-      continue-on-error: true
-      shell: bash
-      env:
-        GH_TOKEN: ${{ inputs.github-token }}
-        GH_REPO: ${{ github.repository }}
-        CACHE_KEY: ${{ steps.cache-restore.outputs.cache-matched-key }}
-      run: |
-        gh cache delete $CACHE_KEY
+        scons-cache: ${{ inputs.scons-cache }}
+        cache-name: ${{ inputs.platform }}_${{ inputs.arch }}_${{ inputs.float-precision }}_${{ inputs.target-type }}
