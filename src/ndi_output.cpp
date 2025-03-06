@@ -146,9 +146,6 @@ void NDIOutput::receive_texture(PackedByteArray p_texture_data, const Ref<RDText
 		return; // Not my request
 	}
 
-	print_verbose(Time::get_singleton()->get_ticks_usec() - timestamp);
-	timestamp = Time::get_singleton()->get_ticks_usec();
-
 	if (send == nullptr) {
 		return;
 	}
@@ -168,7 +165,6 @@ void NDIOutput::receive_texture(PackedByteArray p_texture_data, const Ref<RDText
 	video_frame.FourCC = get_viewport()->has_transparent_background() ? NDIlib_FourCC_type_RGBA : NDIlib_FourCC_type_RGBX;
 	video_frame.p_data = (uint8_t *)p_texture_data.ptr();
 
-	timestamp = Time::get_singleton()->get_ticks_usec();
 	ndi->send_send_video_v2(send, &video_frame);
 	p_texture_data.resize(0);
 }
