@@ -163,7 +163,7 @@ void NDIOutput::receive_texture(PackedByteArray p_texture_data, const Ref<RDText
 	NDIlib_video_frame_v2_t video_frame = {};
 	video_frame.xres = p_texture_format->get_width();
 	video_frame.yres = p_texture_format->get_height();
-	video_frame.frame_rate_N = MIN<int, int>((int)Engine::get_singleton()->get_frames_per_second(), 60);
+	video_frame.frame_rate_N = (int)Engine::get_singleton()->get_frames_per_second();
 	video_frame.frame_rate_D = 1;
 	video_frame.FourCC = get_viewport()->has_transparent_background() ? NDIlib_FourCC_type_RGBA : NDIlib_FourCC_type_RGBX;
 	video_frame.p_data = (uint8_t *)p_texture_data.ptr();
