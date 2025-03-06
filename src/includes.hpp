@@ -9,14 +9,6 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
-#ifndef GIT_COMMIT_HASH
-#define GIT_COMMIT_HASH ""
-#endif
-
-#ifndef GIT_COMMIT_TAG
-#define GIT_COMMIT_TAG ""
-#endif
-
 #include <gdextension_interface.h>
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/hashing_context.hpp>

@@ -11,6 +11,14 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "includes.hpp"
 
+#ifndef GIT_COMMIT_HASH
+#define GIT_COMMIT_HASH ""
+#endif
+
+#ifndef GIT_COMMIT_TAG
+#define GIT_COMMIT_TAG ""
+#endif
+
 const NDIlib_v5 *ndi = nullptr;
 
 void initialize_gdextension_types(ModuleInitializationLevel p_level) {

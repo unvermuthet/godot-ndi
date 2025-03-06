@@ -9,7 +9,7 @@ libname = "godot-ndi"
 bindir = f"project/addons/{libname}/bin"
 
 localEnv = Environment(tools=["default"], PLATFORM="")
-localEnv["build_profile"] = "build.profile"
+localEnv["build_profile"] = "build_profile.json"
 
 customs = ["custom.py"]
 customs = [os.path.abspath(path) for path in customs]
@@ -37,28 +37,8 @@ Run the following command to download godot-cpp:
 env = localEnv.Clone()
 env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 
-# Sources
-env.Append(CPPPATH=["src/", "ndi/"])
-sources = Glob("src/*.cpp")
+# Get commit hash and version tag
 
-# Compiler flags
-env.Append(CCFLAGS=["-Wno-deprecated-declarations",
-           "-static-libgcc", "-static-libstdc++"])
-
-# Include Windows SDK
-if env["platform"] == "windows":
-    env.Append(LIBS=["ws2_32"])
-
-# Add docs
-if env["target"] in ["editor", "template_debug"]:
-    try:
-        doc_data = env.GodotCPPDocData(
-            "src/gen/doc_data.gen.cpp", source=Glob("doc_classes/*.xml"))
-        sources.append(doc_data)
-    except AttributeError:
-        print("Not including class reference as we're targeting a pre-4.3 baseline.")
-
-# Add the commit hash
 commit_hash = ""
 commit_tag = ""
 
@@ -76,11 +56,34 @@ try:
 except subprocess.CalledProcessError:
     print("No tag found for the current commit.")
 
-env.Append(CPPDEFINES={"GIT_COMMIT_HASH": f'\\"{commit_hash}\\"'})
-env.Append(CPPDEFINES={"GIT_COMMIT_TAG": f'\\"{commit_tag}\\"'})
+# Sources
+env.Append(CPPPATH=["src/", "ndi/"])
+sources = Glob("src/*.cpp", exclude=["src/register_types.cpp"])
+
+# Include register_types.cpp with the commit hash and tag defined
+sources += env.SharedObject("src/register_types.cpp", CPPDEFINES={
+    "GIT_COMMIT_HASH": f'\\"{commit_hash}\\"', "GIT_COMMIT_TAG": f'\\"{commit_tag}\\"'
+})
+
+# Add docs
+if env["target"] in ["editor", "template_debug"]:
+    try:
+        doc_data = env.GodotCPPDocData(
+            "src/gen/doc_data.gen.cpp", source=Glob("doc_classes/*.xml"))
+        sources.append(doc_data)
+    except AttributeError:
+        print("Not including class reference as we're targeting a pre-4.3 baseline.")
+
+# Include Windows SDK
+if env["platform"] == "windows":
+    env.Append(LIBS=["ws2_32"])
+
+# Compiler flags
+env.Append(CCFLAGS=["-Wno-deprecated-declarations",
+           "-static-libgcc", "-static-libstdc++"])
 
 # Set paths
 file = "{}{}{}".format(libname, env["suffix"], env["SHLIBSUFFIX"])
 libraryfile = "{}/{}/{}".format(bindir, env["platform"], file)
 
-Default(env.SharedLibrary(libraryfile, source=sources))
+Default(env.SharedLibrary(libraryfile, source=[sources]))
