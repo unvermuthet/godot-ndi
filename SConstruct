@@ -41,8 +41,9 @@ env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 env.Append(CPPPATH=["src/", "ndi/"])
 sources = Glob("src/*.cpp")
 
-# Disable deprecated warnings
-env.Append(CCFLAGS=["-Wno-deprecated-declarations"])
+# Compiler flags
+env.Append(CCFLAGS=["-Wno-deprecated-declarations",
+           "-static-libgcc", "-static-libstdc++"])
 
 # Include Windows SDK
 if env["platform"] == "windows":
