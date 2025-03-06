@@ -28,7 +28,7 @@ runs:
       uses: ./godot-cpp/.github/actions/setup-godot-cpp
       with:
         platform: ${{ inputs.platform }}
-        mingw-version: 11.0.1-3build1
+        mingw-version: ""
 
     - name: Restore .scons_cache
       if: ${{ inputs.scons-cache }}
