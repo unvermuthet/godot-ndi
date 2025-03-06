@@ -79,8 +79,7 @@ if env["platform"] == "windows":
     env.Append(LIBS=["ws2_32"])
 
 # Compiler flags
-env.Append(CCFLAGS=["-Wno-deprecated-declarations",
-           "-static-libgcc", "-static-libstdc++"])
+env.Append(CCFLAGS=["-Wno-deprecated-declarations"])
 
 # Set paths
 file = "{}{}{}".format(libname, env["suffix"], env["SHLIBSUFFIX"])
