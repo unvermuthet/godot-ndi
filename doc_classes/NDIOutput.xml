@@ -12,13 +12,13 @@
 	</tutorials>
 	<members>
 		<member name="enable_editor_output" type="bool" setter="set_output_editor" getter="is_outputting_editor" default="false">
-			Makes the [NDIOutput] Node transmit while running in the Editor. Source name will be suffixed with "(Editor)" instead of "(Game)"
+			Makes the [NDIOutput] Node transmit while running in the Editor. Source name will be suffixed with "[Editor]".
 		</member>
 		<member name="groups" type="PackedStringArray" setter="set_groups" getter="get_groups" default="PackedStringArray()">
 			List of groups that the source will be available in. Leave empty for default.
 		</member>
 		<member name="name" type="String" setter="set_name" getter="get_name" default="&quot;&quot;">
-			The name of the NDI source. Will be suffixed with "(Game)" or "(Editor)".
+			The name of the NDI source.
 		</member>
 	</members>
 </class>

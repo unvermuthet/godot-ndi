@@ -47,7 +47,7 @@ void NDIOutput::set_name(const String p_name) {
 	if (p_name.is_empty()) {
 		name.resize(0);
 	} else {
-		String suffix = Engine::get_singleton()->is_editor_hint() ? " (Editor)" : " (Game)";
+		String suffix = Engine::get_singleton()->is_editor_hint() ? " [Editor]" : "";
 		name = (p_name + suffix).utf8();
 	}
 
@@ -63,7 +63,7 @@ String NDIOutput::get_name() const {
 	if (name.ptr() == nullptr) {
 		return String("");
 	} else {
-		return String::utf8(name.ptr(), name.length()).replace(" (Editor)", "").replace(" (Game)", "");
+		return String::utf8(name.ptr(), name.length()).replace(" [Editor]", "");
 	}
 }
 
