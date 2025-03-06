@@ -31,7 +31,8 @@
 		"RDTextureFormat",
 		"RenderingServer",
 		"RenderingDevice",
-		"DisplayServer"
+		"DisplayServer",
+		"Time"
 	],
 	"type": "feature_profile"
 }

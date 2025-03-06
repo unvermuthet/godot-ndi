@@ -38,22 +38,15 @@ private:
 	CharString groups;
 	bool output_editor;
 
-	Ref<Thread> thr;
-	Ref<Semaphore> sem;
-	bool mtx_exit_thread;
+	NDIlib_send_instance_t send;
+	NDIlib_send_create_t send_desc;
 
-	Ref<Mutex> mtx_send;
-	NDIlib_send_create_t mtx_send_desc;
-	bool mtx_rebuild_send;
+	void update_sender();
+
+	uint64_t timestamp = 0;
 
 	void register_viewport();
 	void unregister_viewport();
+
 	void receive_texture(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format, int64_t p_viewport_rid);
-
-	Ref<Mutex> mtx_texture;
-	PackedByteArray mtx_texture_data;
-	Ref<RDTextureFormat> mtx_texture_format;
-	bool mtx_texture_transparent;
-
-	void send_video_thread();
 };

@@ -18,3 +18,9 @@ run/max_fps=60
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/gut/plugin.cfg")
+
+[rendering]
+
+rendering_device/staging_buffer/block_size_kb=512
+rendering_device/staging_buffer/max_size_mb=512
+rendering_device/staging_buffer/texture_download_region_size_px=256

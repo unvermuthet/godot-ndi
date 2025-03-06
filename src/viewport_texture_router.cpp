@@ -13,9 +13,6 @@ ViewportTextureRouter::ViewportTextureRouter() {
 }
 
 ViewportTextureRouter::~ViewportTextureRouter() {
-	// RenderingServer::get_singleton()->set_render_loop_enabled(false);
-	// RenderingServer::get_singleton()->set_block_signals(true);
-	// RenderingServer::get_singleton()->get_rendering_device()->set_block_signals(true);
 }
 
 void ViewportTextureRouter::add_viewport(Viewport *viewport) {
@@ -64,4 +61,5 @@ void ViewportTextureRouter::request_textures() {
 
 void ViewportTextureRouter::forward_texture(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format, int64_t p_viewport_rid) {
 	emit_signal("texture_arrived", p_data, p_format, p_viewport_rid);
+	p_data.resize(0);
 }

@@ -30,6 +30,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #include <godot_cpp/classes/rendering_server.hpp>
 #include <godot_cpp/classes/semaphore.hpp>
 #include <godot_cpp/classes/thread.hpp>
+#include <godot_cpp/classes/time.hpp>
 #include <godot_cpp/classes/timer.hpp>
 #include <godot_cpp/classes/video_stream.hpp>
 #include <godot_cpp/classes/video_stream_playback.hpp>
