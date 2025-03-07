@@ -96,7 +96,9 @@ void initialize(ModuleInitializationLevel p_level) {
 
 		case MODULE_INITIALIZATION_LEVEL_EDITOR: {
 			GDREGISTER_CLASS(NDIVersionCheck);
+			GDREGISTER_CLASS(MissingNDIRuntimeDialog);
 			EditorPlugins::add_by_type<NDIVersionCheck>();
+			EditorPlugins::add_by_type<MissingNDIRuntimeDialog>();
 		} break;
 	}
 }
@@ -105,6 +107,7 @@ void uninitialize(ModuleInitializationLevel p_level) {
 	switch (p_level) {
 		case MODULE_INITIALIZATION_LEVEL_EDITOR: {
 			EditorPlugins::remove_by_type<NDIVersionCheck>();
+			EditorPlugins::remove_by_type<MissingNDIRuntimeDialog>();
 		} break;
 
 		case MODULE_INITIALIZATION_LEVEL_SCENE: {

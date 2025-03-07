@@ -10,6 +10,8 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #pragma once
 
 #include <gdextension_interface.h>
+#include <godot_cpp/classes/button.hpp>
+#include <godot_cpp/classes/confirmation_dialog.hpp>
 #include <godot_cpp/classes/control.hpp>
 #include <godot_cpp/classes/editor_interface.hpp>
 #include <godot_cpp/classes/editor_plugin.hpp>
@@ -53,6 +55,7 @@ extern const NDIlib_v5 *ndi;
 
 using namespace godot;
 
+class MissingNDIRuntimeDialog;
 class NDIFinder;
 class NDIOutput;
 class NDIVersionCheck;
@@ -60,6 +63,7 @@ class VideoStreamNDI;
 class VideoStreamPlaybackNDI;
 class ViewportTextureRouter;
 
+#include "missing_ndi_runtime_dialog.hpp"
 #include "ndi_finder.hpp"
 #include "ndi_output.hpp"
 #include "ndi_version_check.hpp"
