@@ -58,10 +58,14 @@ except subprocess.CalledProcessError:
 
 # Sources
 env.Append(CPPPATH=["src/", "ndi/"])
-sources = Glob("src/*.cpp", exclude=["src/register_types.cpp"])
+sources = Glob(
+    "src/*.cpp",
+    exclude=["src/initialize.cpp", "src/ndi_version_check.cpp"]
+)
 
-# Include register_types.cpp with the commit hash and tag defined
-sources += env.SharedObject("src/register_types.cpp", CPPDEFINES={
+# These are included seperately to allow for the commit hash and
+# version tag to be included without invalidating cache for every file
+sources += env.SharedObject(["src/initialize.cpp", "src/ndi_version_check.cpp"], CPPDEFINES={
     "GIT_COMMIT_HASH": f'\\"{commit_hash}\\"', "GIT_COMMIT_TAG": f'\\"{commit_tag}\\"'
 })
 
@@ -78,12 +82,11 @@ if env["target"] in ["editor", "template_debug"]:
 if env["platform"] == "windows":
     env.Append(LIBS=["ws2_32"])
 
-# Compiler flags
-env.Append(CCFLAGS=["-Wno-deprecated-declarations",
-           "-static-libgcc", "-static-libstdc++"])
+# Disable deprecated warnings
+env.Append(CCFLAGS=["-Wno-deprecated-declarations"])
 
 # Set paths
 file = "{}{}{}".format(libname, env["suffix"], env["SHLIBSUFFIX"])
 libraryfile = "{}/{}/{}".format(bindir, env["platform"], file)
 
-Default(env.SharedLibrary(libraryfile, source=[sources]))
+Default(env.SharedLibrary(libraryfile, source=sources))
