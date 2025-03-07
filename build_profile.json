@@ -26,6 +26,7 @@
 		"Engine",
 		"GDExtension",
 		"HashingContext",
+		"HTTPClient",
 		"HTTPRequest",
 		"Image",
 		"ImageTexture",
