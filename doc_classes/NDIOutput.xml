@@ -5,15 +5,15 @@
 	</brief_description>
 	<description>
 		Creates an NDI source and displays the closest [Viewport] up the tree.
-		If the [Viewport] should be transmitted while its not visible, for example when the window is in the background or a [SubViewport] is used without a [SubViewportContainer], make sure to have the [param render_target_update_mode] set to Always on the [SubViewport].
-		[NDIOutput] sends a frame on every draw so to control the FPS you can set [param application/run/max_fps] in [ProjectSettings].
+		[b]Warning:[/b] Outputting more than 60 FPS will cause stuttering. Limit the FPS by setting [param application/run/max_fps] in [ProjectSettings].
+		If the [Viewport] should be transmitted while its not visible, for example when the window is in the background or a [SubViewport] is used without a [SubViewportContainer], make sure to have the [param render_target_update_mode] set to [code]Always[/code] on the [SubViewport].
 	</description>
 	<tutorials>
 	</tutorials>
 	<members>
 		<member name="enable_editor_output" type="bool" setter="set_output_editor" getter="is_outputting_editor" default="false">
 			Makes the [NDIOutput] Node transmit while running in the Editor. Source name will be suffixed with [code][Editor][/code].
-			[b]Warning:[/b] Make sure to enable [code]Update Continuously[/code] in the Editor Settings to prevent excessive stuttering.
+			[b]Warning:[/b] Enable [code]Update Continuously[/code] in the Editor Settings to prevent excessive stuttering.
 		</member>
 		<member name="groups" type="PackedStringArray" setter="set_groups" getter="get_groups" default="PackedStringArray()">
 			List of groups that the source will be available in. Leave empty for default.
