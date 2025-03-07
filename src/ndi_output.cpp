@@ -14,6 +14,7 @@ NDIOutput::NDIOutput() {
 	send = nullptr;
 	send_desc.clock_video = false;
 	send_desc.clock_audio = false;
+	output_editor = false;
 }
 
 NDIOutput::~NDIOutput() {
