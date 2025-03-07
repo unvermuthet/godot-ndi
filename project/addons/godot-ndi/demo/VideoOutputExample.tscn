@@ -22,4 +22,4 @@ autoplay = true
 loop = true
 
 [node name="NDIOutput" type="NDIOutput" parent="."]
-name = "GodotNDI"
+name = "Godot (Video)"
