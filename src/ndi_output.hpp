@@ -41,7 +41,9 @@ private:
 	NDIlib_send_instance_t send;
 	NDIlib_send_create_t send_desc;
 
-	void update_sender();
+	void rebuild_sender();
+	void create_sender();
+	void destroy_sender();
 
 	uint64_t timestamp = 0;
 

@@ -7,7 +7,6 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#include "ndi_output.hpp"
 #include "includes.hpp"
 
 NDIOutput::NDIOutput() {
@@ -29,7 +28,7 @@ void NDIOutput::set_name(const String p_name) {
 	}
 
 	send_desc.p_ndi_name = name.ptr();
-	update_sender();
+	rebuild_sender();
 }
 
 String NDIOutput::get_name() const {
@@ -48,7 +47,7 @@ void NDIOutput::set_groups(const PackedStringArray p_groups) {
 	}
 
 	send_desc.p_groups = groups.ptr();
-	update_sender();
+	rebuild_sender();
 }
 
 PackedStringArray NDIOutput::get_groups() const {
@@ -65,16 +64,7 @@ void NDIOutput::set_output_editor(const bool p_state) {
 	}
 
 	output_editor = p_state;
-
-	if (Engine::get_singleton()->is_editor_hint() && is_inside_tree()) { // state changed in the editor
-		if (output_editor) { // previously unregistered
-			register_viewport();
-		} else { // previously registered
-			unregister_viewport();
-		}
-	}
-
-	update_sender();
+	rebuild_sender();
 }
 
 bool NDIOutput::is_outputting_editor() const {
@@ -97,30 +87,40 @@ void NDIOutput::_bind_methods() {
 
 void NDIOutput::_notification(int p_what) {
 	switch (p_what) {
-		case Node::NOTIFICATION_ENTER_TREE: {
-			if (Engine::get_singleton()->is_editor_hint() && !is_outputting_editor()) {
-				return;
-			}
-			register_viewport();
+		case NOTIFICATION_ENTER_TREE: {
+			create_sender();
 		} break;
-
-		case Node::NOTIFICATION_EXIT_TREE: {
-			if (Engine::get_singleton()->is_editor_hint() && !is_outputting_editor()) {
-				return;
-			}
-			unregister_viewport();
+		case NOTIFICATION_EXIT_TREE: {
+			destroy_sender();
 		} break;
 	}
 }
 
-void NDIOutput::update_sender() {
-	if (send != nullptr) {
-		ndi->send_destroy(send);
-		send = nullptr;
+void NDIOutput::rebuild_sender() {
+	if (!is_inside_tree()) {
+		return;
 	}
 
-	if (send_desc.p_ndi_name != nullptr && (is_outputting_editor() || !Engine::get_singleton()->is_editor_hint())) {
+	destroy_sender();
+	create_sender();
+}
+
+void NDIOutput::create_sender() {
+	if (Engine::get_singleton()->is_editor_hint() && !is_outputting_editor()) {
+		return;
+	}
+
+	if (send == nullptr && send_desc.p_ndi_name != nullptr) {
+		register_viewport();
 		send = ndi->send_create(&send_desc);
+	}
+}
+
+void NDIOutput::destroy_sender() {
+	if (send != nullptr) {
+		unregister_viewport();
+		ndi->send_destroy(send);
+		send = nullptr;
 	}
 }
 
