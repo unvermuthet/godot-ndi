@@ -12,7 +12,7 @@ This was born out of work on my DMX Lighting Control Software. I'm really into L
 
 <!-- [![Static Badge](https://img.shields.io/badge/unvermuthet-gray?style=flat&logo=discord&logoColor=white&labelColor=%235865F2)](https://discord.com/users/203583245223198722) -->
 
-![Demo](https://github.com/user-attachments/assets/677eee12-65bb-4ded-b7ea-3bd05f38cee7)
+![Demo GIF](https://github.com/user-attachments/assets/159eb455-b0de-41bb-972f-be0817771455)
 
 ## Install
 
