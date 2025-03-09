@@ -83,7 +83,8 @@ if env["platform"] == "windows":
     env.Append(LIBS=["ws2_32"])
 
 # Disable deprecated warnings
-env.Append(CCFLAGS=["-Wno-deprecated-declarations"])
+if env["platform"] != "windows" or env["use_mingw"]:
+    env.Append(CCFLAGS=["-Wno-deprecated-declarations"])
 
 # Set paths
 file = "{}{}{}".format(libname, env["suffix"], env["SHLIBSUFFIX"])
