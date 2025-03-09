@@ -27,7 +27,7 @@ protected:
 	static void _bind_methods();
 
 private:
-	TypedArray<Viewport> vps;
+	Dictionary vps;
 	void request_textures();
 	void forward_texture(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format, int64_t p_viewport_rid);
 };

@@ -18,28 +18,33 @@ ViewportTextureRouter::~ViewportTextureRouter() {
 void ViewportTextureRouter::add_viewport(Viewport *viewport) {
 	ERR_FAIL_NULL_MSG(viewport, "Viewport is null");
 
-	vps.append(viewport);
+	vps.set(viewport, (int64_t)vps.get(viewport, 0) + 1);
 
 	// If this is the first viewport, connect to the frame_post_draw signal
 	if (vps.size() == 1) {
 		RenderingServer::get_singleton()->connect("frame_post_draw", callable_mp(this, &ViewportTextureRouter::request_textures), CONNECT_REFERENCE_COUNTED);
 	}
+
+	UtilityFunctions::print(vps);
 }
 
 void ViewportTextureRouter::remove_viewport(Viewport *viewport) {
 	ERR_FAIL_NULL_MSG(viewport, "Viewport is null");
 
-	int64_t i = vps.find(viewport);
-	if (i == -1) {
-		return;
-	}
+	vps.set(viewport, (int64_t)vps.get(viewport, 0) - (int64_t)1); // decrement
 
-	vps.remove_at(i);
+	if ((int64_t)vps.get(viewport, (int64_t)0) < (int64_t)1) {
+		// -1 => didn't exist
+		// 0 => existed
+		vps.erase(viewport);
+	}
 
 	// Last viewport removed, disconnect from the frame_post_draw signal
 	if (vps.size() == 0) {
 		RenderingServer::get_singleton()->disconnect("frame_post_draw", callable_mp(this, &ViewportTextureRouter::request_textures));
 	}
+
+	UtilityFunctions::print(vps);
 }
 
 void ViewportTextureRouter::_bind_methods() {
@@ -51,7 +56,7 @@ void ViewportTextureRouter::request_textures() {
 	RenderingDevice *rd = rs->get_rendering_device();
 
 	for (int i = 0; i < vps.size(); i++) {
-		Viewport *vp = Object::cast_to<Viewport>(vps[i]);
+		Viewport *vp = Object::cast_to<Viewport>(vps.keys()[i]);
 		ERR_CONTINUE_MSG(vp == nullptr, "Viewport was deleted but not unregistered");
 
 		Ref<ViewportTexture> texture = vp->get_texture();
