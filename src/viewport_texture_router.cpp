@@ -25,7 +25,7 @@ void ViewportTextureRouter::add_viewport(Viewport *viewport) {
 		RenderingServer::get_singleton()->connect("frame_post_draw", callable_mp(this, &ViewportTextureRouter::request_textures), CONNECT_REFERENCE_COUNTED);
 	}
 
-	UtilityFunctions::print(vps);
+	print_verbose("NDI: ViewportTextureRouter registrations: ", vps);
 }
 
 void ViewportTextureRouter::remove_viewport(Viewport *viewport) {
@@ -44,7 +44,7 @@ void ViewportTextureRouter::remove_viewport(Viewport *viewport) {
 		RenderingServer::get_singleton()->disconnect("frame_post_draw", callable_mp(this, &ViewportTextureRouter::request_textures));
 	}
 
-	UtilityFunctions::print(vps);
+	print_verbose("NDI: ViewportTextureRouter registrations: ", vps);
 }
 
 void ViewportTextureRouter::_bind_methods() {
