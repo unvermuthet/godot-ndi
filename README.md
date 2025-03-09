@@ -14,7 +14,7 @@ This was born out of work on my DMX Lighting Control Software. I'm really into L
 
 ![Demo GIF](https://github.com/user-attachments/assets/159eb455-b0de-41bb-972f-be0817771455)
 
-> This GIF only show local tranmission but imagine this over the network!
+> This GIF only shows local tranmission but imagine this over the network!
 
 ## Install
 
