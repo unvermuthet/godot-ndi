@@ -110,10 +110,18 @@ void NDIOutput::create_sender() {
 		return;
 	}
 
-	if (send == nullptr && send_desc.p_ndi_name != nullptr) {
-		register_viewport();
-		send = ndi->send_create(&send_desc);
+	if (send != nullptr || send_desc.p_ndi_name == nullptr) {
+		return;
 	}
+
+	send = ndi->send_create(&send_desc);
+	if (send == nullptr) {
+		// TODO: Expose this error somehow to enable user code to react to it. Signal?
+		WARN_PRINT_ED("NDI: Source creation failed. Perhaps name is already in use.");
+		return;
+	}
+
+	register_viewport();
 }
 
 void NDIOutput::destroy_sender() {
