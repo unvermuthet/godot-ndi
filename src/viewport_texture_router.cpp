@@ -45,12 +45,18 @@ void ViewportTextureRouter::_bind_methods() {
 }
 
 void ViewportTextureRouter::request_textures() {
+	RenderingServer *rs = RenderingServer::get_singleton();
+	RenderingDevice *rd = rs->get_rendering_device();
+
 	for (int i = 0; i < vps.size(); i++) {
 		Viewport *vp = Object::cast_to<Viewport>(vps[i]);
-		RenderingServer *rs = RenderingServer::get_singleton();
-		RenderingDevice *rd = rs->get_rendering_device();
+		ERR_CONTINUE_MSG(vp == nullptr, "Viewport was deleted but not unregistered");
 
-		RID rd_texture_rid = rs->texture_get_rd_texture(vp->get_texture()->get_rid());
+		Ref<ViewportTexture> texture = vp->get_texture();
+		ERR_FAIL_COND_MSG(texture.is_null(), "Couldn't get Viewport Texture");
+
+		RID rd_texture_rid = rs->texture_get_rd_texture(texture->get_rid());
+		texture.unref();
 		ERR_FAIL_COND_MSG(!rd_texture_rid.is_valid(), "Couldn't get viewport texture's RID on the RenderingDevice");
 
 		Ref<RDTextureFormat> texture_format = rd->texture_get_format(rd_texture_rid);
