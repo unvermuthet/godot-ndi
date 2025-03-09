@@ -160,7 +160,11 @@ void NDIOutput::receive_texture(PackedByteArray p_texture_data, const Ref<RDText
 	}
 
 	if (Engine::get_singleton()->get_frames_per_second() > 65.0) {
-		WARN_PRINT_ONCE_ED("NDI doesn't support frame rates higher than 60 FPS. Consider setting Max FPS to 60 in Project Settings or lowering your refresh rate when outputting from the Editor.");
+		if (Engine::get_singleton()->is_editor_hint()) {
+			WARN_PRINT_ONCE_ED("NDI doesn't support frame rates higher than 60 FPS. Consider lowering your refresh rate when outputting from the Editor.");
+		} else {
+			WARN_PRINT_ONCE_ED("NDI doesn't support frame rates higher than 60 FPS. Consider setting Max FPS to 60 in Project Settings.");
+		}
 	}
 
 	ERR_FAIL_COND_MSG(p_texture_format->get_format() != RenderingDevice::DATA_FORMAT_R8G8B8A8_UNORM, "Viewport texture format isn't DATA_FORMAT_R8G8B8A8_UNORM");
