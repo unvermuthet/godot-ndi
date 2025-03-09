@@ -23,7 +23,7 @@ void ViewportTextureRouter::add_viewport(Viewport *viewport) {
 
 		// If this is the first viewport, connect to the frame_post_draw signal
 		if (vps.size() == 1) {
-			RenderingServer::get_singleton()->connect("frame_post_draw", callable_mp(this, &ViewportTextureRouter::request_textures), CONNECT_REFERENCE_COUNTED);
+			RenderingServer::get_singleton()->connect("frame_post_draw", callable_mp(this, &ViewportTextureRouter::request_textures));
 		}
 	}
 }

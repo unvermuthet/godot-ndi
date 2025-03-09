@@ -129,7 +129,7 @@ void NDIOutput::register_viewport() {
 	ERR_FAIL_NULL_MSG(get_viewport(), "No viewport found");
 	ERR_FAIL_NULL_MSG(vp_texture_router, "No viewport texture router found");
 
-	vp_texture_router->connect("texture_arrived", callable_mp(this, &NDIOutput::receive_texture), CONNECT_REFERENCE_COUNTED);
+	vp_texture_router->connect("texture_arrived", callable_mp(this, &NDIOutput::receive_texture));
 	vp_texture_router->add_viewport(get_viewport());
 }
 
