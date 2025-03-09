@@ -13,8 +13,8 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using namespace godot;
 
-class ViewportTextureRouter : public Node {
-	GDCLASS(ViewportTextureRouter, Node)
+class ViewportTextureRouter : public Object {
+	GDCLASS(ViewportTextureRouter, Object)
 
 public:
 	ViewportTextureRouter();

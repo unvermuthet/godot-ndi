@@ -72,6 +72,13 @@ Error load_runtime() {
 
 void initialize(ModuleInitializationLevel p_level) {
 	switch (p_level) {
+		case MODULE_INITIALIZATION_LEVEL_CORE: {
+			GDREGISTER_CLASS(ViewportTextureRouter);
+			if (!Engine::get_singleton()->has_singleton("ViewportTextureRouter")) {
+				Engine::get_singleton()->register_singleton("ViewportTextureRouter", memnew(ViewportTextureRouter));
+			}
+		} break;
+
 		case MODULE_INITIALIZATION_LEVEL_SCENE: {
 			print_verbose("NDI: Godot NDI Plugin ", String(GIT_COMMIT_TAG), "(", String(GIT_COMMIT_HASH).left(9), ")");
 
@@ -83,15 +90,11 @@ void initialize(ModuleInitializationLevel p_level) {
 			GDREGISTER_CLASS(NDIOutput);
 			GDREGISTER_CLASS(VideoStreamNDI);
 			GDREGISTER_CLASS(VideoStreamPlaybackNDI);
-			GDREGISTER_CLASS(ViewportTextureRouter);
 
 			if (!Engine::get_singleton()->has_singleton("GlobalNDIFinder")) {
 				Engine::get_singleton()->register_singleton("GlobalNDIFinder", memnew(NDIFinder));
 			}
 
-			if (!Engine::get_singleton()->has_singleton("ViewportTextureRouter")) {
-				Engine::get_singleton()->register_singleton("ViewportTextureRouter", memnew(ViewportTextureRouter));
-			}
 		} break;
 
 		case MODULE_INITIALIZATION_LEVEL_EDITOR: {
@@ -112,7 +115,9 @@ void uninitialize(ModuleInitializationLevel p_level) {
 
 		case MODULE_INITIALIZATION_LEVEL_SCENE: {
 			if (Engine::get_singleton()->has_singleton("GlobalNDIFinder")) {
-				memdelete(Engine::get_singleton()->get_singleton("GlobalNDIFinder"));
+				NDIFinder *finder = Object::cast_to<NDIFinder>(Engine::get_singleton()->get_singleton("GlobalNDIFinder"));
+				Engine::get_singleton()->unregister_singleton("GlobalNDIFinder");
+				memdelete(finder);
 			}
 
 			if (ndi != nullptr) {
@@ -123,7 +128,9 @@ void uninitialize(ModuleInitializationLevel p_level) {
 
 		case MODULE_INITIALIZATION_LEVEL_CORE: {
 			if (Engine::get_singleton()->has_singleton("ViewportTextureRouter")) {
-				memdelete(Engine::get_singleton()->get_singleton("ViewportTextureRouter"));
+				ViewportTextureRouter *vptr = Object::cast_to<ViewportTextureRouter>(Engine::get_singleton()->get_singleton("ViewportTextureRouter"));
+				Engine::get_singleton()->unregister_singleton("ViewportTextureRouter");
+				memdelete(vptr);
 			}
 		} break;
 	}
@@ -135,7 +142,7 @@ GDExtensionBool GDE_EXPORT godot_ndi_init(GDExtensionInterfaceGetProcAddress p_g
 	GDExtensionBinding::InitObject init_obj(p_get_proc_address, p_library, r_initialization);
 	init_obj.register_initializer(initialize);
 	init_obj.register_terminator(uninitialize);
-	init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_SCENE);
+	init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_CORE);
 	return init_obj.init();
 }
 }
