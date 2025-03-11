@@ -4,10 +4,12 @@
 		"dockerfile": "Dockerfile"
 	},
 	"features": {
-		"ghcr.io/devcontainers/features/python:1": {},
+		"ghcr.io/devcontainers/features/python:1": {
+			"version": "3.11"
+		},
 		"ghcr.io/devcontainers/features/github-cli:1": {}
 	},
-	"postCreateCommand": "python -m pip install scons clang-format",
+	"postCreateCommand": "python -m pip install -r requirements.txt",
 	"customizations": {
 		"vscode": {
 			"extensions": [

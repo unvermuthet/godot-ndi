@@ -1,0 +1,2 @@
+clang-format==20.1.0
+SCons==4.9.0

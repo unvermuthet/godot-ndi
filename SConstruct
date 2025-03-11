@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 import os
 import sys
-import subprocess
 
 from methods import print_error
+import version
 
 libname = "godot-ndi"
 bindir = f"project/addons/{libname}/bin"
@@ -39,22 +39,7 @@ env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 
 # Get commit hash and version tag
 
-commit_hash = ""
-commit_tag = ""
 
-try:
-    commit_hash = subprocess.check_output(
-        ["git", "rev-parse", "HEAD"]
-    ).strip().decode("utf-8")
-except subprocess.CalledProcessError:
-    print("Failed to get the latest commit hash.")
-
-try:
-    commit_tag = subprocess.check_output(
-        ["git", "describe", "--tags", "--exact-match"]
-    ).strip().decode("utf-8")
-except subprocess.CalledProcessError:
-    print("No tag found for the current commit.")
 
 # Sources
 env.Append(CPPPATH=["src/", "ndi/"])
@@ -66,7 +51,7 @@ sources = Glob(
 # These are included seperately to allow for the commit hash and
 # version tag to be included without invalidating cache for every file
 sources += env.SharedObject(["src/initialize.cpp", "src/ndi_version_check.cpp"], CPPDEFINES={
-    "GIT_COMMIT_HASH": f'\\"{commit_hash}\\"', "GIT_COMMIT_TAG": f'\\"{commit_tag}\\"'
+    "GIT_COMMIT_HASH": f'\\"{version.commit_hash}\\"', "GIT_COMMIT_TAG": f'\\"{version.commit_tag}\\"'
 })
 
 # Add docs

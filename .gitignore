@@ -46,3 +46,6 @@ compile_commands.json
 
 # Jetbrains
 .idea/
+
+# Sphinx docs
+_build

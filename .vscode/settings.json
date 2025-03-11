@@ -1,6 +1,8 @@
 {
-    "cmake.options.statusBarVisibility": "hidden",
-    "cmake.ignoreCMakeListsMissing": true,
-    "C_Cpp.formatting": "clangFormat",
-    "editor.formatOnSave": true
+	"cmake.options.statusBarVisibility": "hidden",
+	"cmake.ignoreCMakeListsMissing": true,
+	"C_Cpp.formatting": "clangFormat",
+	"editor.formatOnSave": true,
+	"editor.formatOnSaveMode": "modifications",
+	"liveServer.settings.root": "doc/_build"
 }
