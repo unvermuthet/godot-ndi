@@ -1,7 +1,5 @@
 {# Add rst-badge after rst-versions for small badge style. #}
 {% set display_version = version -%}
-{% set listed_languages = ({"en":"#"}).items() -%}
-{% set listed_versions = ({"latest":"#"}).items() -%}
 
 {% if READTHEDOCS and current_version %}
   {% set display_version = current_version -%}
