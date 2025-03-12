@@ -1,0 +1,19 @@
+{
+    "name": "Install Godot",
+    "id": "godot",
+    "version": "1.0.0",
+    "description": "Installs a Godot Engine release",
+    "options": {
+        "version": {
+            "type": "string",
+            "proposals": [
+                "4.4-stable"
+            ],
+            "default": "4.4-stable",
+            "description": "Select a release version"
+        }
+    },
+    "installsAfter": [
+        "ghcr.io/devcontainers/features/common-utils"
+    ]
+}
