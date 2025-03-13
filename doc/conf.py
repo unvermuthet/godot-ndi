@@ -188,13 +188,13 @@ html_context = {
     "godot_show_article_status": False,
     # Display user-contributed notes at the bottom of pages that don't have `:allow_comments: False` at the top.
     # "godot_show_article_comments": on_rtd and not is_i18n,
-    "godot_show_article_comments": False,
+    "godot_show_article_comments": True,
 }
 
 html_logo = "../project/addons/godot-ndi/icons/VideoStreamNDI.svg"
 
 # These folders are copied to the documentation's HTML output
-html_static_path = ["godot-docs/_static"]
+html_static_path = ["godot-docs/_static", "_static"]
 
 html_extra_path = ["robots.txt"]
 

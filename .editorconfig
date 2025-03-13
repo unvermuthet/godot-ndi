@@ -16,6 +16,6 @@ indent_style = space
 indent_size = 4
 
 # YAML requires indentation with spaces instead of tabs.
-[*.{yml,yaml}]
+[*.{yml,yaml,js}]
 indent_style = space
 indent_size = 2
