@@ -82,14 +82,16 @@ void initialize(ModuleInitializationLevel p_level) {
 		case MODULE_INITIALIZATION_LEVEL_SCENE: {
 			print_verbose("NDI: Godot NDI Plugin ", String(GIT_COMMIT_TAG), "(", String(GIT_COMMIT_HASH).left(9), ")");
 
+			// Not dependant on NDI SDK, needed in EditorPlugin
+			GDREGISTER_CLASS(NDIRuntimeDialog);
+			GDREGISTER_CLASS(NDIVersionCheck);
+
 			if (load_runtime() != OK) {
 				return;
 			}
 
 			GDREGISTER_CLASS(NDIFinder);
 			GDREGISTER_CLASS(NDIOutput);
-			GDREGISTER_CLASS(NDIRuntimeDialog);
-			GDREGISTER_CLASS(NDIVersionCheck);
 			GDREGISTER_CLASS(VideoStreamNDI);
 			GDREGISTER_CLASS(VideoStreamPlaybackNDI);
 
