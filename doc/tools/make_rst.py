@@ -1867,22 +1867,22 @@ def make_rst_index(grouped_classes: Dict[str, List[str]], dry_run: bool, output_
 
         for group_name in CLASS_GROUPS:
             if group_name in grouped_classes:
-                f.write(make_heading(CLASS_GROUPS[group_name], "="))
+                # f.write(make_heading(CLASS_GROUPS[group_name], "="))
 
                 f.write(".. toctree::\n")
                 f.write("    :maxdepth: 1\n")
                 f.write(f"    :name: toc-class-ref-{group_name}s\n")
                 f.write("\n")
 
-                if group_name in CLASS_GROUPS_BASE:
-                    f.write(
-                        f"    class_{sanitize_class_name(CLASS_GROUPS_BASE[group_name], True)}\n")
+                # if group_name in CLASS_GROUPS_BASE:
+                #     f.write(
+                #         f"    class_{sanitize_class_name(CLASS_GROUPS_BASE[group_name], True)}\n")
 
                 for class_name in grouped_classes[group_name]:
-                    if group_name in CLASS_GROUPS_BASE and sanitize_class_name(
-                        CLASS_GROUPS_BASE[group_name], True
-                    ) == sanitize_class_name(class_name, True):
-                        continue
+                    # if group_name in CLASS_GROUPS_BASE and sanitize_class_name(
+                    #     CLASS_GROUPS_BASE[group_name], True
+                    # ) == sanitize_class_name(class_name, True):
+                    #     continue
 
                     f.write(
                         f"    class_{sanitize_class_name(class_name, True)}\n")

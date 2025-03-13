@@ -8,6 +8,9 @@ build:
   os: ubuntu-22.04
   tools:
     python: "3.11"
+  jobs:
+    pre_build:
+      - python3 doc/tools/make_rst.py -o doc/classes doc_classes
 
 sphinx:
   configuration: doc/conf.py
@@ -30,4 +33,4 @@ submodules:
 
 python:
   install:
-    - requirements: doc/requirements.txt
+    - requirements: requirements.txt
