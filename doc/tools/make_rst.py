@@ -145,6 +145,7 @@ BASE_STRINGS = [
 strings_l10n: Dict[str, str] = {}
 
 CLASS_GROUPS: Dict[str, str] = {
+    "gdextension": "All classes",
     "global": "Globals",
     "node": "Nodes",
     "resource": "Resources",
@@ -688,7 +689,7 @@ class ClassDef(DefinitionBase):
         return False
 
     def update_class_group(self, state: State) -> None:
-        group_name = "variant"
+        group_name = "gdextension"
 
         if self.name.startswith("@"):
             group_name = "global"
@@ -1863,26 +1864,26 @@ def make_rst_index(grouped_classes: Dict[str, List[str]], dry_run: bool, output_
 
         f.write(".. _doc_class_reference:\n\n")
 
-        f.write(make_heading("All classes", "="))
+        # f.write(make_heading("All classes", "="))
 
         for group_name in CLASS_GROUPS:
             if group_name in grouped_classes:
-                # f.write(make_heading(CLASS_GROUPS[group_name], "="))
+                f.write(make_heading(CLASS_GROUPS[group_name], "="))
 
                 f.write(".. toctree::\n")
                 f.write("    :maxdepth: 1\n")
                 f.write(f"    :name: toc-class-ref-{group_name}s\n")
                 f.write("\n")
 
-                # if group_name in CLASS_GROUPS_BASE:
-                #     f.write(
-                #         f"    class_{sanitize_class_name(CLASS_GROUPS_BASE[group_name], True)}\n")
+                if group_name in CLASS_GROUPS_BASE:
+                    f.write(
+                        f"    class_{sanitize_class_name(CLASS_GROUPS_BASE[group_name], True)}\n")
 
                 for class_name in grouped_classes[group_name]:
-                    # if group_name in CLASS_GROUPS_BASE and sanitize_class_name(
-                    #     CLASS_GROUPS_BASE[group_name], True
-                    # ) == sanitize_class_name(class_name, True):
-                    #     continue
+                    if group_name in CLASS_GROUPS_BASE and sanitize_class_name(
+                        CLASS_GROUPS_BASE[group_name], True
+                    ) == sanitize_class_name(class_name, True):
+                        continue
 
                     f.write(
                         f"    class_{sanitize_class_name(class_name, True)}\n")
