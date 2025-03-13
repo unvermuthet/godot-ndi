@@ -73,7 +73,8 @@ Error load_runtime() {
 void initialize(ModuleInitializationLevel p_level) {
 	switch (p_level) {
 		case MODULE_INITIALIZATION_LEVEL_CORE: {
-			GDREGISTER_CLASS(ViewportTextureRouter);
+			GDREGISTER_INTERNAL_CLASS(ViewportTextureRouter);
+
 			if (!Engine::get_singleton()->has_singleton("ViewportTextureRouter")) {
 				Engine::get_singleton()->register_singleton("ViewportTextureRouter", memnew(ViewportTextureRouter));
 			}
