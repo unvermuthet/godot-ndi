@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="NDIOutput" inherits="Node" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
-		Transmit the [Viewport] as a NDI source.
+		Transmit the [Viewport] as a NDI source
 	</brief_description>
 	<description>
 		Creates an NDI source and displays the closest [Viewport] up the tree.

@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="NDIRuntimeDialog" inherits="ConfirmationDialog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
+		Displays a dialog if the NDI Runtime is missing
 	</brief_description>
 	<description>
+		It is strongly recommended to add this to your scene or implement an alternative. Otherwise an error in the console is the only indication that the NDI Runtime is missing.
+		Automatically added in the editor by [EditorPluginNDI].
 	</description>
 	<tutorials>
 	</tutorials>
@@ -10,11 +13,16 @@
 		<method name="get_download_link" qualifiers="static">
 			<return type="String" />
 			<description>
+				The link to download the NDI Runtime. Differs depending on OS.
+				Windows: [code]http://ndi.link/NDIRedistV6[/code]
+				Linux: [code]https://github.com/DistroAV/DistroAV/wiki/1.-Installation#linux[/code]
+				MacOS: [code]http://ndi.link/NDIRedistV6Apple[/code]
 			</description>
 		</method>
 		<method name="open_download_link" qualifiers="static">
 			<return type="void" />
 			<description>
+				Opens the link in the default browser.
 			</description>
 		</method>
 	</methods>

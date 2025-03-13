@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="NDIVersionCheck" inherits="HTTPRequest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
+		Warns about new releases of Godot NDI
 	</brief_description>
 	<description>
+		Checks GitHub and prints a warning in the console incase there is a new version of Godot NDI available.
+		Automatically added in the editor by [EditorPluginNDI].
 	</description>
 	<tutorials>
 	</tutorials>
