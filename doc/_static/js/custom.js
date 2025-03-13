@@ -285,7 +285,7 @@ const registerGiscus = function () {
 	  reactionsEnabled: "0",
 	  emitMetadata: "0",
 	  inputPosition: "bottom",
-	  theme: "preferred_color_scheme",
+	  theme: "dark_dimmed",
 	  lang: "en",
 	  loading: "lazy",
 	};
