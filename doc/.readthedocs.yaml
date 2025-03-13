@@ -10,7 +10,7 @@ build:
     python: "3.11"
   jobs:
     pre_build:
-      - python3 doc/tools/make_rst.py -o doc/classes doc_classes
+      - python3 doc/tools/make_rst.py -o doc/classes doc_classes || true
 
 sphinx:
   configuration: doc/conf.py
