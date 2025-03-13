@@ -1,7 +1,7 @@
 # godot-ndi [![Made with Godot](https://img.shields.io/badge/Made%20with-Godot-478CBF?style=flat&logo=godot%20engine&logoColor=white)](https://godotengine.org) [![Build GDExtension](https://github.com/unvermuthet/godot-ndi/actions/workflows/builds.yml/badge.svg)](https://github.com/unvermuthet/godot-ndi/actions/workflows/builds.yml)
 
 > Integrates the NDI® SDK with Godot
-> 
+>
 > [ NDI® is a registered trademark of Vizrt NDI AB ]
 
 Extends the [VideoStream](https://docs.godotengine.org/en/stable/classes/class_videostream.html) and VideoStreamPlayback classes to implement **NDI playback**.
@@ -42,16 +42,20 @@ If you want to configure the environment yourself, follow [Godot's "Building fro
 
 ## License
 
-(C) 2025 Henry Muth - unvermuthet
+**(C) 2025-present Henry Muth - unvermuthet and Godot NDI contributors**
 
-godot-ndi is subject to the terms of the [Mozilla Public License, v. 2.0](LICENSE).
+### Source code
 
-Generally, changes to the source code must be made available under the same license. See license text.
+Subject to the terms of the [Mozilla Public License, v. 2.0](https://www.mozilla.org/en-US/MPL/2.0/).
+
+### Documentation
+
+Licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 
 ### Attribution suggestion
 ```
 godot-ndi
     Licensed under MPL-2.0
-    (C) 2025 Henry Muth - unvermuthet
+    (C) 2025-present Henry Muth - unvermuthet and Godot NDI contributors
     https://github.com/unvermuthet/godot-ndi
 ```

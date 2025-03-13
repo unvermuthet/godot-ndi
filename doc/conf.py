@@ -85,9 +85,9 @@ master_doc = "index"
 
 # General information about the project
 project = "Godot NDI"
-author = "Henry Muth (unvermuthet) and Godot NDI contributors"
+author = "Henry Muth - unvermuthet and Godot NDI contributors"
 copyright = (
-    f"2025-present {author} (CC BY 3.0)"
+    f"2025-present {author} (CC BY 4.0)"
 )
 
 # Version info for the project, acts as replacement for |version| and |release|
