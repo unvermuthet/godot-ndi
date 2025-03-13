@@ -2,6 +2,7 @@
     "recommendations": [
         "ms-vscode.cpptools-extension-pack",
         "xaver.clang-format",
-        "editorconfig.editorconfig"
+		"editorconfig.editorconfig",
+		"ritwickdey.liveserver"
     ]
 }

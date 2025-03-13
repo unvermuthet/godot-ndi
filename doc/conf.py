@@ -76,7 +76,7 @@ if not os.getenv("SPHINX_NO_DESCRIPTIONS"):
 templates_path = ["_templates", "godot-docs/_templates"]
 
 # You can specify multiple suffix as a list of string: ['.rst', '.md']
-source_suffix = ['.rst', '.md']
+source_suffix = {'.rst': 'restructuredtext', '.md': 'markdown'}
 source_encoding = "utf-8-sig"
 
 # The master toctree document

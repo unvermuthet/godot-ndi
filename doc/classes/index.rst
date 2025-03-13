@@ -10,14 +10,10 @@
 All classes
 ===========
 
-Variant types
-=============
-
 .. toctree::
     :maxdepth: 1
     :name: toc-class-ref-variants
 
-    class_variant
     class_missingndiruntimedialog
     class_ndifinder
     class_ndioutput
