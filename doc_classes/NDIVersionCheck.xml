@@ -9,4 +9,13 @@
 	</description>
 	<tutorials>
 	</tutorials>
+	<methods>
+		<method name="get_copyright_info" qualifiers="static">
+			<return type="Dictionary" />
+			<description>
+				Copyright and license information for Godot NDI and the NDI SDK headers.
+				Can be appended to [url=https://docs.godotengine.org/en/stable/classes/class_engine.html#class-engine-method-get-copyright-info][code]Engine.get_copyright_info()[/code][/url].
+			</description>
+		</method>
+	</methods>
 </class>

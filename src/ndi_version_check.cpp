@@ -15,7 +15,47 @@ NDIVersionCheck::NDIVersionCheck() {
 NDIVersionCheck::~NDIVersionCheck() {
 }
 
+Dictionary NDIVersionCheck::get_copyright_info() {
+	auto infos = Dictionary();
+	infos.set("name", "Godot NDI");
+
+	{
+		auto parts = Array();
+		{
+			auto part = Dictionary();
+
+			auto files = Array();
+			files.append("godot-ndi/src/*");
+
+			auto copyright = Array();
+			copyright.append("Copyright (C) 2025-present Henry Muth - unvermuthet");
+
+			part.set("files", files);
+			part.set("copyright", copyright);
+			part.set("license", "MPL-2.0");
+			parts.append(part);
+		}
+		{
+			auto part = Dictionary();
+
+			auto files = Array();
+			files.append("godot-ndi/ndi/*.h");
+
+			auto copyright = Array();
+			copyright.append("Copyright (C) 2023-2024 Vizrt NDI AB. All rights reserved.");
+
+			part.set("files", files);
+			part.set("copyright", copyright);
+			part.set("license", "MIT");
+			parts.append(part);
+		}
+		infos.set("parts", parts);
+	}
+
+	return infos;
+}
 void NDIVersionCheck::_bind_methods() {
+	ClassDB::bind_static_method("NDIVersionCheck", D_METHOD("get_copyright_info"), &NDIVersionCheck::get_copyright_info);
 }
 
 void NDIVersionCheck::_notification(int p_what) {

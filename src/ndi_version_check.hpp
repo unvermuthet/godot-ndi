@@ -27,6 +27,7 @@ class NDIVersionCheck : public HTTPRequest {
 public:
 	NDIVersionCheck();
 	~NDIVersionCheck();
+	static Dictionary get_copyright_info();
 
 protected:
 	static void _bind_methods();
