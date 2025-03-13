@@ -277,7 +277,7 @@ const registerGiscus = function () {
 	const dataset = {
 	  repo: "unvermuthet/godot-ndi",
 	  repoId: "R_kgDONqKAzQ",
-	  category: "Documentation comments",
+	  category: "User-contributed notes",
 	  categoryId: "DIC_kwDONqKAzc4Cn_4l",
 	  mapping: "specific",
 	  term: pageNameMetaElement.content,
