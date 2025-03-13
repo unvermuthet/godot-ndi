@@ -11,25 +11,16 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "includes.hpp"
 
-#ifndef GIT_COMMIT_HASH
-#define GIT_COMMIT_HASH ""
-#endif
-
-#ifndef GIT_COMMIT_TAG
-#define GIT_COMMIT_TAG ""
-#endif
-
 using namespace godot;
 
-class NDIVersionCheck : public HTTPRequest {
-	GDCLASS(NDIVersionCheck, HTTPRequest)
+class EditorPluginNDI : public EditorPlugin {
+	GDCLASS(EditorPluginNDI, EditorPlugin)
 
 public:
-	NDIVersionCheck();
-	~NDIVersionCheck();
+	EditorPluginNDI();
+	~EditorPluginNDI();
 
 protected:
 	static void _bind_methods();
 	void _notification(int p_what);
-	void _on_request_completed(HTTPRequest::Result p_result, HTTPClient::ResponseCode p_response_code, PackedStringArray p_headers, PackedByteArray p_body);
 };

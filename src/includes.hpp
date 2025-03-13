@@ -55,17 +55,19 @@ extern const NDIlib_v5 *ndi;
 
 using namespace godot;
 
-class MissingNDIRuntimeDialog;
+class EditorPluginNDI;
 class NDIFinder;
 class NDIOutput;
+class NDIRuntimeDialog;
 class NDIVersionCheck;
 class VideoStreamNDI;
 class VideoStreamPlaybackNDI;
 class ViewportTextureRouter;
 
-#include "missing_ndi_runtime_dialog.hpp"
+#include "editor_plugin_ndi.hpp"
 #include "ndi_finder.hpp"
 #include "ndi_output.hpp"
+#include "ndi_runtime_dialog.hpp"
 #include "ndi_version_check.hpp"
 #include "video_stream_ndi.hpp"
 #include "video_stream_playback_ndi.hpp"

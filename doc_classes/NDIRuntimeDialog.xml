@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="NDIRuntimeDialog" inherits="ConfirmationDialog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="get_download_link" qualifiers="static">
+			<return type="String" />
+			<description>
+			</description>
+		</method>
+		<method name="open_download_link" qualifiers="static">
+			<return type="void" />
+			<description>
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="dialog_autowrap" type="bool" setter="set_autowrap" getter="has_autowrap" overrides="AcceptDialog" default="true" />
+		<member name="dialog_text" type="String" setter="set_text" getter="get_text" overrides="AcceptDialog" default="&quot;Godot NDI requires the NDI Runtime to be installed on your system. Check the verbose logs to see which paths were tried.&quot;" />
+		<member name="ok_button_text" type="String" setter="set_ok_button_text" getter="get_ok_button_text" overrides="AcceptDialog" default="&quot;Download NDI Runtime&quot;" />
+		<member name="size" type="Vector2i" setter="set_size" getter="get_size" overrides="Window" default="Vector2i(530, 160)" />
+		<member name="title" type="String" setter="set_title" getter="get_title" overrides="Window" default="&quot;NDI Runtime not found&quot;" />
+	</members>
+</class>

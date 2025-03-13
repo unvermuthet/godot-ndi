@@ -20,12 +20,9 @@ void NDIVersionCheck::_bind_methods() {
 
 void NDIVersionCheck::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ENTER_TREE: {
-			HTTPRequest *request = memnew(HTTPRequest);
-			add_child(request);
-
-			request->connect("request_completed", callable_mp(this, &NDIVersionCheck::_on_request_completed));
-			request->request("https://api.github.com/repos/unvermuthet/godot-ndi/releases/latest");
+		case NOTIFICATION_READY: {
+			connect("request_completed", callable_mp(this, &NDIVersionCheck::_on_request_completed));
+			request("https://api.github.com/repos/unvermuthet/godot-ndi/releases/latest");
 		} break;
 	}
 }
@@ -50,6 +47,6 @@ void NDIVersionCheck::_on_request_completed(HTTPRequest::Result p_result, HTTPCl
 	}
 
 	if (latest_version != current_version) {
-		get_editor_interface()->get_editor_toaster()->push_toast("New version of Godot NDI available (" + latest_version + ")", EditorToaster::SEVERITY_INFO);
+		WARN_PRINT_ED("New version of Godot NDI available (" + latest_version + ")");
 	}
 }

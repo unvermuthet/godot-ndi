@@ -88,6 +88,8 @@ void initialize(ModuleInitializationLevel p_level) {
 
 			GDREGISTER_CLASS(NDIFinder);
 			GDREGISTER_CLASS(NDIOutput);
+			GDREGISTER_CLASS(NDIRuntimeDialog);
+			GDREGISTER_CLASS(NDIVersionCheck);
 			GDREGISTER_CLASS(VideoStreamNDI);
 			GDREGISTER_CLASS(VideoStreamPlaybackNDI);
 
@@ -98,10 +100,8 @@ void initialize(ModuleInitializationLevel p_level) {
 		} break;
 
 		case MODULE_INITIALIZATION_LEVEL_EDITOR: {
-			GDREGISTER_CLASS(NDIVersionCheck);
-			GDREGISTER_CLASS(MissingNDIRuntimeDialog);
-			EditorPlugins::add_by_type<NDIVersionCheck>();
-			EditorPlugins::add_by_type<MissingNDIRuntimeDialog>();
+			GDREGISTER_CLASS(EditorPluginNDI);
+			EditorPlugins::add_by_type<EditorPluginNDI>();
 		} break;
 	}
 }
@@ -109,8 +109,7 @@ void initialize(ModuleInitializationLevel p_level) {
 void uninitialize(ModuleInitializationLevel p_level) {
 	switch (p_level) {
 		case MODULE_INITIALIZATION_LEVEL_EDITOR: {
-			EditorPlugins::remove_by_type<NDIVersionCheck>();
-			EditorPlugins::remove_by_type<MissingNDIRuntimeDialog>();
+			EditorPlugins::remove_by_type<EditorPluginNDI>();
 		} break;
 
 		case MODULE_INITIALIZATION_LEVEL_SCENE: {

@@ -13,18 +13,16 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 using namespace godot;
 
-class MissingNDIRuntimeDialog : public EditorPlugin {
-	GDCLASS(MissingNDIRuntimeDialog, EditorPlugin)
+class NDIRuntimeDialog : public ConfirmationDialog {
+	GDCLASS(NDIRuntimeDialog, ConfirmationDialog)
 
 public:
-	MissingNDIRuntimeDialog();
-	~MissingNDIRuntimeDialog();
+	NDIRuntimeDialog();
+	~NDIRuntimeDialog();
 	static void open_download_link();
+	static String get_download_link();
 
 protected:
 	static void _bind_methods();
 	void _notification(int p_what);
-
-private:
-	ConfirmationDialog *dialog;
 };
