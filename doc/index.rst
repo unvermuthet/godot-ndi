@@ -11,7 +11,6 @@ Godot NDI – *main* branch
    guides/installing_mac_os
 
 .. toctree::
-   :hidden:
    :maxdepth: 1
    :caption: Class reference
    :name: sec-class-ref
