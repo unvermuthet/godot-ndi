@@ -7,7 +7,12 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#include "includes.hpp"
+#include "viewport_texture_router.hpp"
+
+#include <godot_cpp/classes/rendering_server.hpp>
+#include <godot_cpp/classes/viewport_texture.hpp>
+
+using namespace godot;
 
 ViewportTextureRouter::ViewportTextureRouter() {
 }

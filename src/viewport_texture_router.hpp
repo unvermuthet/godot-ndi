@@ -9,7 +9,8 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
-#include "includes.hpp"
+#include <godot_cpp/classes/rd_texture_format.hpp>
+#include <godot_cpp/classes/viewport.hpp>
 
 using namespace godot;
 

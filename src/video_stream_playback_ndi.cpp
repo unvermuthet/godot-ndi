@@ -7,7 +7,12 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#include "includes.hpp"
+#include "video_stream_playback_ndi.hpp"
+
+#include <godot_cpp/classes/os.hpp>
+#include <godot_cpp/classes/project_settings.hpp>
+
+using namespace godot;
 
 VideoStreamPlaybackNDI::VideoStreamPlaybackNDI() {
 	texture.instantiate();

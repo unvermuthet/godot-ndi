@@ -7,7 +7,11 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#include "includes.hpp"
+#include "ndi_version_check.hpp"
+
+#include <godot_cpp/classes/json.hpp>
+
+using namespace godot;
 
 NDIVersionCheck::NDIVersionCheck() {
 }

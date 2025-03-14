@@ -9,9 +9,18 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
-#include "includes.hpp"
+#include "ndi.hpp"
+#include "video_stream_ndi.hpp"
+
+#include <godot_cpp/classes/mutex.hpp>
+#include <godot_cpp/classes/node.hpp>
+#include <godot_cpp/classes/semaphore.hpp>
+#include <godot_cpp/classes/thread.hpp>
 
 using namespace godot;
+
+class VideoStreamNDI;
+class VideoStreamPlaybackNDI;
 
 class NDIFinder : public Node {
 	GDCLASS(NDIFinder, Node)

@@ -9,7 +9,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
-#include "includes.hpp"
+#include <godot_cpp/classes/http_request.hpp>
 
 #ifndef GIT_COMMIT_HASH
 #define GIT_COMMIT_HASH ""

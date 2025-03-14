@@ -7,7 +7,16 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#include "includes.hpp"
+#include "ndi_output.hpp"
+
+#include "viewport_texture_router.hpp"
+
+#include <godot_cpp/classes/engine.hpp>
+#include <godot_cpp/classes/viewport.hpp>
+
+using namespace godot;
+
+class ViewportTextureRouter;
 
 NDIOutput::NDIOutput() {
 	send = nullptr;

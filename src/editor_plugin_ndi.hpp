@@ -9,9 +9,15 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #pragma once
 
-#include "includes.hpp"
+#include "ndi_runtime_dialog.hpp"
+#include "ndi_version_check.hpp"
+
+#include <godot_cpp/classes/editor_plugin.hpp>
 
 using namespace godot;
+
+class NDIRuntimeDialog;
+class NDIVersionCheck;
 
 class EditorPluginNDI : public EditorPlugin {
 	GDCLASS(EditorPluginNDI, EditorPlugin)

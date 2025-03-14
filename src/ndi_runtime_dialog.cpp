@@ -7,7 +7,13 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#include "includes.hpp"
+#include "ndi_runtime_dialog.hpp"
+
+#include "ndi.hpp"
+
+#include <godot_cpp/classes/os.hpp>
+
+using namespace godot;
 
 NDIRuntimeDialog::NDIRuntimeDialog() {
 	set_title("NDI Runtime not found");

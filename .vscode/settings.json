@@ -4,5 +4,8 @@
 	"C_Cpp.formatting": "clangFormat",
 	"editor.formatOnSave": true,
 	"editor.formatOnSaveMode": "modifications",
-	"liveServer.settings.root": "doc/_build"
+	"liveServer.settings.root": "doc/_build",
+	"files.exclude": {
+		"**/*.os": true
+	}
 }

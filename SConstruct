@@ -45,12 +45,12 @@ env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 env.Append(CPPPATH=["src/", "ndi/"])
 sources = Glob(
     "src/*.cpp",
-    exclude=["src/initialize.cpp", "src/ndi_version_check.cpp"]
+    exclude=["src/ndi.cpp", "src/ndi_version_check.cpp"]
 )
 
 # These are included seperately to allow for the commit hash and
 # version tag to be included without invalidating cache for every file
-sources += env.SharedObject(["src/initialize.cpp", "src/ndi_version_check.cpp"], CPPDEFINES={
+sources += env.SharedObject(["src/ndi.cpp", "src/ndi_version_check.cpp"], CPPDEFINES={
     "GIT_COMMIT_HASH": f'\\"{version.commit_hash}\\"', "GIT_COMMIT_TAG": f'\\"{version.commit_tag}\\"'
 })
 
