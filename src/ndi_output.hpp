@@ -11,6 +11,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "ndi.hpp"
 
+#include <godot_cpp/classes/audio_effect_capture.hpp>
 #include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/classes/rd_texture_format.hpp>
 
@@ -32,14 +33,21 @@ public:
 	void set_output_editor(const bool p_state);
 	bool is_outputting_editor() const;
 
+	void set_audio_bus(const StringName &p_bus);
+	StringName get_audio_bus() const;
+
+	PackedStringArray _get_configuration_warnings() const;
+
 protected:
 	static void _bind_methods();
-	void _notification(int what);
+	void _notification(int p_what);
+	void _validate_property(PropertyInfo &p_property) const;
 
 private:
 	CharString name;
 	CharString groups;
 	bool output_editor = false;
+	StringName audio_bus = StringName("None");
 
 	NDIlib_send_instance_t send = nullptr;
 	NDIlib_send_create_t send_desc = NDIlib_send_create_t(nullptr, nullptr, false, false);
@@ -48,8 +56,12 @@ private:
 	void create_sender();
 	void destroy_sender();
 
-	void register_viewport();
-	void unregister_viewport();
+	void register_hooks();
+	void unregister_hooks();
 
-	void receive_texture(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format, int64_t p_viewport_rid);
+	void busses_changed();
+	Ref<AudioEffectCapture> get_audio_capture() const;
+
+	void send_texture(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format, int64_t p_viewport_rid);
+	void send_audio();
 };

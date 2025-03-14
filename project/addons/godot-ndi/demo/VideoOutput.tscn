@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://ddr3hiaft61tl"]
+[gd_scene load_steps=3 format=3 uid="uid://ddr3hiaft61tl"]
 
-[ext_resource type="VideoStream" uid="uid://djpk24xapxnq4" path="res://addons/godot-ndi/demo/Liftoff_Space_Shuttle_Atlantis.ogv" id="1_utmvk"]
+[ext_resource type="VideoStream" uid="uid://0whnog13yrlf" path="res://addons/godot-ndi/demo/assets/liftoff_space_shuttle_atlantis.ogv" id="1_utmvk"]
+[ext_resource type="AudioStream" uid="uid://dyvxmok1n3vu1" path="res://addons/godot-ndi/demo/assets/sub-d-more-jazz-guitar.wav" id="2_51pmd"]
 
 [node name="Canvas" type="Control"]
 layout_mode = 3
@@ -18,8 +19,14 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 stream = ExtResource("1_utmvk")
+volume_db = -15.0
 autoplay = true
 loop = true
 
+[node name="AudioStreamPlayer" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_51pmd")
+autoplay = true
+
 [node name="NDIOutput" type="NDIOutput" parent="."]
 name = "Godot (Video)"
+audio_bus = &"Master"

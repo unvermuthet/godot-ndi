@@ -4,6 +4,7 @@
 		"AudioBusLayout",
 		"AudioEffect",
 		"AudioEffectCapture",
+		"AudioServer",
 		"BaseButton",
 		"Button",
 		"CanvasItem",
