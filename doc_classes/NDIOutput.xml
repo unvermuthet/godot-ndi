@@ -11,15 +11,19 @@
 	<tutorials>
 	</tutorials>
 	<members>
-		<member name="enable_editor_output" type="bool" setter="set_output_editor" getter="is_outputting_editor" default="false">
-			Makes the [NDIOutput] Node transmit while running in the Editor. Source name will be suffixed with [code][Editor][/code].
-			[b]Warning:[/b] Enable [code]Update Continuously[/code] in the Editor Settings to prevent excessive stuttering.
+		<member name="name" type="String" setter="set_name" getter="get_name" default="&quot;&quot;">
+			The name of the NDI source.
 		</member>
 		<member name="groups" type="PackedStringArray" setter="set_groups" getter="get_groups" default="PackedStringArray()">
 			List of groups that the source will be available in. Leave empty for default.
 		</member>
-		<member name="name" type="String" setter="set_name" getter="get_name" default="&quot;&quot;">
-			The name of the NDI source.
+		<member experimental name="audio_bus" type="StringName" setter="set_audio_bus" getter="get_audio_bus" default="&amp;&quot;None&quot;">
+			Which Audio Bus to transmit.
+			[b]Warning[/b]: Selected Bus has to have a [code]Capture[/code] effect added and enabled.
+		</member>
+		<member name="enable_editor_output" type="bool" setter="set_output_editor" getter="is_outputting_editor" default="false">
+			Makes the [NDIOutput] Node transmit while running in the Editor. Source name will be suffixed with [code][Editor][/code].
+			[b]Warning:[/b] Enable [code]Update Continuously[/code] in the Editor Settings to prevent excessive stuttering.
 		</member>
 	</members>
 </class>

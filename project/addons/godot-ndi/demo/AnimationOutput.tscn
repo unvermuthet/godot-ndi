@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://p6ywmqtt7nke"]
 
-[ext_resource type="Texture2D" uid="uid://cfvxj5cdj3n45" path="res://addons/godot-ndi/demo/icon.svg" id="1_ekn6m"]
+[ext_resource type="Texture2D" uid="uid://cfvxj5cdj3n45" path="res://addons/godot-ndi/demo/assets/icon.svg" id="1_ekn6m"]
 
 [sub_resource type="Animation" id="Animation_62e2m"]
 length = 0.001
