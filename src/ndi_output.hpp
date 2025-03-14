@@ -11,6 +11,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "ndi.hpp"
 
+#include <godot_cpp/classes/audio_effect_capture.hpp>
 #include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/classes/rd_texture_format.hpp>
 
@@ -32,9 +33,15 @@ public:
 	void set_output_editor(const bool p_state);
 	bool is_outputting_editor() const;
 
+	void set_audio_bus(const StringName &p_bus);
+	StringName get_audio_bus() const;
+
+	PackedStringArray _get_configuration_warnings() const;
+
 protected:
 	static void _bind_methods();
-	void _notification(int what);
+	void _notification(int p_what);
+	void _validate_property(PropertyInfo &p_property) const;
 
 private:
 	CharString name;
@@ -44,11 +51,12 @@ private:
 	NDIlib_send_instance_t send;
 	NDIlib_send_create_t send_desc;
 
+	StringName audio_bus;
+	void busses_changed();
+
 	void rebuild_sender();
 	void create_sender();
 	void destroy_sender();
-
-	uint64_t timestamp = 0;
 
 	void register_viewport();
 	void unregister_viewport();

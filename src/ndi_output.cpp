@@ -11,7 +11,9 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "viewport_texture_router.hpp"
 
+#include <godot_cpp/classes/audio_server.hpp>
 #include <godot_cpp/classes/engine.hpp>
+#include <godot_cpp/classes/project_settings.hpp>
 #include <godot_cpp/classes/viewport.hpp>
 
 using namespace godot;
@@ -23,9 +25,12 @@ NDIOutput::NDIOutput() {
 	send_desc.clock_video = false;
 	send_desc.clock_audio = false;
 	output_editor = false;
+
+	AudioServer::get_singleton()->connect("bus_layout_changed", callable_mp(this, &NDIOutput::busses_changed));
 }
 
 NDIOutput::~NDIOutput() {
+	AudioServer::get_singleton()->disconnect("bus_layout_changed", callable_mp(this, &NDIOutput::busses_changed));
 }
 
 void NDIOutput::set_name(const String p_name) {
@@ -80,6 +85,51 @@ bool NDIOutput::is_outputting_editor() const {
 	return output_editor;
 }
 
+void NDIOutput::set_audio_bus(const StringName &p_bus) {
+	AudioServer::get_singleton()->lock();
+	audio_bus = p_bus;
+	AudioServer::get_singleton()->unlock();
+	update_configuration_warnings();
+}
+
+StringName NDIOutput::get_audio_bus() const {
+	if (audio_bus == StringName("None")) {
+		return audio_bus;
+	}
+
+	// Avoid returning bus that doesn't exist
+	for (int i = 0; i < AudioServer::get_singleton()->get_bus_count(); i++) {
+		if (AudioServer::get_singleton()->get_bus_name(i) == audio_bus) {
+			return audio_bus;
+		}
+	}
+
+	// Default and fallback if bus was deleted
+	return StringName("Master");
+}
+
+PackedStringArray NDIOutput::_get_configuration_warnings() const {
+	auto warnings = PackedStringArray();
+
+	if (get_audio_bus() != StringName("None")) {
+		int32_t bus_idx = AudioServer::get_singleton()->get_bus_index(get_audio_bus());
+		int32_t bus_effect = -1;
+
+		for (int i = 0; i < AudioServer::get_singleton()->get_bus_effect_count(bus_idx); i++) {
+			if (AudioServer::get_singleton()->get_bus_effect(bus_idx, i)->is_class("AudioEffectCapture")) {
+				bus_effect = i;
+				break;
+			}
+		}
+
+		if (bus_effect == -1) {
+			warnings.append("The selected Audio Bus needs to have a Capture Effect added");
+		}
+	}
+
+	return warnings;
+}
+
 void NDIOutput::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_name", "p_name"), &NDIOutput::set_name);
 	ClassDB::bind_method(D_METHOD("get_name"), &NDIOutput::get_name);
@@ -92,6 +142,10 @@ void NDIOutput::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_output_editor", "p_state"), &NDIOutput::set_output_editor);
 	ClassDB::bind_method(D_METHOD("is_outputting_editor"), &NDIOutput::is_outputting_editor);
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "enable_editor_output"), "set_output_editor", "is_outputting_editor");
+
+	ClassDB::bind_method(D_METHOD("set_audio_bus", "p_bus"), &NDIOutput::set_audio_bus);
+	ClassDB::bind_method(D_METHOD("get_audio_bus"), &NDIOutput::get_audio_bus);
+	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "audio_bus", PROPERTY_HINT_ENUM, ""), "set_audio_bus", "get_audio_bus");
 }
 
 void NDIOutput::_notification(int p_what) {
@@ -103,6 +157,22 @@ void NDIOutput::_notification(int p_what) {
 			destroy_sender();
 		} break;
 	}
+}
+
+void NDIOutput::_validate_property(PropertyInfo &p_property) const {
+	if (p_property.name == StringName("audio_bus")) {
+		String options = "None,";
+		for (int i = 0; i < AudioServer::get_singleton()->get_bus_count(); i++) {
+			options += AudioServer::get_singleton()->get_bus_name(i);
+			options += ",";
+		}
+
+		p_property.hint_string = options;
+	}
+}
+
+void NDIOutput::busses_changed() {
+	notify_property_list_changed();
 }
 
 void NDIOutput::rebuild_sender() {
@@ -166,6 +236,31 @@ void NDIOutput::receive_texture(PackedByteArray p_texture_data, const Ref<RDText
 
 	if (send == nullptr || p_texture_format.is_null() || p_texture_data.is_empty()) {
 		return;
+	}
+
+	if (get_audio_bus() != StringName("None")) {
+		int32_t bus_idx = AudioServer::get_singleton()->get_bus_index(get_audio_bus());
+		Ref<AudioEffectCapture> audio_capture;
+
+		for (int i = 0; i < AudioServer::get_singleton()->get_bus_effect_count(bus_idx); i++) {
+			if (AudioServer::get_singleton()->get_bus_effect(bus_idx, i)->is_class("AudioEffectCapture")) {
+				audio_capture = AudioServer::get_singleton()->get_bus_effect(bus_idx, i);
+				break;
+			}
+		}
+
+		if (audio_capture.is_valid()) {
+			NDIlib_audio_frame_interleaved_32f_t audio_frame = {};
+
+			audio_frame.sample_rate = ProjectSettings::get_singleton()->get_setting("audio/driver/mix_rate", 2000);
+			audio_frame.no_channels = 2;
+			audio_frame.no_samples = audio_capture->get_frames_available();
+			audio_frame.p_data = (float *)audio_capture->get_buffer(audio_frame.no_samples).ptrw();
+
+			ndi->util_send_send_audio_interleaved_32f(send, &audio_frame);
+		}
+
+		audio_capture.unref();
 	}
 
 	if (Engine::get_singleton()->get_frames_per_second() > 65.0) {
