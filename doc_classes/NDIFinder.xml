@@ -30,8 +30,21 @@
 	</members>
 	<signals>
 		<signal name="sources_changed">
+			<param index="0" name="sources" type="Array" />
 			<description>
 				Emited when the list of available sources has changed.
+			</description>
+		</signal>
+		<signal name="sources_found">
+			<param index="0" name="found_sources" type="Array" />
+			<description>
+				Emited when new sources are found.
+			</description>
+		</signal>
+		<signal name="sources_gone">
+			<param index="0" name="gone_sources" type="Array" />
+			<description>
+				Emited when existing sources disappear.
 			</description>
 		</signal>
 	</signals>

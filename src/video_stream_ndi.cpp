@@ -25,7 +25,7 @@ VideoStreamNDI::VideoStreamNDI() {
 	if (Engine::get_singleton()->has_singleton("GlobalNDIFinder")) {
 		finder = Object::cast_to<NDIFinder>(Engine::get_singleton()->get_singleton("GlobalNDIFinder"));
 		finder->connect("sources_changed", callable_mp(this, &VideoStreamNDI::sources_changed));
-		sources_changed();
+		notify_property_list_changed();
 	}
 }
 
@@ -39,6 +39,10 @@ VideoStreamNDI::~VideoStreamNDI() {
 	if (finder != nullptr) {
 		finder->disconnect("sources_changed", callable_mp(this, &VideoStreamNDI::sources_changed));
 	}
+}
+
+bool VideoStreamNDI::equal(VideoStreamNDI *a, VideoStreamNDI *b) {
+	return a->get_name() == b->get_name() && a->get_url() == b->get_url();
 }
 
 void VideoStreamNDI::set_name(const String p_name) {
@@ -142,6 +146,6 @@ void VideoStreamNDI::_validate_property(PropertyInfo &p_property) {
 	}
 }
 
-void VideoStreamNDI::sources_changed() {
+void VideoStreamNDI::sources_changed(Array p_sources) {
 	notify_property_list_changed();
 }

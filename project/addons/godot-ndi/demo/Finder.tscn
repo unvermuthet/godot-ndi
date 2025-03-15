@@ -23,5 +23,6 @@ expand = true
 [node name="NDIFinder" type="NDIFinder" parent="."]
 script = ExtResource("1_0rvup")
 
-[connection signal="sources_changed" from="NDIFinder" to="VideoStreamPlayer" method="_on_ndi_finder_sources_changed"]
 [connection signal="sources_changed" from="NDIFinder" to="NDIFinder" method="_on_sources_changed"]
+[connection signal="sources_found" from="NDIFinder" to="NDIFinder" method="_on_sources_found"]
+[connection signal="sources_gone" from="NDIFinder" to="NDIFinder" method="_on_sources_gone"]

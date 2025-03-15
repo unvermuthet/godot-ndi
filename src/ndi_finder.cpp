@@ -109,7 +109,9 @@ void NDIFinder::update() {
 
 void NDIFinder::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_sources"), &NDIFinder::get_sources);
-	ADD_SIGNAL(MethodInfo("sources_changed"));
+	ADD_SIGNAL(MethodInfo("sources_changed", PropertyInfo(Variant::ARRAY, "sources")));
+	ADD_SIGNAL(MethodInfo("sources_found", PropertyInfo(Variant::ARRAY, "found_sources")));
+	ADD_SIGNAL(MethodInfo("sources_gone", PropertyInfo(Variant::ARRAY, "gone_sources")));
 
 	ClassDB::bind_method(D_METHOD("set_show_local_sources", "show_local_sources"), &NDIFinder::set_show_local_sources);
 	ClassDB::bind_method(D_METHOD("get_show_local_sources"), &NDIFinder::get_show_local_sources);
@@ -188,16 +190,69 @@ void NDIFinder::find_sources_thread() {
 
 		previous_hash = current_hash;
 
-		TypedArray<VideoStreamNDI> new_sources;
+		mtx->lock();
+		TypedArray<VideoStreamNDI> sources;
+		TypedArray<VideoStreamNDI> found_sources;
+		TypedArray<VideoStreamNDI> gone_sources;
+		TypedArray<VideoStreamNDI> existing_sources = mtx_sources.duplicate(true);
+		mtx->unlock();
+
 		for (int i = 0; i < num_sources; i++) {
-			new_sources.push_back(memnew(VideoStreamNDI(sources_pointer[i])));
+			VideoStreamNDI *source = memnew(VideoStreamNDI(sources_pointer[i]));
+			sources.push_back(source);
+		}
+
+		for (int i = 0; i < sources.size(); i++) {
+			auto *source = Object::cast_to<VideoStreamNDI>(sources[i]);
+
+			bool has = false;
+
+			for (int j = 0; j < existing_sources.size(); j++) {
+				auto *existing_source = Object::cast_to<VideoStreamNDI>(existing_sources[j]);
+
+				if (VideoStreamNDI::equal(source, existing_source)) {
+					has = true;
+					break;
+				}
+			}
+
+			if (!has) {
+				found_sources.append(source);
+			}
+		}
+
+		for (int j = 0; j < existing_sources.size(); j++) {
+			auto *existing_source = Object::cast_to<VideoStreamNDI>(existing_sources[j]);
+
+			bool has = false;
+
+			for (int i = 0; i < sources.size(); i++) {
+				auto *source = Object::cast_to<VideoStreamNDI>(sources[i]);
+
+				if (VideoStreamNDI::equal(existing_source, source)) {
+					has = true;
+					break;
+				}
+			}
+
+			if (!has) {
+				gone_sources.append(existing_source);
+			}
 		}
 
 		mtx->lock();
-		mtx_sources.assign(new_sources);
+		mtx_sources.assign(sources);
 		mtx->unlock();
 
-		call_deferred("emit_signal", "sources_changed");
+		call_deferred("emit_signal", "sources_changed", sources);
+
+		if (found_sources.size() != 0) {
+			call_deferred("emit_signal", "sources_found", found_sources);
+		}
+
+		if (gone_sources.size() != 0) {
+			call_deferred("emit_signal", "sources_gone", gone_sources);
+		}
 	}
 
 	hasher.unref();

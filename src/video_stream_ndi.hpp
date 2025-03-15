@@ -28,6 +28,8 @@ public:
 	VideoStreamNDI(const NDIlib_source_t p_source);
 	~VideoStreamNDI();
 
+	static bool equal(VideoStreamNDI *a, VideoStreamNDI *b);
+
 	void set_name(const String p_name);
 	String get_name() const;
 
@@ -49,7 +51,7 @@ private:
 	NDIlib_recv_bandwidth_e bandwidth;
 
 	NDIFinder *finder;
-	void sources_changed();
+	void sources_changed(Array p_sources);
 };
 
 VARIANT_ENUM_CAST(NDIlib_recv_bandwidth_e);

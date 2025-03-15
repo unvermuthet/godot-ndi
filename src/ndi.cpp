@@ -142,8 +142,9 @@ void initialize(ModuleInitializationLevel p_level) {
 
 			auto property_info = Dictionary();
 			property_info.set("name", "godot_ndi/enable_fps_warning");
-			property_info.set("type", Variant::INT);
+			property_info.set("type", Variant::BOOL);
 			ProjectSettings::get_singleton()->set_setting("godot_ndi/enable_fps_warning", true);
+			ProjectSettings::get_singleton()->set_initial_value("godot_ndi/enable_fps_warning", true);
 			ProjectSettings::get_singleton()->add_property_info(property_info);
 
 			GDREGISTER_CLASS(NDIFinder);
