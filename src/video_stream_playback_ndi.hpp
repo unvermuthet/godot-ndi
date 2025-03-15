@@ -22,7 +22,7 @@ class VideoStreamPlaybackNDI : public VideoStreamPlayback {
 public:
 	VideoStreamPlaybackNDI();
 	~VideoStreamPlaybackNDI();
-	NDIlib_recv_create_v3_t recv_desc;
+	NDIlib_recv_create_v3_t recv_desc = {};
 	void _play() override;
 	void _stop() override;
 	bool _is_playing() const override;
@@ -44,15 +44,8 @@ private:
 	bool playing = false;
 	bool paused = false;
 
-	bool receiving = false;
-	NDIlib_recv_instance_t recv;
-	bool start_receiving(const bool restart = false);
-	void stop_receiving();
-
-	bool syncing = false;
-	NDIlib_framesync_instance_t sync;
-	bool start_syncing(const bool restart = false);
-	void stop_syncing();
+	NDIlib_recv_instance_t recv = nullptr;
+	NDIlib_framesync_instance_t sync = nullptr;
 
 	Ref<ImageTexture> texture;
 	Ref<Image> img;

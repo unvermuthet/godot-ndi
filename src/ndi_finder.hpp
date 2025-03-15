@@ -53,11 +53,11 @@ private:
 	Ref<Thread> thr;
 	Ref<Mutex> mtx;
 	Ref<Semaphore> sem;
-	bool mtx_exit_thread;
+	bool mtx_exit_thread = false;
 
 	TypedArray<VideoStreamNDI> mtx_sources;
 	NDIlib_find_create_t mtx_find_desc;
-	bool mtx_rebuild_find;
+	bool mtx_rebuild_find = true;
 
 	void find_sources_thread();
 };

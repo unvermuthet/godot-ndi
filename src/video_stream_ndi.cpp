@@ -22,11 +22,11 @@ VideoStreamNDI::VideoStreamNDI() {
 
 	finder = nullptr;
 
-	ERR_FAIL_COND_MSG(!Engine::get_singleton()->has_singleton("GlobalNDIFinder"), "NDIFinder Singleton not found");
-	finder = Object::cast_to<NDIFinder>(Engine::get_singleton()->get_singleton("GlobalNDIFinder"));
-	finder->connect("sources_changed", callable_mp(this, &VideoStreamNDI::update_available_sources_hint));
-
-	update_available_sources_hint();
+	if (Engine::get_singleton()->has_singleton("GlobalNDIFinder")) {
+		finder = Object::cast_to<NDIFinder>(Engine::get_singleton()->get_singleton("GlobalNDIFinder"));
+		finder->connect("sources_changed", callable_mp(this, &VideoStreamNDI::sources_changed));
+		sources_changed();
+	}
 }
 
 VideoStreamNDI::VideoStreamNDI(const NDIlib_source_t p_source) :
@@ -37,7 +37,7 @@ VideoStreamNDI::VideoStreamNDI(const NDIlib_source_t p_source) :
 
 VideoStreamNDI::~VideoStreamNDI() {
 	if (finder != nullptr) {
-		finder->disconnect("sources_changed", callable_mp(this, &VideoStreamNDI::update_available_sources_hint));
+		finder->disconnect("sources_changed", callable_mp(this, &VideoStreamNDI::sources_changed));
 	}
 }
 
@@ -45,23 +45,24 @@ void VideoStreamNDI::set_name(const String p_name) {
 	set_url("");
 
 	if (p_name.is_empty()) {
-		name = NULL;
-		return;
-	}
+		name = nullptr;
+	} else {
+		name = p_name.utf8();
 
-	name = p_name.utf8();
+		if (finder != nullptr) {
+			TypedArray<VideoStreamNDI> sources = finder->get_sources();
 
-	if (finder != nullptr) {
-		TypedArray<VideoStreamNDI> sources = finder->get_sources();
-
-		for (int64_t i = 0; i < sources.size(); i++) {
-			VideoStreamNDI *source = Object::cast_to<VideoStreamNDI>(sources[i]);
-			if (get_name() == source->get_name()) {
-				set_url(source->get_url());
-				return;
+			for (int64_t i = 0; i < sources.size(); i++) {
+				VideoStreamNDI *source = Object::cast_to<VideoStreamNDI>(sources[i]);
+				if (get_name() == source->get_name()) {
+					set_url(source->get_url());
+					break;
+				}
 			}
 		}
 	}
+
+	emit_changed();
 }
 
 String VideoStreamNDI::get_name() const {
@@ -75,10 +76,9 @@ String VideoStreamNDI::get_name() const {
 void VideoStreamNDI::set_url(const String p_url) {
 	if (p_url.is_empty()) {
 		url = nullptr;
-		return;
+	} else {
+		url = p_url.utf8();
 	}
-
-	url = p_url.utf8();
 }
 
 String VideoStreamNDI::get_url() const {
@@ -130,23 +130,18 @@ void VideoStreamNDI::_bind_methods() {
 }
 
 void VideoStreamNDI::_validate_property(PropertyInfo &p_property) {
-	if (p_property.name == StringName("name")) {
-		p_property.hint_string = available_sources_hint;
+	if (p_property.name == StringName("name") && finder != nullptr) {
+		TypedArray<VideoStreamNDI> sources = finder->get_sources();
+		PackedStringArray source_names;
+
+		for (int64_t i = 0; i < sources.size(); i++) {
+			source_names.push_back(Object::cast_to<VideoStreamNDI>(sources[i])->get_name());
+		}
+
+		p_property.hint_string = String(",").join(source_names);
 	}
 }
 
-void VideoStreamNDI::update_available_sources_hint() {
-	if (finder == nullptr) {
-		return;
-	}
-
-	TypedArray<VideoStreamNDI> sources = finder->get_sources();
-	PackedStringArray source_names;
-
-	for (int64_t i = 0; i < sources.size(); i++) {
-		source_names.push_back(Object::cast_to<VideoStreamNDI>(sources[i])->get_name());
-	}
-
-	available_sources_hint = String(",").join(source_names);
+void VideoStreamNDI::sources_changed() {
 	notify_property_list_changed();
 }

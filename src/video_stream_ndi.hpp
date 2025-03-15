@@ -49,8 +49,7 @@ private:
 	NDIlib_recv_bandwidth_e bandwidth;
 
 	NDIFinder *finder;
-	String available_sources_hint;
-	void update_available_sources_hint();
+	void sources_changed();
 };
 
 VARIANT_ENUM_CAST(NDIlib_recv_bandwidth_e);

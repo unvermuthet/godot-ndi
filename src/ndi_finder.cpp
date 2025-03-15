@@ -19,9 +19,6 @@ NDIFinder::NDIFinder() {
 	mtx.instantiate();
 	sem.instantiate();
 
-	mtx_exit_thread = false;
-	mtx_rebuild_find = true;
-
 	thr->start(callable_mp(this, &NDIFinder::find_sources_thread));
 }
 
