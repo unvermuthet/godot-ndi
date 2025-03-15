@@ -22,6 +22,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include <godot_cpp/classes/editor_plugin_registration.hpp>
 #include <godot_cpp/classes/engine.hpp>
+#include <godot_cpp/classes/project_settings.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
@@ -138,6 +139,12 @@ void initialize(ModuleInitializationLevel p_level) {
 			if (load_runtime() != OK) {
 				return;
 			}
+
+			auto property_info = Dictionary();
+			property_info.set("name", "godot_ndi/enable_fps_warning");
+			property_info.set("type", Variant::INT);
+			ProjectSettings::get_singleton()->set_setting("godot_ndi/enable_fps_warning", true);
+			ProjectSettings::get_singleton()->add_property_info(property_info);
 
 			GDREGISTER_CLASS(NDIFinder);
 			GDREGISTER_CLASS(NDIOutput);

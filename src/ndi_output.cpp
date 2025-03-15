@@ -12,6 +12,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #include "viewport_texture_router.hpp"
 
 #include <godot_cpp/classes/engine.hpp>
+#include <godot_cpp/classes/project_settings.hpp>
 #include <godot_cpp/classes/viewport.hpp>
 
 using namespace godot;
@@ -19,10 +20,8 @@ using namespace godot;
 class ViewportTextureRouter;
 
 NDIOutput::NDIOutput() {
-	send = nullptr;
 	send_desc.clock_video = false;
 	send_desc.clock_audio = false;
-	output_editor = false;
 }
 
 NDIOutput::~NDIOutput() {
@@ -124,11 +123,9 @@ void NDIOutput::create_sender() {
 	}
 
 	send = ndi->send_create(&send_desc);
-	if (send == nullptr) {
-		// TODO: Expose this error somehow to enable user code to react to it. Signal?
-		WARN_PRINT_ED("NDI: Source creation failed. Perhaps name is already in use.");
-		return;
-	}
+
+	// TODO: Expose this error somehow to enable user code to react to it. Signal?
+	ERR_FAIL_NULL_EDMSG(send, "NDI: Source creation failed. Perhaps name is already in use.");
 
 	register_viewport();
 }
@@ -168,7 +165,7 @@ void NDIOutput::receive_texture(PackedByteArray p_texture_data, const Ref<RDText
 		return;
 	}
 
-	if (Engine::get_singleton()->get_frames_per_second() > 65.0) {
+	if (Engine::get_singleton()->get_frames_per_second() > 65.0 && ProjectSettings::get_singleton()->get_setting("godot_ndi/enable_fps_warning", true)) {
 		if (Engine::get_singleton()->is_editor_hint()) {
 			WARN_PRINT_ONCE_ED("NDI doesn't support frame rates higher than 60 FPS. Consider lowering your refresh rate when outputting from the Editor.");
 		} else {

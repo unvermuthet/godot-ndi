@@ -39,16 +39,14 @@ protected:
 private:
 	CharString name;
 	CharString groups;
-	bool output_editor;
+	bool output_editor = false;
 
-	NDIlib_send_instance_t send;
-	NDIlib_send_create_t send_desc;
+	NDIlib_send_instance_t send = nullptr;
+	NDIlib_send_create_t send_desc = NDIlib_send_create_t(nullptr, nullptr, false, false);
 
 	void rebuild_sender();
 	void create_sender();
 	void destroy_sender();
-
-	uint64_t timestamp = 0;
 
 	void register_viewport();
 	void unregister_viewport();
