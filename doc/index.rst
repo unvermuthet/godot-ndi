@@ -3,6 +3,8 @@
 Godot NDI – *main* branch
 ============================
 
+We're looking for Guides and Demos and Showcases! If you want to share something and can write a little Markdown, feel free to make a PR on GitHub.
+
 .. toctree::
    :maxdepth: 1
    :caption: Guides
