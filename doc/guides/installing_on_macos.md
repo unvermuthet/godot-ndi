@@ -1,8 +1,8 @@
 # Installing on MacOS
 
-> Contributed by Foreman21, tested on MacOS Sonoma 14.6
+> _Contributed by Foreman21, tested on MacOS Sonoma 14.6_
 
-Since the distributed binaries aren't signed, MacOS will refuse to load them unless you make an excpetion.
+Since the distributed binaries aren't signed, MacOS will refuse to load them unless you make an exception.
 Note that when you export and sign your project for MacOS or iOS, the godot-ndi binaries will be signed too.
 
 ![](../img/installing_mac_os_1.png)

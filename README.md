@@ -14,13 +14,13 @@ This was born out of work on my DMX Lighting Control Software. I'm really into L
 
 ![Demo GIF](https://github.com/user-attachments/assets/159eb455-b0de-41bb-972f-be0817771455)
 
-> This GIF only shows local tranmission but imagine this over the network!
+> This GIF only shows local transmission but imagine this over the network!
 
 ## Install
 
 > [!IMPORTANT]
 > - Only compatible with `Godot 4.4-stable` and later
-> - The NDI Runtime is required ([Windows](http://ndi.link/NDIRedistV6), [MacOS](http://ndi.link/NDIRedistV6Apple), [Linux (Flatpak incomaptible)](https://github.com/DistroAV/DistroAV/wiki/1.-Installation#linux))
+> - The NDI Runtime is required ([Windows](http://ndi.link/NDIRedistV6), [MacOS](http://ndi.link/NDIRedistV6Apple), [Linux (Flatpak incompatible)](https://github.com/DistroAV/DistroAV/wiki/1.-Installation#linux))
 > - Your application needs to comply with the [NDI SDK license](http://ndi.link/ndisdk_license).
 
 Download the latest version under `Releases` and install by extracting the ZIP file in your Godot project.
@@ -30,7 +30,7 @@ Alternatively you can install the extension from Godot's Asset Library.
 
 In the production industries, software usually comes with exorbitant licensing fees. If this project has been useful to you and you want to show appreciation for my time and effort, consider a donation.
 
-For **comercial** support and exclusive alternative licensing, contact me at [godot-ndi@muth.pro](mailto:godot-ndi@muth.pro)
+For **commercial** support and exclusive alternative licensing, contact me at [godot-ndi@muth.pro](mailto:godot-ndi@muth.pro)
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/I2I51A7ZC3)
 
