@@ -10,7 +10,8 @@ We're looking for Guides and Demos and Showcases! If you want to share something
    :caption: Guides
    :name: sec-guides
 
-   guides/installing_mac_os
+   guides/outputting_the_editor
+   guides/installing_on_macos
 
 .. toctree::
    :maxdepth: 1
