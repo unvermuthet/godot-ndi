@@ -146,6 +146,6 @@ void VideoStreamNDI::_validate_property(PropertyInfo &p_property) {
 	}
 }
 
-void VideoStreamNDI::sources_changed(Array p_sources) {
+void VideoStreamNDI::sources_changed() {
 	notify_property_list_changed();
 }

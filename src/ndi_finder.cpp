@@ -109,9 +109,9 @@ void NDIFinder::update() {
 
 void NDIFinder::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_sources"), &NDIFinder::get_sources);
-	ADD_SIGNAL(MethodInfo("sources_changed", PropertyInfo(Variant::ARRAY, "sources")));
-	ADD_SIGNAL(MethodInfo("sources_found", PropertyInfo(Variant::ARRAY, "found_sources")));
-	ADD_SIGNAL(MethodInfo("sources_gone", PropertyInfo(Variant::ARRAY, "gone_sources")));
+	ADD_SIGNAL(MethodInfo("sources_changed"));
+	ADD_SIGNAL(MethodInfo("sources_found", PropertyInfo(Variant::ARRAY, "found_sources", PROPERTY_HINT_ARRAY_TYPE, "VideoStreamNDI")));
+	ADD_SIGNAL(MethodInfo("sources_gone", PropertyInfo(Variant::ARRAY, "gone_sources", PROPERTY_HINT_ARRAY_TYPE, "VideoStreamNDI")));
 
 	ClassDB::bind_method(D_METHOD("set_show_local_sources", "show_local_sources"), &NDIFinder::set_show_local_sources);
 	ClassDB::bind_method(D_METHOD("get_show_local_sources"), &NDIFinder::get_show_local_sources);
@@ -244,7 +244,7 @@ void NDIFinder::find_sources_thread() {
 		mtx_sources.assign(sources);
 		mtx->unlock();
 
-		call_deferred("emit_signal", "sources_changed", sources);
+		call_deferred("emit_signal", "sources_changed");
 
 		if (found_sources.size() != 0) {
 			call_deferred("emit_signal", "sources_found", found_sources);

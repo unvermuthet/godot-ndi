@@ -51,7 +51,7 @@ private:
 	NDIlib_recv_bandwidth_e bandwidth;
 
 	NDIFinder *finder;
-	void sources_changed(Array p_sources);
+	void sources_changed();
 };
 
 VARIANT_ENUM_CAST(NDIlib_recv_bandwidth_e);
