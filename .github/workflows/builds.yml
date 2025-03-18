@@ -46,7 +46,7 @@ jobs:
             { platform: windows, arch: x86_64, os: ubuntu-latest },
             { platform: macos, arch: universal, os: macos-latest },
           ]
-        target-type: [template_debug, template_release]
+        target-type: [template_debug]
         float-precision: [single]
 
     runs-on: ${{ matrix.target.os }}
