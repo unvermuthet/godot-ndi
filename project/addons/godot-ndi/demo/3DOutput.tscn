@@ -1,0 +1,73 @@
+[gd_scene load_steps=4 format=3 uid="uid://deioml0m7ep1t"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_4r73q"]
+emission_shape = 1
+emission_sphere_radius = 1.0
+direction = Vector3(0, 1, 0)
+initial_velocity_min = 2.0
+initial_velocity_max = 6.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_jpqj6"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_ln6fu"]
+font_size = 24
+shadow_size = 5
+shadow_color = Color(0, 0, 0, 0.235294)
+
+[node name="3DOutput" type="SubViewportContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="Node3D" type="Node3D" parent="."]
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="Node3D"]
+amount = 32
+lifetime = 2.0
+process_material = SubResource("ParticleProcessMaterial_4r73q")
+draw_pass_1 = SubResource("SphereMesh_jpqj6")
+
+[node name="SubViewportB" type="SubViewport" parent="."]
+handle_input_locally = false
+size = Vector2i(1152, 648)
+render_target_update_mode = 4
+
+[node name="NDIOutput" type="NDIOutput" parent="SubViewportB"]
+name = "Godot Cam B"
+enable_editor_output = true
+
+[node name="Camera3D" type="Camera3D" parent="SubViewportB"]
+transform = Transform3D(1, 0, 0, 0, -0.0010647, 0.999999, 0, -0.999999, -0.0010647, 0, 6.41845, 0)
+current = true
+
+[node name="SubViewportA" type="SubViewport" parent="."]
+handle_input_locally = false
+size = Vector2i(1152, 648)
+render_target_update_mode = 4
+
+[node name="NDIOutput" type="NDIOutput" parent="SubViewportA"]
+name = "Godot Cam A"
+enable_editor_output = true
+
+[node name="Label" type="Label" parent="SubViewportA"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 31.0
+offset_top = -357.0
+offset_right = 534.0
+offset_bottom = -27.0
+grow_vertical = 0
+text = "NDIOutput always transmits the Viewport closest up the Tree. When running in the Editor that's the 2D View.
+
+If you want to display a camera view, add NDIOutput to a SubViewport instead. You can skip the SubViewportContainer incase you don't need the Scene to be visible when running the Game. "
+label_settings = SubResource("LabelSettings_ln6fu")
+horizontal_alignment = 3
+autowrap_mode = 2
+
+[node name="Camera3D" type="Camera3D" parent="SubViewportA"]
+transform = Transform3D(0.99299, -0.0520139, 0.106136, 0, 0.897966, 0.440065, -0.118196, -0.43698, 0.891672, -2.28829, 1.75016, 5.03714)
+current = true

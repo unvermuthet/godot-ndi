@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://ddr3hiaft61tl"]
+[gd_scene load_steps=5 format=3 uid="uid://ddr3hiaft61tl"]
 
 [ext_resource type="VideoStream" uid="uid://0whnog13yrlf" path="res://addons/godot-ndi/demo/assets/liftoff_space_shuttle_atlantis.ogv" id="1_utmvk"]
 [ext_resource type="AudioStream" uid="uid://dyvxmok1n3vu1" path="res://addons/godot-ndi/demo/assets/sub-d-more-jazz-guitar.wav" id="2_51pmd"]
+[ext_resource type="Script" uid="uid://d2sex4jisnkck" path="res://addons/godot-ndi/demo/video_stream_player.gd" id="2_w6vuq"]
+[ext_resource type="VideoStream" uid="uid://4mp8kyfc212k" path="res://addons/godot-ndi/demo/assets/twitch_sync_footage.ogv" id="3_ug8g3"]
 
 [node name="Canvas" type="Control"]
 layout_mode = 3
@@ -18,10 +20,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-stream = ExtResource("1_utmvk")
 volume_db = -15.0
 autoplay = true
-loop = true
+script = ExtResource("2_w6vuq")
+playlist = Array[VideoStream]([ExtResource("1_utmvk"), ExtResource("3_ug8g3")])
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("2_51pmd")
@@ -30,3 +32,5 @@ autoplay = true
 [node name="NDIOutput" type="NDIOutput" parent="."]
 name = "Godot (Video)"
 audio_bus = &"Master"
+
+[connection signal="finished" from="VideoStreamPlayer" to="VideoStreamPlayer" method="_on_finished"]
