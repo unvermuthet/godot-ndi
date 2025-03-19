@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <class name="VideoStreamNDI" inherits="VideoStream" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
+		Playback NDI Sources
 	</brief_description>
 	<description>
+		Use with VideoStreamPlayer to receive NDI sources. [VideoStreamNDI] can either describe a source by name alone or be discovered dynamically by [NDIFinder]. When setting the [param name] in the Editor you will be presented with options discovered by a global [NDIFinder].
+		[b]Note:[/b] Starting playback blocks the main thread until the source's URL is discovered and the first frame is received. This is necessary because Godot requires the resolution to determined ahead of time. This process can be greatly sped up by using a [VideoStreamNDI] discovered by [NDIFinder], since these already have their URL discovered. This will be fixed with Godot 4.4.2.
 	</description>
 	<tutorials>
 	</tutorials>
 	<members>
 		<member name="bandwidth" type="int" setter="set_bandwidth" getter="get_bandwidth" enum="NDIlib_recv_bandwidth_e" default="100">
+			Bandwidth setting of the NDI source. Changing this at runtime will stop playback.
 		</member>
 		<member name="name" type="String" setter="set_name" getter="get_name" default="&quot;&quot;">
+			Name of the NDI source. Changing this at runtime will stop playback.
 		</member>
 	</members>
 	<constants>
