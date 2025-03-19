@@ -28,6 +28,7 @@ playlist = Array[VideoStream]([ExtResource("1_utmvk"), ExtResource("3_ug8g3")])
 [node name="AudioStreamPlayer" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("2_51pmd")
 autoplay = true
+panning_strength = 0.0
 
 [node name="NDIOutput" type="NDIOutput" parent="."]
 name = "Godot (Video)"

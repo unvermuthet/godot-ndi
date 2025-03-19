@@ -30,11 +30,14 @@ public:
 	void set_groups(const PackedStringArray p_groups);
 	PackedStringArray get_groups() const;
 
-	void set_output_editor(const bool p_state);
-	bool is_outputting_editor() const;
-
 	void set_audio_bus(const StringName &p_bus);
 	StringName get_audio_bus() const;
+
+	void set_output_video(const bool p_state);
+	bool is_outputting_video() const;
+
+	void set_output_editor(const bool p_state);
+	bool is_outputting_editor() const;
 
 	PackedStringArray _get_configuration_warnings() const;
 
@@ -46,8 +49,9 @@ protected:
 private:
 	CharString name;
 	CharString groups;
-	bool output_editor = false;
 	StringName audio_bus = StringName("None");
+	bool output_video = true;
+	bool output_editor = false;
 
 	NDIlib_send_instance_t send = nullptr;
 	NDIlib_send_create_t send_desc = NDIlib_send_create_t(nullptr, nullptr, false, false);
@@ -61,6 +65,8 @@ private:
 
 	void busses_changed();
 	Ref<AudioEffectCapture> get_audio_capture() const;
+	PackedVector2Array audio_interleaved;
+	PackedFloat32Array audio_planar;
 
 	void send_texture(PackedByteArray p_data, const Ref<RDTextureFormat> &p_format, int64_t p_viewport_rid);
 	void send_audio();

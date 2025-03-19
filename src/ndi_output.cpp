@@ -73,6 +73,19 @@ PackedStringArray NDIOutput::get_groups() const {
 	}
 }
 
+void NDIOutput::set_output_video(const bool p_state) {
+	if (p_state == output_video) {
+		return;
+	}
+
+	output_video = p_state;
+	rebuild_sender();
+}
+
+bool NDIOutput::is_outputting_video() const {
+	return output_video;
+}
+
 void NDIOutput::set_output_editor(const bool p_state) {
 	if (p_state == output_editor) {
 		return;
@@ -87,7 +100,10 @@ bool NDIOutput::is_outputting_editor() const {
 }
 
 void NDIOutput::set_audio_bus(const StringName &p_bus) {
+	AudioServer::get_singleton()->lock();
 	audio_bus = p_bus;
+	AudioServer::get_singleton()->unlock();
+
 	update_configuration_warnings();
 	rebuild_sender();
 }
@@ -126,6 +142,10 @@ void NDIOutput::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_audio_bus", "p_bus"), &NDIOutput::set_audio_bus);
 	ClassDB::bind_method(D_METHOD("get_audio_bus"), &NDIOutput::get_audio_bus);
 	ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "audio_bus", PROPERTY_HINT_ENUM, ""), "set_audio_bus", "get_audio_bus");
+
+	ClassDB::bind_method(D_METHOD("set_output_video", "p_state"), &NDIOutput::set_output_video);
+	ClassDB::bind_method(D_METHOD("is_outputting_video"), &NDIOutput::is_outputting_video);
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "enable_video_output"), "set_output_video", "is_outputting_video");
 
 	ClassDB::bind_method(D_METHOD("set_output_editor", "p_state"), &NDIOutput::set_output_editor);
 	ClassDB::bind_method(D_METHOD("is_outputting_editor"), &NDIOutput::is_outputting_editor);
@@ -210,53 +230,57 @@ void NDIOutput::destroy_sender() {
 }
 
 void NDIOutput::register_hooks() {
-	RenderingServer::get_singleton()->connect("frame_post_draw", callable_mp(this, &NDIOutput::send_audio));
+	if (get_audio_bus() != StringName("None")) {
+		RenderingServer::get_singleton()->connect("frame_post_draw", callable_mp(this, &NDIOutput::send_audio));
+	}
 
-	auto *vp_texture_router = Object::cast_to<ViewportTextureRouter>(Engine::get_singleton()->get_singleton("ViewportTextureRouter"));
-	ERR_FAIL_NULL_MSG(get_viewport(), "No viewport found");
-	ERR_FAIL_NULL_MSG(vp_texture_router, "No viewport texture router found");
+	if (is_outputting_video()) {
+		auto *vp_texture_router = Object::cast_to<ViewportTextureRouter>(Engine::get_singleton()->get_singleton("ViewportTextureRouter"));
+		ERR_FAIL_NULL_MSG(vp_texture_router, "No viewport texture router found");
+		ERR_FAIL_NULL_MSG(get_viewport(), "No viewport found");
 
-	vp_texture_router->connect("texture_arrived", callable_mp(this, &NDIOutput::send_texture), CONNECT_REFERENCE_COUNTED);
-	vp_texture_router->add_viewport(get_viewport());
+		vp_texture_router->connect("texture_arrived", callable_mp(this, &NDIOutput::send_texture));
+		vp_texture_router->add_viewport(get_viewport());
+	}
 }
 
 void NDIOutput::unregister_hooks() {
-	RenderingServer::get_singleton()->disconnect("frame_post_draw", callable_mp(this, &NDIOutput::send_audio));
+	SIGNAL_DISCONNECT(RenderingServer::get_singleton(), "frame_post_draw", callable_mp(this, &NDIOutput::send_audio));
 
 	auto *vp_texture_router = Object::cast_to<ViewportTextureRouter>(Engine::get_singleton()->get_singleton("ViewportTextureRouter"));
-	ERR_FAIL_NULL_MSG(get_viewport(), "No viewport found");
 	ERR_FAIL_NULL_MSG(vp_texture_router, "No viewport texture router found");
+	ERR_FAIL_NULL_MSG(get_viewport(), "No viewport found");
 
-	vp_texture_router->disconnect("texture_arrived", callable_mp(this, &NDIOutput::send_texture));
+	SIGNAL_DISCONNECT(vp_texture_router, "texture_arrived", callable_mp(this, &NDIOutput::send_texture));
 	vp_texture_router->remove_viewport(get_viewport());
 }
 
 void NDIOutput::send_audio() {
-	if (send == nullptr || get_audio_bus() == StringName("None") || !is_inside_tree()) {
-		return;
-	}
+	ERR_FAIL_NULL_MSG(send, "Send instance unconfigured");
+	ERR_FAIL_COND_MSG(get_audio_bus() == StringName("None"), "No audio bus selected");
 
 	Ref<AudioEffectCapture> audio_capture = get_audio_capture();
 
-	if (audio_capture.is_null() || audio_capture->get_frames_available() < 512) {
+	if (audio_capture.is_null()) {
 		return;
 	}
 
-	NDIlib_audio_frame_v3_t frame = {};
+	NDIlib_audio_frame_v3_t frame;
 	frame.no_channels = 2;
 	frame.sample_rate = AudioServer::get_singleton()->get_mix_rate(); // AudioEffectCapture doesn't resample to sample rate in project settings
 	frame.no_samples = Math::clamp<int>(audio_capture->get_frames_available(), 0, 4096);
 	frame.channel_stride_in_bytes = frame.no_samples * sizeof(float);
 
-	PackedVector2Array buffer_interleaved = audio_capture->get_buffer(frame.no_samples);
-	PackedFloat32Array buffer_planar;
-	buffer_planar.resize(frame.no_samples * frame.no_channels);
+	// Convert from interleaved samples to planar. SDK has a util for this but results in a slightly panned signal.
 
-	for (int i = 0; i < buffer_planar.size(); i++) {
-		buffer_planar[i] = buffer_interleaved[i % frame.no_samples][i / frame.no_samples];
+	audio_interleaved = audio_capture->get_buffer(frame.no_samples);
+	audio_planar.resize(frame.no_samples * frame.no_channels);
+
+	for (int i = 0; i < audio_planar.size(); i++) {
+		audio_planar[i] = audio_interleaved[i % frame.no_samples][i / frame.no_samples];
 	}
 
-	frame.p_data = (uint8_t *)buffer_planar.ptr();
+	frame.p_data = (uint8_t *)audio_planar.ptr();
 	ndi->send_send_audio_v3(send, &frame);
 }
 
@@ -265,9 +289,10 @@ void NDIOutput::send_texture(PackedByteArray p_texture_data, const Ref<RDTexture
 		return; // Not my request
 	}
 
-	if (send == nullptr || p_texture_format.is_null() || p_texture_data.is_empty()) {
-		return;
-	}
+	ERR_FAIL_NULL_MSG(send, "Send instance unconfigured");
+	ERR_FAIL_COND_MSG(p_texture_format.is_null() || p_texture_data.is_empty(), "Empty viewport texture received");
+	ERR_FAIL_COND_MSG(p_texture_format->get_format() != RenderingDevice::DATA_FORMAT_R8G8B8A8_UNORM, "Viewport texture format isn't DATA_FORMAT_R8G8B8A8_UNORM");
+	ERR_FAIL_COND_MSG(p_texture_format->get_width() * p_texture_format->get_height() * 4 != p_texture_data.size(), "Unexpected viewport texture size");
 
 	if (Engine::get_singleton()->get_frames_per_second() > 65.0 && ProjectSettings::get_singleton()->get_setting("godot_ndi/enable_fps_warning", true)) {
 		if (Engine::get_singleton()->is_editor_hint()) {
@@ -277,10 +302,7 @@ void NDIOutput::send_texture(PackedByteArray p_texture_data, const Ref<RDTexture
 		}
 	}
 
-	ERR_FAIL_COND_MSG(p_texture_format->get_format() != RenderingDevice::DATA_FORMAT_R8G8B8A8_UNORM, "Viewport texture format isn't DATA_FORMAT_R8G8B8A8_UNORM");
-	ERR_FAIL_COND_MSG(p_texture_format->get_width() * p_texture_format->get_height() * 4 != p_texture_data.size(), "Unexpected texture size");
-
-	NDIlib_video_frame_v2_t frame = {};
+	NDIlib_video_frame_v2_t frame;
 	frame.xres = p_texture_format->get_width();
 	frame.yres = p_texture_format->get_height();
 	frame.frame_rate_N = (int)Engine::get_singleton()->get_frames_per_second();

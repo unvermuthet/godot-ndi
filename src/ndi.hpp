@@ -14,3 +14,8 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #include "Processing.NDI.Lib.h"
 
 extern const NDIlib_v5 *ndi;
+
+#define SIGNAL_DISCONNECT(obj, signal, callable) \
+	if (obj->is_connected(signal, callable)) {   \
+		obj->disconnect(signal, callable);       \
+	}
