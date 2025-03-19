@@ -3,7 +3,7 @@
 [ext_resource type="VideoStream" uid="uid://0whnog13yrlf" path="res://addons/godot-ndi/demo/assets/liftoff_space_shuttle_atlantis.ogv" id="1_utmvk"]
 [ext_resource type="AudioStream" uid="uid://dyvxmok1n3vu1" path="res://addons/godot-ndi/demo/assets/sub-d-more-jazz-guitar.wav" id="2_51pmd"]
 [ext_resource type="Script" uid="uid://d2sex4jisnkck" path="res://addons/godot-ndi/demo/video_stream_player.gd" id="2_w6vuq"]
-[ext_resource type="VideoStream" uid="uid://4mp8kyfc212k" path="res://addons/godot-ndi/demo/assets/twitch_sync_footage.ogv" id="3_ug8g3"]
+[ext_resource type="VideoStream" path="res://addons/godot-ndi/demo/assets/twitch_sync_footage.ogv" id="3_ug8g3"]
 
 [node name="Canvas" type="Control"]
 layout_mode = 3

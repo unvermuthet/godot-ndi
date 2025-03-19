@@ -238,16 +238,25 @@ void NDIOutput::send_audio() {
 
 	Ref<AudioEffectCapture> audio_capture = get_audio_capture();
 
-	if (audio_capture.is_valid() && audio_capture->get_frames_available() >= 512) {
-		NDIlib_audio_frame_interleaved_32f_t frame = {};
-
-		frame.no_channels = 2;
-		frame.sample_rate = AudioServer::get_singleton()->get_mix_rate(); // AudioEffectCapture doesn't resample to sample rate in project settings
-		frame.no_samples = Math::clamp<int>(audio_capture->get_frames_available(), 0, 4096);
-		frame.p_data = (float *)audio_capture->get_buffer(frame.no_samples).ptr();
-
-		ndi->util_send_send_audio_interleaved_32f(send, &frame);
+	if (audio_capture.is_null() || audio_capture->get_frames_available() < 512) {
+		return;
 	}
+
+	NDIlib_audio_frame_v3_t frame = {};
+	frame.no_channels = 2;
+	frame.sample_rate = AudioServer::get_singleton()->get_mix_rate(); // AudioEffectCapture doesn't resample to sample rate in project settings
+	frame.no_samples = Math::clamp<int>(audio_capture->get_frames_available(), 0, 4096);
+
+	PackedVector2Array buffer_interleaved = audio_capture->get_buffer(frame.no_samples);
+	PackedFloat32Array buffer_planar;
+	buffer_planar.resize(frame.no_samples * frame.no_channels);
+
+	for (int i = 0; i < buffer_planar.size(); i++) {
+		buffer_planar[i] = buffer_interleaved[i % frame.no_samples][i / frame.no_samples];
+	}
+
+	frame.p_data = (uint8_t *)buffer_planar.ptr();
+	ndi->send_send_audio_v3(send, &frame);
 }
 
 void NDIOutput::send_texture(PackedByteArray p_texture_data, const Ref<RDTextureFormat> &p_texture_format, int64_t p_viewport_rid) {
