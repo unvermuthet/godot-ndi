@@ -246,6 +246,7 @@ void NDIOutput::send_audio() {
 	frame.no_channels = 2;
 	frame.sample_rate = AudioServer::get_singleton()->get_mix_rate(); // AudioEffectCapture doesn't resample to sample rate in project settings
 	frame.no_samples = Math::clamp<int>(audio_capture->get_frames_available(), 0, 4096);
+	frame.channel_stride_in_bytes = frame.no_samples * sizeof(float);
 
 	PackedVector2Array buffer_interleaved = audio_capture->get_buffer(frame.no_samples);
 	PackedFloat32Array buffer_planar;
