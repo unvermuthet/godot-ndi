@@ -265,6 +265,11 @@ void NDIOutput::send_audio() {
 		return;
 	}
 
+	if (AudioServer::get_singleton()->get_speaker_mode() != AudioServer::SPEAKER_MODE_STEREO) {
+		WARN_PRINT_ONCE_ED("NDI: Audio devices with more than two channels are unsupported because Godot's AudioEffectCapture becomes broken.");
+		return;
+	}
+
 	NDIlib_audio_frame_v3_t frame;
 	frame.no_channels = 2;
 	frame.sample_rate = AudioServer::get_singleton()->get_mix_rate(); // AudioEffectCapture doesn't resample to sample rate in project settings
