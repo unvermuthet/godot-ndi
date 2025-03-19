@@ -11,7 +11,7 @@
 	<tutorials>
 	</tutorials>
 	<members>
-		<member name="audio_bus" type="StringName" setter="set_audio_bus" getter="get_audio_bus" default="&amp;&quot;None&quot;" experimental="">
+		<member name="audio_bus" type="StringName" setter="set_audio_bus" getter="get_audio_bus" default="&amp;&quot;None&quot;">
 			Which Audio Bus to transmit.
 			[b]Warning[/b]: Selected Bus has to have a [code]Capture[/code] effect added and enabled.
 		</member>
