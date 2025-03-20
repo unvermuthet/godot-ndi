@@ -23,7 +23,7 @@
 			<return type="bool" />
 			<description>
 				Returns [code]false[/code] if the NDI Runtime was unable to be loaded, in which case all runtime-dependent Nodes of this extension will be replaced with [MissingNode].
-				Access of properties or methods on these Nodes needs to be guarded against the case that they are missing.
+				[b]Warning:[/b] Access of properties or methods on these Nodes needs to be guarded against the case that they are missing.
 			</description>
 		</method>
 		<method name="open_download_link" qualifiers="static">
