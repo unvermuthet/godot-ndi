@@ -29,6 +29,10 @@ NDIRuntimeDialog::NDIRuntimeDialog() {
 NDIRuntimeDialog::~NDIRuntimeDialog() {
 }
 
+bool NDIRuntimeDialog::is_runtime_loaded() {
+	return ndi != nullptr;
+}
+
 String NDIRuntimeDialog::get_download_link() {
 	return String(NDILIB_REDIST_URL);
 }
@@ -38,6 +42,7 @@ void NDIRuntimeDialog::open_download_link() {
 }
 
 void NDIRuntimeDialog::_bind_methods() {
+	ClassDB::bind_static_method("NDIRuntimeDialog", D_METHOD("is_runtime_loaded"), &NDIRuntimeDialog::is_runtime_loaded);
 	ClassDB::bind_static_method("NDIRuntimeDialog", D_METHOD("get_download_link"), &NDIRuntimeDialog::get_download_link);
 	ClassDB::bind_static_method("NDIRuntimeDialog", D_METHOD("open_download_link"), &NDIRuntimeDialog::open_download_link);
 }

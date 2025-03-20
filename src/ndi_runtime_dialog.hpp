@@ -19,6 +19,7 @@ class NDIRuntimeDialog : public ConfirmationDialog {
 public:
 	NDIRuntimeDialog();
 	~NDIRuntimeDialog();
+	static bool is_runtime_loaded();
 	static void open_download_link();
 	static String get_download_link();
 
