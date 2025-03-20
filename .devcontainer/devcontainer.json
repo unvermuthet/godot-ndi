@@ -12,7 +12,7 @@
 			"version": "4.4-stable"
 		}
 	},
-	"postCreateCommand": "git submodule update --init --recursive && python3 -m pip install -r requirements.txt -r doc/requirements.txt",
+	"postCreateCommand": "python3 -m pip install -r requirements.txt",
 	"customizations": {
 		"vscode": {
 			"extensions": [
