@@ -13,7 +13,8 @@
 	<members>
 		<member name="audio_bus" type="StringName" setter="set_audio_bus" getter="get_audio_bus" default="&amp;&quot;None&quot;">
 			Which Audio Bus to transmit.
-			[b]Warning[/b]: Selected Bus has to have a [code]Capture[/code] effect added and enabled.
+			[b]Note:[/b] Selected Bus has to have a [code]Capture[/code] effect added and enabled.
+			[b]Warning:[/b] Only mono and stereo audio devices are supported.
 		</member>
 		<member name="enable_editor_output" type="bool" setter="set_output_editor" getter="is_outputting_editor" default="false">
 			Makes the [NDIOutput] Node transmit while running in the Editor. Source name will be suffixed with [code][Editor][/code].
