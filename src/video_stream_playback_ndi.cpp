@@ -9,6 +9,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "video_stream_playback_ndi.hpp"
 
+#include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/os.hpp>
 #include <godot_cpp/classes/project_settings.hpp>
 
@@ -16,6 +17,11 @@ using namespace godot;
 
 VideoStreamPlaybackNDI::VideoStreamPlaybackNDI() {
 	texture.instantiate();
+}
+
+VideoStreamPlaybackNDI::VideoStreamPlaybackNDI(NDIlib_recv_create_v3_t p_recv_desc) :
+		VideoStreamPlaybackNDI::VideoStreamPlaybackNDI() {
+	recv_desc = p_recv_desc;
 }
 
 VideoStreamPlaybackNDI::~VideoStreamPlaybackNDI() {
@@ -93,7 +99,9 @@ Ref<Texture2D> VideoStreamPlaybackNDI::_get_texture() const {
 void VideoStreamPlaybackNDI::_update(double p_delta) {
 	ERR_FAIL_COND_MSG(recv == nullptr || sync == nullptr, "VideoStreamPlaybackNDI wasn't setup properly");
 
-	if (p_delta == 0) { // See https://github.com/godotengine/godot/blob/b15b24b087e792335d919fd83055f50f276fbe22/scene/gui/video_stream_player.cpp#L314
+	if (p_delta == 0 && (int)Engine::get_singleton()->get_version_info().get("hex", 0) < 0x040402) {
+		// First frame is ticked with delta of 0
+		// Workaround for https://github.com/godotengine/godot/pull/103912, required for Godot versions before 4.4.2
 		render_first_frame();
 	} else {
 		render_audio(p_delta);
@@ -104,9 +112,7 @@ void VideoStreamPlaybackNDI::_update(double p_delta) {
 void VideoStreamPlaybackNDI::_bind_methods() {}
 
 void VideoStreamPlaybackNDI::render_first_frame() {
-	// Workaround for https://github.com/godotengine/godot/pull/103912
-
-	for (size_t i = 0; i < 500; i++) {
+	for (size_t i = 0; i < 1000; i++) {
 		ndi->framesync_capture_video(sync, &video_frame, NDIlib_frame_format_type_progressive);
 		if (video_frame.xres != 0 && video_frame.yres != 0) {
 			texture->set_image(Image::create_empty(video_frame.xres, video_frame.yres, false, Image::FORMAT_RGBA8));
@@ -119,7 +125,7 @@ void VideoStreamPlaybackNDI::render_first_frame() {
 
 	// Fallback resolution
 	texture->set_image(Image::create_empty(1920, 1080, false, Image::FORMAT_RGBA8));
-	ERR_FAIL_MSG("NDI Source not found at playback start. Will play once found.");
+	ERR_FAIL_MSG("NDI: Source not found at playback start. It will play at fallback resolution of 1920x1080 once discovered. See docs.");
 }
 
 void VideoStreamPlaybackNDI::render_video() {

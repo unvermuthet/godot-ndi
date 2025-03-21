@@ -33,9 +33,6 @@ public:
 	void set_name(const String p_name);
 	String get_name() const;
 
-	void set_url(const String p_url);
-	String get_url() const;
-
 	void set_bandwidth(const NDIlib_recv_bandwidth_e p_bandwidth);
 	NDIlib_recv_bandwidth_e get_bandwidth() const;
 
@@ -46,11 +43,14 @@ protected:
 	void _validate_property(PropertyInfo &p_property);
 
 private:
-	CharString name;
-	CharString url;
-	NDIlib_recv_bandwidth_e bandwidth;
+	CharString name = nullptr;
+	CharString url = nullptr;
+	NDIlib_recv_bandwidth_e bandwidth = NDIlib_recv_bandwidth_highest;
 
-	NDIFinder *finder;
+	void _set_url(const String p_url);
+	String _get_url() const;
+
+	NDIFinder *finder = nullptr;
 	void sources_changed();
 };
 

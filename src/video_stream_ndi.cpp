@@ -16,12 +16,6 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 using namespace godot;
 
 VideoStreamNDI::VideoStreamNDI() {
-	name = nullptr;
-	url = nullptr;
-	bandwidth = NDIlib_recv_bandwidth_highest;
-
-	finder = nullptr;
-
 	if (Engine::get_singleton()->has_singleton("GlobalNDIFinder")) {
 		finder = Object::cast_to<NDIFinder>(Engine::get_singleton()->get_singleton("GlobalNDIFinder"));
 		finder->connect("sources_changed", callable_mp(this, &VideoStreamNDI::sources_changed));
@@ -42,11 +36,15 @@ VideoStreamNDI::~VideoStreamNDI() {
 }
 
 bool VideoStreamNDI::equal(VideoStreamNDI *a, VideoStreamNDI *b) {
-	return a->get_name() == b->get_name() && a->get_url() == b->get_url();
+	return a->get_name() == b->get_name() && a->_get_url() == b->_get_url();
 }
 
 void VideoStreamNDI::set_name(const String p_name) {
-	set_url("");
+	if (p_name == get_name()) {
+		return;
+	}
+
+	_set_url("");
 
 	if (p_name.is_empty()) {
 		name = nullptr;
@@ -59,7 +57,7 @@ void VideoStreamNDI::set_name(const String p_name) {
 			for (int64_t i = 0; i < sources.size(); i++) {
 				VideoStreamNDI *source = Object::cast_to<VideoStreamNDI>(sources[i]);
 				if (get_name() == source->get_name()) {
-					set_url(source->get_url());
+					_set_url(source->_get_url());
 					break;
 				}
 			}
@@ -75,18 +73,6 @@ String VideoStreamNDI::get_name() const {
 	}
 
 	return String::utf8(name);
-}
-
-void VideoStreamNDI::set_url(const String p_url) {
-	if (p_url.is_empty()) {
-		url = nullptr;
-	} else {
-		url = p_url.utf8();
-	}
-}
-
-String VideoStreamNDI::get_url() const {
-	return String::utf8(url);
 }
 
 void VideoStreamNDI::set_bandwidth(const NDIlib_recv_bandwidth_e p_bandwidth) {
@@ -109,9 +95,8 @@ Ref<VideoStreamPlayback> VideoStreamNDI::_instantiate_playback() {
 	recv_desc.allow_video_fields = false;
 	recv_desc.p_ndi_recv_name = nullptr;
 
-	Ref<VideoStreamPlaybackNDI> pb = memnew(VideoStreamPlaybackNDI);
-	pb->recv_desc = recv_desc;
-	return pb;
+	print_verbose("NDI: Instantiating video stream playback with name=" + String(name) + " and url=" + String(url));
+	return memnew(VideoStreamPlaybackNDI(recv_desc));
 }
 
 void VideoStreamNDI::_bind_methods() {
@@ -119,9 +104,9 @@ void VideoStreamNDI::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_name"), &VideoStreamNDI::get_name);
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "name", PROPERTY_HINT_ENUM_SUGGESTION), "set_name", "get_name");
 
-	// ClassDB::bind_method(D_METHOD("set_url", "p_url"), &VideoStreamNDI::set_url);
-	// ClassDB::bind_method(D_METHOD("get_url"), &VideoStreamNDI::get_url);
-	// ADD_PROPERTY(PropertyInfo(Variant::STRING, "url", PROPERTY_HINT_NONE), "set_url", "get_url");
+	ClassDB::bind_method(D_METHOD("_set_url"), &VideoStreamNDI::_set_url);
+	ClassDB::bind_method(D_METHOD("_get_url"), &VideoStreamNDI::_get_url);
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "url", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_INTERNAL), "_set_url", "_get_url");
 
 	ClassDB::bind_method(D_METHOD("set_bandwidth", "p_bandwidth"), &VideoStreamNDI::set_bandwidth);
 	ClassDB::bind_method(D_METHOD("get_bandwidth"), &VideoStreamNDI::get_bandwidth);
@@ -144,6 +129,22 @@ void VideoStreamNDI::_validate_property(PropertyInfo &p_property) {
 
 		p_property.hint_string = String(",").join(source_names);
 	}
+}
+
+void VideoStreamNDI::_set_url(const String p_url) {
+	if (p_url == _get_url()) {
+		return;
+	}
+
+	if (p_url.is_empty()) {
+		url = nullptr;
+	} else {
+		url = p_url.utf8();
+	}
+}
+
+String VideoStreamNDI::_get_url() const {
+	return String::utf8(url);
 }
 
 void VideoStreamNDI::sources_changed() {
