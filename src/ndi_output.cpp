@@ -9,6 +9,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "ndi_output.hpp"
 
+#include "editor_plugin_ndi.hpp"
 #include "viewport_texture_router.hpp"
 
 #include <godot_cpp/classes/audio_server.hpp>
@@ -150,6 +151,8 @@ void NDIOutput::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_output_editor", "p_state"), &NDIOutput::set_output_editor);
 	ClassDB::bind_method(D_METHOD("is_outputting_editor"), &NDIOutput::is_outputting_editor);
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "enable_editor_output"), "set_output_editor", "is_outputting_editor");
+
+	ADD_NDI_BUTTON
 }
 
 void NDIOutput::_notification(int p_what) {

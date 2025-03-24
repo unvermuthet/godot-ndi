@@ -9,6 +9,8 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "ndi_finder.hpp"
 
+#include "editor_plugin_ndi.hpp"
+
 #include <godot_cpp/classes/hashing_context.hpp>
 #include <godot_cpp/classes/timer.hpp>
 
@@ -124,6 +126,8 @@ void NDIFinder::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_extra_ips", "extra_ips"), &NDIFinder::set_extra_ips);
 	ClassDB::bind_method(D_METHOD("get_extra_ips"), &NDIFinder::get_extra_ips);
 	ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "extra_ips"), "set_extra_ips", "get_extra_ips");
+
+	ADD_NDI_BUTTON
 }
 
 void NDIFinder::_notification(int what) {

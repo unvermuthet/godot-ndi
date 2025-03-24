@@ -9,6 +9,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "video_stream_ndi.hpp"
 
+#include "editor_plugin_ndi.hpp"
 #include "video_stream_playback_ndi.hpp"
 
 #include <godot_cpp/classes/engine.hpp>
@@ -111,6 +112,8 @@ void VideoStreamNDI::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_bandwidth", "p_bandwidth"), &VideoStreamNDI::set_bandwidth);
 	ClassDB::bind_method(D_METHOD("get_bandwidth"), &VideoStreamNDI::get_bandwidth);
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "bandwidth", PROPERTY_HINT_ENUM, "Metadata only:-10,Audio only:10,Lowest:0,Highest:100"), "set_bandwidth", "get_bandwidth");
+
+	ADD_NDI_BUTTON
 
 	BIND_ENUM_CONSTANT(NDIlib_recv_bandwidth_metadata_only);
 	BIND_ENUM_CONSTANT(NDIlib_recv_bandwidth_audio_only);
