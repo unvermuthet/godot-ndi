@@ -9,6 +9,7 @@
 		If the [Viewport] should be transmitted while its not visible, for example when the window is in the background or a [SubViewport] is used without a [SubViewportContainer], make sure to have the [param render_target_update_mode] set to [code]Always[/code] on the [SubViewport].
 	</description>
 	<tutorials>
+		<link title="Outputting the Editor">https://godot-ndi.readthedocs.io/stable/guides/outputting_the_editor.html</link>
 	</tutorials>
 	<members>
 		<member name="audio_bus" type="StringName" setter="set_audio_bus" getter="get_audio_bus" default="&amp;&quot;None&quot;">

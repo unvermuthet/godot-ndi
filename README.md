@@ -44,7 +44,7 @@ If you want to configure the environment yourself, follow [Godot's "Building fro
 
 **(C) 2025-present Henry Muth - unvermuthet and Godot NDI contributors**
 
-### Source code
+### Software
 
 Subject to the terms of the [Mozilla Public License, v. 2.0](https://www.mozilla.org/en-US/MPL/2.0/).
 

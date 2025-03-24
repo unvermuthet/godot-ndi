@@ -5,9 +5,10 @@
 	</brief_description>
 	<description>
 		Use with VideoStreamPlayer to receive NDI sources. [VideoStreamNDI] can either describe a source by name alone or be discovered dynamically by [NDIFinder]. When setting the [param name] in the Editor you will be presented with options discovered by a global [NDIFinder].
-		[b]Note:[/b] Starting playback blocks the main thread until the source's URL is discovered and the first frame is received. This is necessary because Godot requires the resolution to determined ahead of time. This process can be greatly sped up by using a [VideoStreamNDI] discovered by [NDIFinder], since these already have their URL discovered. This will be fixed with Godot 4.4.2.
+		[b]Note:[/b] Starting playback blocks the main thread until the source's URL is discovered and the first frame is received. This is necessary because Godot requires the resolution to determined ahead of time. This process can be greatly sped up by using a [VideoStreamNDI] discovered by [NDIFinder], since these already have their URL discovered. This is fixed in Godot 4.4.2.
 	</description>
 	<tutorials>
+		<link title="Playing Videos">https://docs.godotengine.org/en/stable/tutorials/animation/playing_videos.html</link>
 	</tutorials>
 	<members>
 		<member name="bandwidth" type="int" setter="set_bandwidth" getter="get_bandwidth" enum="NDIlib_recv_bandwidth_e" default="100">

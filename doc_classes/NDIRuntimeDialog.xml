@@ -8,6 +8,7 @@
 		Automatically added in the editor by [EditorPluginNDI].
 	</description>
 	<tutorials>
+		<link title="Handling a missing NDI Runtime">https://godot-ndi.readthedocs.io/stable/guides/handling_a_missing_ndi_runtime.html</link>
 	</tutorials>
 	<methods>
 		<method name="get_download_link" qualifiers="static">

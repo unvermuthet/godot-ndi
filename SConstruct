@@ -37,10 +37,6 @@ Run the following command to download godot-cpp:
 env = localEnv.Clone()
 env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 
-# Get commit hash and version tag
-
-
-
 # Sources
 env.Append(CPPPATH=["src/", "ndi/"])
 sources = Glob(
