@@ -59,7 +59,7 @@ jobs:
       - name: Build GDExtension
         uses: ./.github/actions/build
         with:
-          scons-arguments: "lto=auto use_mingw=yes use_static_cpp=yes debug_symbols=no optimize=speed"
+          scons-arguments: "lto=auto use_static_cpp=yes debug_symbols=no optimize=speed"
           platform: ${{ matrix.target.platform }}
           arch: ${{ matrix.target.arch }}
           float-precision: ${{ matrix.float-precision }}
@@ -72,6 +72,7 @@ jobs:
           Remove-Item project/addons/${{ env.LIBNAME }}/bin/windows/* -Include *.exp,*.lib,*.pdb -Force
 
       - name: Copy license files
+        continue-on-error: true
         run: |
           cp LICENSE project/addons/${{ env.LIBNAME }}/LICENSE
           cp README.md project/addons/${{ env.LIBNAME }}/README.md
@@ -81,7 +82,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.LIBNAME }}-${{ matrix.target.platform }}-${{ matrix.target.arch }}-${{ matrix.float-precision }}-${{ matrix.target-type }}
-          path: project/*/${{ env.LIBNAME }}
+          path: project/*/${{ env.LIBNAME }} # Artifacts include directories beginning with the first wildcard
 
   merge:
     runs-on: ubuntu-latest

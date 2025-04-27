@@ -9,6 +9,8 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "ndi_version_check.hpp"
 
+#include "ndi.hpp"
+
 #include <godot_cpp/classes/json.hpp>
 
 using namespace godot;

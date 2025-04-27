@@ -20,10 +20,12 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #include "video_stream_playback_ndi.hpp"
 #include "viewport_texture_router.hpp"
 
+#include <gdextension_interface.h>
 #include <godot_cpp/classes/editor_plugin_registration.hpp>
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/project_settings.hpp>
 #include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
 #ifdef _WIN32
@@ -41,14 +43,6 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #define LOAD_LIBRARY(var, path) void *var = dlopen(path, RTLD_LAZY | RTLD_LOCAL)
 #define GET_PROC_ADDRESS(var, lib, name) *((void **)&var) = dlsym(lib, name)
 #define FREE_LIBRARY(lib) dlclose(lib)
-#endif
-
-#ifndef GIT_COMMIT_HASH
-#define GIT_COMMIT_HASH ""
-#endif
-
-#ifndef GIT_COMMIT_TAG
-#define GIT_COMMIT_TAG ""
 #endif
 
 using namespace godot;

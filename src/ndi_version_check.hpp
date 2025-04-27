@@ -11,14 +11,6 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include <godot_cpp/classes/http_request.hpp>
 
-#ifndef GIT_COMMIT_HASH
-#define GIT_COMMIT_HASH ""
-#endif
-
-#ifndef GIT_COMMIT_TAG
-#define GIT_COMMIT_TAG ""
-#endif
-
 using namespace godot;
 
 class NDIVersionCheck : public HTTPRequest {

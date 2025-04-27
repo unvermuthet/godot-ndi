@@ -15,6 +15,14 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 extern const NDIlib_v5 *ndi;
 
+#ifndef GIT_COMMIT_HASH
+#define GIT_COMMIT_HASH ""
+#endif
+
+#ifndef GIT_COMMIT_TAG
+#define GIT_COMMIT_TAG ""
+#endif
+
 #define SIGNAL_DISCONNECT(obj, signal, callable) \
 	if (obj->is_connected(signal, callable)) {   \
 		obj->disconnect(signal, callable);       \

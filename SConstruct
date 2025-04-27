@@ -1,53 +1,51 @@
 #!/usr/bin/env python
 import os
 import sys
+from SCons.Script import Environment, SConscript, Default, Glob, Variables, PathVariable, Import, Copy
 
-from methods import print_error
 import version
 
-libname = "godot-ndi"
-bindir = f"project/addons/{libname}/bin"
+extensionName = "godot-ndi"
 
-localEnv = Environment(tools=["default"], PLATFORM="")
-localEnv["build_profile"] = "build_profile.json"
+try:
+    Import("env")
+except Exception:
+    env_gcpp = Environment()
 
-customs = ["custom.py"]
-customs = [os.path.abspath(path) for path in customs]
+env_gcpp["build_profile"] = env_gcpp.File("build_profile.json").path
 
-opts = Variables(customs, ARGUMENTS)
-opts.Update(localEnv)
+opts = Variables()
 
-Help(opts.GenerateHelpText(localEnv))
+opts.Add(PathVariable(
+    key="install_dir",
+    help="Directory to copy the addon folder into",
+    default=env_gcpp.get("install_dir", None),
+    validator=PathVariable.PathIsDirCreate
+))
+
+opts.Update(env_gcpp)
+env_gcpp.Help(opts.GenerateHelpText(env_gcpp))
 
 # Check if the godot-cpp submodule is initialized
-
-submodule_initialized = False
-if os.path.isdir("godot-cpp"):
-    if os.listdir("godot-cpp"):
-        submodule_initialized = True
-
-if not submodule_initialized:
-    print_error("""godot-cpp is not available within this folder, as Git submodules haven't been initialized.
+if not (os.path.isdir("godot-cpp") and os.listdir("godot-cpp")):
+    print("""godot-cpp is not available within this folder, as Git submodules haven't been initialized.
 Run the following command to download godot-cpp:
 
     git submodule update --init --recursive""")
     sys.exit(1)
 
-# Extend the godot-cpp environment
-env = localEnv.Clone()
-env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
+# Consume the godot-cpp environment
+env_gcpp = SConscript("godot-cpp/SConstruct", {"env": env_gcpp})
+env = env_gcpp.Clone()
 
 # Sources
 env.Append(CPPPATH=["src/", "ndi/"])
-sources = Glob(
-    "src/*.cpp",
-    exclude=["src/ndi.cpp", "src/ndi_version_check.cpp"]
-)
+sources = Glob("src/*.cpp")
 
-# These are included seperately to allow for the commit hash and
-# version tag to be included without invalidating cache for every file
-sources += env.SharedObject(["src/ndi.cpp", "src/ndi_version_check.cpp"], CPPDEFINES={
-    "GIT_COMMIT_HASH": f'\\"{version.commit_hash}\\"', "GIT_COMMIT_TAG": f'\\"{version.commit_tag}\\"'
+# Git commit hash and tag
+env.Append(CPPDEFINES={
+    "GIT_COMMIT_HASH": f'\\"{version.commit_hash}\\"',
+    "GIT_COMMIT_TAG": f'\\"{version.commit_tag}\\"'
 })
 
 # Add docs
@@ -67,8 +65,23 @@ if env["platform"] == "windows":
 if env["platform"] != "windows" or env["use_mingw"]:
     env.Append(CCFLAGS=["-Wno-deprecated-declarations"])
 
-# Set paths
-file = "{}{}{}".format(libname, env["suffix"], env["SHLIBSUFFIX"])
-libraryfile = "{}/{}/{}".format(bindir, env["platform"], file)
+# Ensure consistency between tool-chains
+env["SHLIBPREFIX"] = "lib"
+if env["platform"] == "macos":
+    env["SHLIBSUFFIX"] = ".dylib"
 
-Default(env.SharedLibrary(libraryfile, source=sources))
+# Output shared library
+addonFolder = f"project/addons/{extensionName}"
+libraryFile = f"{extensionName}{env['suffix']}{env['SHLIBSUFFIX']}"
+libraryPath = f"{addonFolder}/bin/{env['platform']}/{libraryFile}"
+library = env.SharedLibrary(libraryPath, source=sources)
+
+# Copy the addonFolder to install_in
+if env.get("install_dir", None):
+    install = env.Install(
+        env["install_dir"],
+        addonFolder,
+    )
+    Default([library, install])
+else:
+    Default([library])
