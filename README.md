@@ -1,4 +1,4 @@
-# godot-ndi [![Made with Godot](https://img.shields.io/badge/Made%20with-Godot-478CBF?style=flat&logo=godot%20engine&logoColor=white)](https://godotengine.org) [![Build GDExtension](https://github.com/unvermuthet/godot-ndi/actions/workflows/builds.yml/badge.svg)](https://github.com/unvermuthet/godot-ndi/actions/workflows/builds.yml)
+# godot-ndi [![Made with Godot](https://img.shields.io/badge/Made%20with-Godot-478CBF?style=flat&logo=godot%20engine&logoColor=white)](https://godotengine.org) [![Build GDExtension](https://github.com/unvermuthet/godot-ndi/actions/workflows/builds.yml/badge.svg)](https://github.com/unvermuthet/godot-ndi/actions/workflows/builds.yml) [![Read the docs](https://img.shields.io/readthedocs/godot-ndi)](https://godot-ndi.readthedocs.io)
 
 > Integrates the NDI® SDK with Godot
 >
@@ -25,6 +25,10 @@ This was born out of work on my DMX Lighting Control Software. I'm fascinated by
 
 Download the latest version under `Releases` and install by extracting the ZIP file in your Godot project.
 Alternatively, you can install the extension from Godot's Asset Library.
+
+## Documentation
+
+Read the documentation at [godot-ndi.readthedocs.io](https://godot-ndi.readthedocs.io)
 
 ## Support
 
