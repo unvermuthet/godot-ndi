@@ -64,17 +64,19 @@ void ViewportTextureRouter::request_textures() {
 		Viewport *vp = Object::cast_to<Viewport>(vps.keys()[i]);
 		ERR_CONTINUE_MSG(vp == nullptr, "Viewport was deleted but not unregistered");
 
-		Ref<ViewportTexture> texture = vp->get_texture();
-		ERR_FAIL_COND_MSG(texture.is_null(), "Couldn't get Viewport Texture");
+		RID viewport_rid = vp->get_viewport_rid();
+		ERR_CONTINUE_MSG(!viewport_rid.is_valid(), "Viewport RID is invalid");
 
-		RID rd_texture_rid = rs->texture_get_rd_texture(texture->get_rid());
-		texture.unref();
+		RID texture_rid = rs->viewport_get_texture(viewport_rid);
+		ERR_CONTINUE_MSG(!texture_rid.is_valid(), "Viewport texture RID is invalid");
+
+		RID rd_texture_rid = rs->texture_get_rd_texture(texture_rid);
 		ERR_FAIL_COND_MSG(!rd_texture_rid.is_valid(), "Couldn't get viewport texture's RID on the RenderingDevice");
 
 		Ref<RDTextureFormat> texture_format = rd->texture_get_format(rd_texture_rid);
 		ERR_FAIL_COND_MSG(texture_format.is_null(), "Couldn't get viewport texture format");
 
-		rd->texture_get_data_async(rd_texture_rid, 0, callable_mp(this, &ViewportTextureRouter::forward_texture).bind(texture_format, vp->get_viewport_rid().get_id()));
+		rd->texture_get_data_async(rd_texture_rid, 0, callable_mp(this, &ViewportTextureRouter::forward_texture).bind(texture_format, viewport_rid.get_id()));
 	}
 }
 
