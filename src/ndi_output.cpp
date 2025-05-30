@@ -245,6 +245,8 @@ void NDIOutput::register_hooks() {
 		vp_texture_router->connect("texture_arrived", callable_mp(this, &NDIOutput::send_texture));
 		vp_texture_router->add_viewport(get_viewport());
 	}
+
+	DisplayServer::get_singleton()->register_additional_output(this);
 }
 
 void NDIOutput::unregister_hooks() {
@@ -256,6 +258,8 @@ void NDIOutput::unregister_hooks() {
 
 	SIGNAL_DISCONNECT(vp_texture_router, "texture_arrived", callable_mp(this, &NDIOutput::send_texture));
 	vp_texture_router->remove_viewport(get_viewport());
+
+	DisplayServer::get_singleton()->unregister_additional_output(this);
 }
 
 void NDIOutput::send_audio() {
@@ -269,7 +273,7 @@ void NDIOutput::send_audio() {
 	}
 
 	if (AudioServer::get_singleton()->get_speaker_mode() != AudioServer::SPEAKER_MODE_STEREO) {
-		WARN_PRINT_ONCE_ED("NDI: Audio devices with more than two channels are unsupported because Godot's AudioEffectCapture becomes broken.");
+		WARN_PRINT_ONCE_ED("NDI: Audio devices with more than two channels are unsupported because Godot's AudioEffectCapture breaks.");
 		return;
 	}
 
