@@ -3,9 +3,9 @@
 Godot NDI – *main* branch
 ============================
 
-You're probably looking for one the staples: :ref:`VideoStreamNDI<class_VideoStreamNDI>`, :ref:`NDIOutput<class_NDIOutput>` or :ref:`NDIFinder<class_NDIFinder>`!
+You're probably looking for one of the staples: :ref:`VideoStreamNDI<class_VideoStreamNDI>`, :ref:`NDIOutput<class_NDIOutput>` or :ref:`NDIFinder<class_NDIFinder>`!
 
-We're looking for Guides and Demos and Showcases! If you want to share something and can write a little Markdown, feel free to make a PR on GitHub.
+We're looking for Guides and Demos, and Showcases! If you want to share something and can write a little Markdown, feel free to make a PR on GitHub.
 
 .. toctree::
    :maxdepth: 1
