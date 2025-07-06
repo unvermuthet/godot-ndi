@@ -65,7 +65,7 @@
 #		else // __APPLE__
 #			define NDILIB_LIBRARY_NAME  "libndi.so.6"
 #			define NDILIB_REDIST_FOLDER "NDI_RUNTIME_DIR_V6"
-#			define NDILIB_REDIST_URL    "https://github.com/DistroAV/DistroAV/wiki/1.-Installation#linux"
+#			define NDILIB_REDIST_URL    "https://github.com/DistroAV/DistroAV/wiki/1.-Installation/fbb1d9473862b27a3c12baaaee504b4ecb9f9574#linux-1"
 #		endif // __APPLE__
 #		ifdef __cplusplus
 #			define PROCESSINGNDILIB_API extern "C" __attribute((visibility("default")))
