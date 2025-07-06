@@ -21,7 +21,7 @@ This was born out of work on my DMX Lighting Control Software. I'm fascinated by
 > [!IMPORTANT]
 > - Only compatible with `Godot 4.4-stable` and later
 > - Your application needs to comply with the [NDI SDK license](http://ndi.link/ndisdk_license).
-> - The NDI Runtime is required ([Windows](http://ndi.link/NDIRedistV6), [MacOS](http://ndi.link/NDIRedistV6Apple), [Linux (Flatpak incompatible)](https://github.com/DistroAV/DistroAV/wiki/1.-Installation#linux))
+> - The NDI Runtime is required ([Windows](http://ndi.link/NDIRedistV6), [MacOS](http://ndi.link/NDIRedistV6Apple), [Linux (Flatpak incompatible)](https://github.com/DistroAV/DistroAV/wiki/1.-Installation#linux-1))
 
 Download the latest version under `Releases` and install by extracting the ZIP file in your Godot project.
 Alternatively, you can install the extension from Godot's Asset Library.
