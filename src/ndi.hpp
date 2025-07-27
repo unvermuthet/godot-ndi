@@ -13,7 +13,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "Processing.NDI.Lib.h"
 
-extern const NDIlib_v5 *ndi;
+extern const NDIlib_v6 *ndi;
 
 #ifndef GIT_COMMIT_HASH
 #define GIT_COMMIT_HASH ""

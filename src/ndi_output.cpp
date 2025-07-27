@@ -283,7 +283,7 @@ void NDIOutput::send_audio() {
 	frame.no_samples = Math::clamp<int>(audio_capture->get_frames_available(), 0, 4096);
 	frame.channel_stride_in_bytes = frame.no_samples * sizeof(float);
 
-	// Convert from interleaved samples to planar. SDK has a util for this but results in a slightly panned signal.
+	// Convert from interleaved samples to planar
 
 	audio_interleaved = audio_capture->get_buffer(frame.no_samples);
 	audio_planar.resize(frame.no_samples * frame.no_channels);

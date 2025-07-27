@@ -56,7 +56,7 @@ class VideoStreamNDI;
 class VideoStreamPlaybackNDI;
 class ViewportTextureRouter;
 
-const NDIlib_v5 *ndi = nullptr;
+const NDIlib_v6 *ndi = nullptr;
 
 Error load_runtime() {
 	PackedStringArray runtime_paths;
@@ -81,10 +81,10 @@ Error load_runtime() {
 			continue;
 		}
 
-		const NDIlib_v5 *(*NDIlib_v5_load)(void) = nullptr;
-		GET_PROC_ADDRESS(NDIlib_v5_load, ndi_lib, "NDIlib_v5_load");
+		const NDIlib_v6 *(*NDIlib_v6_load)(void) = nullptr;
+		GET_PROC_ADDRESS(NDIlib_v6_load, ndi_lib, "NDIlib_v6_load");
 
-		if (NDIlib_v5_load == nullptr) {
+		if (NDIlib_v6_load == nullptr) {
 			if (ndi_lib != nullptr) {
 				FREE_LIBRARY(ndi_lib);
 			}
@@ -92,7 +92,7 @@ Error load_runtime() {
 			continue;
 		}
 
-		ndi = NDIlib_v5_load();
+		ndi = NDIlib_v6_load();
 
 		if (ndi == nullptr) {
 			if (ndi_lib != nullptr) {
@@ -108,6 +108,8 @@ Error load_runtime() {
 
 	ERR_FAIL_NULL_V_MSG(ndi, ERR_FILE_CANT_OPEN, "NDI: Failed to load NDI Runtime. Make sure its installed on your system. Paths tried: \n" + String("\n").join(runtime_paths));
 	ERR_FAIL_COND_V_MSG(!ndi->initialize(), ERR_UNAVAILABLE, "NDI: NDI isn't supported on your device");
+
+	print_verbose(ndi->version());
 
 	print_verbose("NDI: Runtime sucessfully initialized");
 	return OK;

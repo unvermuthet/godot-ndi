@@ -91,7 +91,7 @@ Ref<VideoStreamPlayback> VideoStreamNDI::_instantiate_playback() {
 
 	NDIlib_recv_create_v3_t recv_desc;
 	recv_desc.source_to_connect_to = source;
-	recv_desc.color_format = NDIlib_recv_color_format_RGBX_RGBA;
+	recv_desc.color_format = NDIlib_recv_color_format_BGRX_BGRA;
 	recv_desc.bandwidth = bandwidth;
 	recv_desc.allow_video_fields = false;
 	recv_desc.p_ndi_recv_name = nullptr;

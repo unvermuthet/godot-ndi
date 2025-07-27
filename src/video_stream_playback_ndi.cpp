@@ -139,9 +139,16 @@ void VideoStreamPlaybackNDI::render_video() {
 
 	ndi->framesync_capture_video(sync, &video_frame, NDIlib_frame_format_type_progressive);
 
-	if (video_frame.p_data != nullptr && (video_frame.FourCC == NDIlib_FourCC_type_RGBA || video_frame.FourCC == NDIlib_FourCC_type_RGBX)) {
-		video_buffer.resize(video_frame.line_stride_in_bytes * video_frame.yres);
-		memcpy(video_buffer.ptrw(), video_frame.p_data, video_buffer.size());
+	if (video_frame.p_data != nullptr && (video_frame.FourCC == NDIlib_FourCC_type_BGRA || video_frame.FourCC == NDIlib_FourCC_type_BGRX)) {
+		video_buffer.resize(video_frame.xres * video_frame.yres * 4);
+
+		for (size_t i = 0; i < video_frame.xres * video_frame.yres; i++) {
+			video_buffer.set(i * 4 + 0, video_frame.p_data[i * 4 + 2]);
+			video_buffer.set(i * 4 + 1, video_frame.p_data[i * 4 + 1]);
+			video_buffer.set(i * 4 + 2, video_frame.p_data[i * 4 + 0]);
+			video_buffer.set(i * 4 + 3, video_frame.p_data[i * 4 + 3]);
+		}
+
 		img = Image::create_from_data(video_frame.xres, video_frame.yres, false, Image::Format::FORMAT_RGBA8, video_buffer);
 	}
 
