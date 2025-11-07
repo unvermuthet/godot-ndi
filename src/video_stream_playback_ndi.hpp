@@ -11,7 +11,8 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "ndi.hpp"
 
-#include <godot_cpp/classes/image_texture.hpp>
+#include <godot_cpp/classes/rendering_device.hpp>
+#include <godot_cpp/classes/texture2drd.hpp>
 #include <godot_cpp/classes/video_stream_playback.hpp>
 
 using namespace godot;
@@ -48,12 +49,13 @@ private:
 	NDIlib_recv_instance_t recv = nullptr;
 	NDIlib_framesync_instance_t sync = nullptr;
 
-	Ref<ImageTexture> texture;
-	Ref<Image> img;
-	NDIlib_video_frame_v2_t video_frame;
-	PackedByteArray video_buffer;
-	void render_first_frame();
-	void render_video();
+	RenderingDevice *rd;
+	Ref<Texture2DRD> texture;
+	Vector2i texture_size = Vector2i(0, 0);
+	void update_texture(NDIlib_video_frame_v2_t p_video_frame);
+
+	void wait_for_non_empty_frame();
+	bool render_video();
 
 	NDIlib_audio_frame_v3_t audio_frame;
 	PackedFloat32Array audio_buffer_planar;

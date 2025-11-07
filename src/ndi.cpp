@@ -106,7 +106,7 @@ Error load_runtime() {
 		break;
 	}
 
-	ERR_FAIL_NULL_V_MSG(ndi, ERR_FILE_CANT_OPEN, "NDI: Failed to load NDI Runtime. Make sure its installed on your system. Paths tried: \n" + String("\n").join(runtime_paths));
+	ERR_FAIL_NULL_V_MSG(ndi, ERR_FILE_CANT_OPEN, "NDI: Failed to load NDI 6.2 Runtime. Make sure its installed on your system. Paths tried: \n" + String("\n").join(runtime_paths));
 	ERR_FAIL_COND_V_MSG(!ndi->initialize(), ERR_UNAVAILABLE, "NDI: NDI isn't supported on your device");
 
 	print_verbose(ndi->version());

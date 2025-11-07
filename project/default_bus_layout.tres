@@ -4,6 +4,5 @@
 resource_name = "Capture"
 
 [resource]
-bus/0/mute = true
 bus/0/effect/0/effect = SubResource("AudioEffectCapture_j3pel")
 bus/0/effect/0/enabled = true

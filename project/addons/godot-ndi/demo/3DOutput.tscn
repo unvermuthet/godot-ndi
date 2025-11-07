@@ -14,7 +14,7 @@ font_size = 24
 shadow_size = 5
 shadow_color = Color(0, 0, 0, 0.235294)
 
-[node name="3DOutput" type="SubViewportContainer"]
+[node name="SubViewportContainer" type="SubViewportContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
