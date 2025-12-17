@@ -8,6 +8,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
 #include "viewport_texture_router.hpp"
+#include "ndi.hpp"
 
 #include <godot_cpp/classes/rendering_server.hpp>
 #include <godot_cpp/classes/viewport_texture.hpp>
@@ -18,6 +19,8 @@ ViewportTextureRouter::ViewportTextureRouter() {
 }
 
 ViewportTextureRouter::~ViewportTextureRouter() {
+	// Ensure the disconnection from the frame_post_draw signal if it's connected
+	SIGNAL_DISCONNECT(RenderingServer::get_singleton(), "frame_post_draw", callable_mp(this, &ViewportTextureRouter::request_textures));
 }
 
 void ViewportTextureRouter::add_viewport(Viewport *viewport) {
@@ -46,7 +49,8 @@ void ViewportTextureRouter::remove_viewport(Viewport *viewport) {
 
 	// Last viewport removed, disconnect from the frame_post_draw signal
 	if (vps.size() == 0) {
-		RenderingServer::get_singleton()->disconnect("frame_post_draw", callable_mp(this, &ViewportTextureRouter::request_textures));
+		// RenderingServer::get_singleton()->disconnect("frame_post_draw", callable_mp(this, &ViewportTextureRouter::request_textures));
+		SIGNAL_DISCONNECT(RenderingServer::get_singleton(), "frame_post_draw", callable_mp(this, &ViewportTextureRouter::request_textures));
 	}
 
 	print_verbose("NDI: ViewportTextureRouter registrations: ", vps);
