@@ -49,7 +49,6 @@ void ViewportTextureRouter::remove_viewport(Viewport *viewport) {
 
 	// Last viewport removed, disconnect from the frame_post_draw signal
 	if (vps.size() == 0) {
-		// RenderingServer::get_singleton()->disconnect("frame_post_draw", callable_mp(this, &ViewportTextureRouter::request_textures));
 		SIGNAL_DISCONNECT(RenderingServer::get_singleton(), "frame_post_draw", callable_mp(this, &ViewportTextureRouter::request_textures));
 	}
 
