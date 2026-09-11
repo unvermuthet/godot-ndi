@@ -33,7 +33,7 @@ public:
 	bool get_show_local_sources() const;
 
 	void set_groups(const PackedStringArray groups);
-	PackedStringArray get_groups() const;
+	PackedStringArray get_ndi_groups() const;
 
 	void set_extra_ips(const PackedStringArray extra_ips);
 	PackedStringArray get_extra_ips() const;
@@ -51,7 +51,7 @@ private:
 	CharString extra_ips;
 
 	Ref<Thread> thr;
-	Ref<Mutex> mtx;
+	Ref<CoreBind::Mutex> mtx;
 	Ref<Semaphore> sem;
 	bool mtx_exit_thread = false;
 

@@ -73,8 +73,9 @@ Error load_runtime() {
 
 	for (int64_t i = 0; i < runtime_paths.size(); i++) {
 		print_verbose("NDI: Trying to load ", runtime_paths[i]);
+		const CharString runtime_path = runtime_paths[i].utf8();
 
-		LOAD_LIBRARY(ndi_lib, runtime_paths[i].utf8());
+		LOAD_LIBRARY(ndi_lib, runtime_path.ptr());
 
 		if (ndi_lib == nullptr) {
 			print_verbose("NDI: Failed to open ", runtime_paths[i]);

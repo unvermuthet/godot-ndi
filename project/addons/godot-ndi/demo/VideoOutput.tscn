@@ -31,7 +31,7 @@ autoplay = true
 panning_strength = 0.0
 
 [node name="NDIOutput" type="NDIOutput" parent="."]
-name = "Godot (Video)"
+ndi_name = "Godot (Video)"
 audio_bus = &"Master"
 
 [connection signal="finished" from="VideoStreamPlayer" to="VideoStreamPlayer" method="_on_finished"]

@@ -55,7 +55,7 @@ size = Vector2i(1152, 648)
 render_target_update_mode = 4
 
 [node name="NDIOutput" type="NDIOutput" parent="SubViewport"]
-name = "Godot (Animation)"
+ndi_name = "Godot (Animation)"
 
 [node name="Icon" type="Sprite2D" parent="SubViewport"]
 position = Vector2(1034, 527)

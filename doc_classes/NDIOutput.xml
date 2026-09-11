@@ -24,10 +24,10 @@
 		<member name="enable_video_output" type="bool" setter="set_output_video" getter="is_outputting_video" default="true">
 			Can be disabled if you only want to transmit audio.
 		</member>
-		<member name="groups" type="PackedStringArray" setter="set_groups" getter="get_groups" default="PackedStringArray()">
+		<member name="groups" type="PackedStringArray" setter="set_groups" getter="get_ndi_groups" default="PackedStringArray()">
 			List of groups that the source will be available in. Leave empty for default.
 		</member>
-		<member name="name" type="String" setter="set_name" getter="get_name" default="&quot;&quot;">
+		<member name="ndi_name" type="String" setter="set_ndi_name" getter="get_ndi_name" default="&quot;&quot;">
 			The name of the NDI source.
 		</member>
 	</members>
