@@ -36,7 +36,7 @@ size = Vector2i(1152, 648)
 render_target_update_mode = 4
 
 [node name="NDIOutput" type="NDIOutput" parent="SubViewportB"]
-name = "Godot Cam B"
+ndi_name = "Godot Cam B"
 enable_editor_output = true
 
 [node name="Camera3D" type="Camera3D" parent="SubViewportB"]
@@ -49,7 +49,7 @@ size = Vector2i(1152, 648)
 render_target_update_mode = 4
 
 [node name="NDIOutput" type="NDIOutput" parent="SubViewportA"]
-name = "Godot Cam A"
+ndi_name = "Godot Cam A"
 enable_editor_output = true
 
 [node name="Label" type="Label" parent="SubViewportA"]

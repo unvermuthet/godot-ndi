@@ -37,11 +37,11 @@ VideoStreamNDI::~VideoStreamNDI() {
 }
 
 bool VideoStreamNDI::equal(VideoStreamNDI *a, VideoStreamNDI *b) {
-	return a->get_name() == b->get_name() && a->_get_url() == b->_get_url();
+	return a->get_ndi_name() == b->get_ndi_name() && a->_get_url() == b->_get_url();
 }
 
-void VideoStreamNDI::set_name(const String p_name) {
-	if (p_name == get_name()) {
+void VideoStreamNDI::set_ndi_name(const String p_name) {
+	if (p_name == get_ndi_name()) {
 		return;
 	}
 
@@ -57,7 +57,7 @@ void VideoStreamNDI::set_name(const String p_name) {
 
 			for (int64_t i = 0; i < sources.size(); i++) {
 				VideoStreamNDI *source = Object::cast_to<VideoStreamNDI>(sources[i]);
-				if (get_name() == source->get_name()) {
+				if (get_ndi_name() == source->get_ndi_name()) {
 					_set_url(source->_get_url());
 					break;
 				}
@@ -68,12 +68,12 @@ void VideoStreamNDI::set_name(const String p_name) {
 	emit_changed();
 }
 
-String VideoStreamNDI::get_name() const {
+String VideoStreamNDI::get_ndi_name() const {
 	if (finder != nullptr) {
 		finder->update();
 	}
 
-	return String::utf8(name);
+	return String::utf8(name.ptr(), name.length());
 }
 
 void VideoStreamNDI::set_bandwidth(const NDIlib_recv_bandwidth_e p_bandwidth) {
@@ -86,8 +86,8 @@ NDIlib_recv_bandwidth_e VideoStreamNDI::get_bandwidth() const {
 
 Ref<VideoStreamPlayback> VideoStreamNDI::_instantiate_playback() {
 	NDIlib_source_t source;
-	source.p_ndi_name = name;
-	source.p_url_address = url;
+	source.p_ndi_name = name.ptr();
+	source.p_url_address = url.ptr();
 
 	NDIlib_recv_create_v3_t recv_desc;
 	recv_desc.source_to_connect_to = source;
@@ -96,14 +96,14 @@ Ref<VideoStreamPlayback> VideoStreamNDI::_instantiate_playback() {
 	recv_desc.allow_video_fields = false;
 	recv_desc.p_ndi_recv_name = nullptr;
 
-	print_verbose("NDI: Instantiating video stream playback with name=" + String(name) + " and url=" + String(url));
+	print_verbose("NDI: Instantiating video stream playback with name=" + String::utf8(name.ptr(), name.length()) + " and url=" + String::utf8(url.ptr(), url.length()));
 	return memnew(VideoStreamPlaybackNDI(recv_desc));
 }
 
 void VideoStreamNDI::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("set_name", "p_name"), &VideoStreamNDI::set_name);
-	ClassDB::bind_method(D_METHOD("get_name"), &VideoStreamNDI::get_name);
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "name", PROPERTY_HINT_ENUM_SUGGESTION), "set_name", "get_name");
+	ClassDB::bind_method(D_METHOD("set_ndi_name", "p_name"), &VideoStreamNDI::set_ndi_name);
+	ClassDB::bind_method(D_METHOD("get_ndi_name"), &VideoStreamNDI::get_ndi_name);
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "ndi_name", PROPERTY_HINT_ENUM_SUGGESTION), "set_ndi_name", "get_ndi_name");
 
 	ClassDB::bind_method(D_METHOD("_set_url"), &VideoStreamNDI::_set_url);
 	ClassDB::bind_method(D_METHOD("_get_url"), &VideoStreamNDI::_get_url);
@@ -122,12 +122,12 @@ void VideoStreamNDI::_bind_methods() {
 }
 
 void VideoStreamNDI::_validate_property(PropertyInfo &p_property) {
-	if (p_property.name == StringName("name") && finder != nullptr) {
+	if (p_property.name == StringName("ndi_name") && finder != nullptr) {
 		TypedArray<VideoStreamNDI> sources = finder->get_sources();
 		PackedStringArray source_names;
 
 		for (int64_t i = 0; i < sources.size(); i++) {
-			source_names.push_back(Object::cast_to<VideoStreamNDI>(sources[i])->get_name());
+			source_names.push_back(Object::cast_to<VideoStreamNDI>(sources[i])->get_ndi_name());
 		}
 
 		p_property.hint_string = String(",").join(source_names);
@@ -147,7 +147,7 @@ void VideoStreamNDI::_set_url(const String p_url) {
 }
 
 String VideoStreamNDI::_get_url() const {
-	return String::utf8(url);
+	return String::utf8(url.ptr(), url.length());
 }
 
 void VideoStreamNDI::sources_changed() {

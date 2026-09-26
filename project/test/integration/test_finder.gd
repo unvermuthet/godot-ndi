@@ -7,7 +7,7 @@ func test_finds_grouped_source():
 	watch_signals(finder)
 
 	var output: NDIOutput = add_child_autoqfree(NDIOutput.new())
-	output.name = "GodotSource"
+	output.ndi_name = "GodotSource"
 	output.groups = ["GodotGroup"]
 
 	await wait_for_signal(finder.sources_changed, 10, "Waiting for sources to change")
@@ -17,10 +17,10 @@ func test_finds_grouped_source():
 	assert_signal_emit_count(finder, "sources_gone", 0, "Existing sources have never disappeared")
 
 	assert_eq(finder.get_sources().size(), 1, "There is one source in GodotGroup")
-	assert_string_ends_with(finder.get_sources()[0].name, " (GodotSource)", "Correct source found")
+	assert_string_ends_with(finder.get_sources()[0].ndi_name, " (GodotSource)", "Correct source found")
 
 	# Now change the name of the NDIOutput
-	output.name = "NewGodotSource"
+	output.ndi_name = "NewGodotSource"
 
 	await wait_for_signal(finder.sources_changed, 10, "Waiting for sources to change")
 
@@ -29,4 +29,4 @@ func test_finds_grouped_source():
 	assert_signal_emit_count(finder, "sources_gone", 1, "Source with old name is gone")
 
 	assert_eq(finder.get_sources().size(), 1, "There is still one source in GodotGroup")
-	assert_string_ends_with(finder.get_sources()[0].name, " (NewGodotSource)", "Correct new source found")
+	assert_string_ends_with(finder.get_sources()[0].ndi_name, " (NewGodotSource)", "Correct new source found")

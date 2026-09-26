@@ -13,6 +13,7 @@ except Exception:
     env_gcpp = Environment()
 
 env_gcpp["build_profile"] = env_gcpp.File("build_profile.json").path
+env_gcpp["api_version"] = "4.4"
 
 opts = Variables()
 

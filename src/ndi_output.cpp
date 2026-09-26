@@ -35,9 +35,9 @@ NDIOutput::~NDIOutput() {
 	AudioServer::get_singleton()->disconnect("bus_layout_changed", callable_mp(this, &NDIOutput::busses_changed));
 }
 
-void NDIOutput::set_name(const String p_name) {
+void NDIOutput::set_ndi_name(const String p_name) {
 	if (p_name.is_empty()) {
-		name.resize(0);
+		name = CharString();
 	} else {
 		String suffix = Engine::get_singleton()->is_editor_hint() ? " [Editor]" : "";
 		name = (p_name + suffix).utf8();
@@ -47,7 +47,7 @@ void NDIOutput::set_name(const String p_name) {
 	rebuild_sender();
 }
 
-String NDIOutput::get_name() const {
+String NDIOutput::get_ndi_name() const {
 	if (name.ptr() == nullptr) {
 		return String("");
 	} else {
@@ -57,7 +57,7 @@ String NDIOutput::get_name() const {
 
 void NDIOutput::set_groups(const PackedStringArray p_groups) {
 	if (p_groups.is_empty()) {
-		groups.resize(0);
+		groups = CharString();
 	} else {
 		groups = String(",").join(p_groups).utf8();
 	}
@@ -66,7 +66,7 @@ void NDIOutput::set_groups(const PackedStringArray p_groups) {
 	rebuild_sender();
 }
 
-PackedStringArray NDIOutput::get_groups() const {
+PackedStringArray NDIOutput::get_ndi_groups() const {
 	if (groups.ptr() == nullptr) {
 		return PackedStringArray();
 	} else {
@@ -132,13 +132,13 @@ PackedStringArray NDIOutput::_get_configuration_warnings() const {
 }
 
 void NDIOutput::_bind_methods() {
-	ClassDB::bind_method(D_METHOD("set_name", "p_name"), &NDIOutput::set_name);
-	ClassDB::bind_method(D_METHOD("get_name"), &NDIOutput::get_name);
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "name"), "set_name", "get_name");
+	ClassDB::bind_method(D_METHOD("set_ndi_name", "p_name"), &NDIOutput::set_ndi_name);
+	ClassDB::bind_method(D_METHOD("get_ndi_name"), &NDIOutput::get_ndi_name);
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "ndi_name"), "set_ndi_name", "get_ndi_name");
 
 	ClassDB::bind_method(D_METHOD("set_groups", "p_groups"), &NDIOutput::set_groups);
-	ClassDB::bind_method(D_METHOD("get_groups"), &NDIOutput::get_groups);
-	ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "groups"), "set_groups", "get_groups");
+	ClassDB::bind_method(D_METHOD("get_ndi_groups"), &NDIOutput::get_ndi_groups);
+	ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "groups"), "set_groups", "get_ndi_groups");
 
 	ClassDB::bind_method(D_METHOD("set_audio_bus", "p_bus"), &NDIOutput::set_audio_bus);
 	ClassDB::bind_method(D_METHOD("get_audio_bus"), &NDIOutput::get_audio_bus);
@@ -151,7 +151,6 @@ void NDIOutput::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_output_editor", "p_state"), &NDIOutput::set_output_editor);
 	ClassDB::bind_method(D_METHOD("is_outputting_editor"), &NDIOutput::is_outputting_editor);
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "enable_editor_output"), "set_output_editor", "is_outputting_editor");
-
 	ADD_NDI_BUTTON
 }
 

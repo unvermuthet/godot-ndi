@@ -14,7 +14,7 @@
 		<member name="bandwidth" type="int" setter="set_bandwidth" getter="get_bandwidth" enum="NDIlib_recv_bandwidth_e" default="100">
 			Bandwidth setting of the NDI source. Changing this at runtime will stop playback.
 		</member>
-		<member name="name" type="String" setter="set_name" getter="get_name" default="&quot;&quot;">
+		<member name="ndi_name" type="String" setter="set_ndi_name" getter="get_ndi_name" default="&quot;&quot;">
 			Name of the NDI source. Changing this at runtime will stop playback.
 		</member>
 	</members>

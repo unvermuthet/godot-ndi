@@ -52,7 +52,7 @@ void NDIFinder::set_groups(const PackedStringArray p_groups) {
 	mtx->lock();
 
 	if (p_groups.is_empty()) {
-		groups.resize(0);
+		groups = CharString();
 	} else {
 		groups = String(",").join(p_groups).utf8();
 	}
@@ -65,7 +65,7 @@ void NDIFinder::set_groups(const PackedStringArray p_groups) {
 	sem->post();
 }
 
-PackedStringArray NDIFinder::get_groups() const {
+PackedStringArray NDIFinder::get_ndi_groups() const {
 	if (groups.ptr() == nullptr) {
 		return PackedStringArray();
 	} else {
@@ -77,12 +77,12 @@ void NDIFinder::set_extra_ips(const PackedStringArray p_extra_ips) {
 	mtx->lock();
 
 	if (p_extra_ips.is_empty()) {
-		extra_ips.resize(0);
+		extra_ips = CharString();
 	} else {
 		extra_ips = String(",").join(p_extra_ips).utf8();
 	}
 
-	mtx_find_desc.p_extra_ips = extra_ips;
+	mtx_find_desc.p_extra_ips = extra_ips.ptr();
 	mtx_rebuild_find = true;
 
 	mtx->unlock();
@@ -120,13 +120,12 @@ void NDIFinder::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "show_local_sources"), "set_show_local_sources", "get_show_local_sources");
 
 	ClassDB::bind_method(D_METHOD("set_groups", "groups"), &NDIFinder::set_groups);
-	ClassDB::bind_method(D_METHOD("get_groups"), &NDIFinder::get_groups);
-	ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "groups"), "set_groups", "get_groups");
+	ClassDB::bind_method(D_METHOD("get_ndi_groups"), &NDIFinder::get_ndi_groups);
+	ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "groups"), "set_groups", "get_ndi_groups");
 
 	ClassDB::bind_method(D_METHOD("set_extra_ips", "extra_ips"), &NDIFinder::set_extra_ips);
 	ClassDB::bind_method(D_METHOD("get_extra_ips"), &NDIFinder::get_extra_ips);
 	ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "extra_ips"), "set_extra_ips", "get_extra_ips");
-
 	ADD_NDI_BUTTON
 }
 
@@ -202,7 +201,7 @@ void NDIFinder::find_sources_thread() {
 		mtx->unlock();
 
 		for (int i = 0; i < num_sources; i++) {
-			VideoStreamNDI *source = memnew(VideoStreamNDI(sources_pointer[i]));
+			Ref<VideoStreamNDI> source = memnew(VideoStreamNDI(sources_pointer[i]));
 			sources.push_back(source);
 		}
 

@@ -24,11 +24,11 @@ public:
 	NDIOutput();
 	~NDIOutput();
 
-	void set_name(const String p_name);
-	String get_name() const;
+	void set_ndi_name(const String p_name);
+	String get_ndi_name() const;
 
 	void set_groups(const PackedStringArray p_groups);
-	PackedStringArray get_groups() const;
+	PackedStringArray get_ndi_groups() const;
 
 	void set_audio_bus(const StringName &p_bus);
 	StringName get_audio_bus() const;
@@ -39,7 +39,7 @@ public:
 	void set_output_editor(const bool p_state);
 	bool is_outputting_editor() const;
 
-	PackedStringArray _get_configuration_warnings() const;
+	PackedStringArray _get_configuration_warnings() const override;
 
 protected:
 	static void _bind_methods();

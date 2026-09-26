@@ -21,7 +21,7 @@
 		<member name="extra_ips" type="PackedStringArray" setter="set_extra_ips" getter="get_extra_ips" default="PackedStringArray()">
 			The list of additional IP addresses that we should query for sources. For instance, if you want to find the sources on a remote machine that is not on your local sub-net then you can add them here and those sources will be available locally even though they are not mDNS discoverable.
 		</member>
-		<member name="groups" type="PackedStringArray" setter="set_groups" getter="get_groups" default="PackedStringArray()">
+		<member name="groups" type="PackedStringArray" setter="set_groups" getter="get_ndi_groups" default="PackedStringArray()">
 			Which groups you want to search in for sources. Leave empty for default.
 		</member>
 		<member name="show_local_sources" type="bool" setter="set_show_local_sources" getter="get_show_local_sources" default="true">

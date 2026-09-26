@@ -30,8 +30,8 @@ public:
 
 	static bool equal(VideoStreamNDI *a, VideoStreamNDI *b);
 
-	void set_name(const String p_name);
-	String get_name() const;
+	void set_ndi_name(const String p_name);
+	String get_ndi_name() const;
 
 	void set_bandwidth(const NDIlib_recv_bandwidth_e p_bandwidth);
 	NDIlib_recv_bandwidth_e get_bandwidth() const;

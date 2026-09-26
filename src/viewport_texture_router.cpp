@@ -20,7 +20,9 @@ ViewportTextureRouter::ViewportTextureRouter() {
 
 ViewportTextureRouter::~ViewportTextureRouter() {
 	// Ensure the disconnection from the frame_post_draw signal if it's connected
-	SIGNAL_DISCONNECT(RenderingServer::get_singleton(), "frame_post_draw", callable_mp(this, &ViewportTextureRouter::request_textures));
+	if (!vps.is_empty() && RenderingServer::get_singleton() != nullptr) {
+		SIGNAL_DISCONNECT(RenderingServer::get_singleton(), "frame_post_draw", callable_mp(this, &ViewportTextureRouter::request_textures));
+	}
 }
 
 void ViewportTextureRouter::add_viewport(Viewport *viewport) {
